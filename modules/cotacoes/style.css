@@ -1,0 +1,65 @@
+/* Módulo Cotações */
+.m-cotacoes { padding: 3.2rem 3.8rem; display: flex; flex-direction: column; gap: 2.4rem; }
+.m-cotacoes > * { position: relative; }
+.m-cotacoes .q-bg {
+  position: absolute; inset: 0; z-index: -1;
+  background:
+    radial-gradient(circle at 90% 0%, var(--accent-a35) 0, transparent 40%),
+    linear-gradient(180deg, var(--bg), var(--bg));
+}
+.m-cotacoes .q-head { display: flex; justify-content: space-between; align-items: flex-start; }
+.m-cotacoes .q-title { font-size: 2.6rem; font-weight: 800; letter-spacing: -.02em; }
+.m-cotacoes .q-sub { font-size: 1.25rem; color: var(--muted); font-weight: 600; margin-top: .3rem; }
+.m-cotacoes .q-clock { font-size: 3rem; }
+
+.m-cotacoes .q-var { font-weight: 800; font-size: 1.35rem; padding: .35rem .8rem; border-radius: .5rem; }
+.m-cotacoes .q-var.up { color: #16a34a; background: rgba(22,163,74,.14); }
+.m-cotacoes .q-var.down { color: #ef4444; background: rgba(239,68,68,.14); }
+.m-cotacoes .q-var.flat { color: var(--muted); background: var(--text-a12); }
+[data-tema="claro"] .m-cotacoes .q-var.up, [data-tema="areia"] .m-cotacoes .q-var.up { color: #15803d; }
+
+/* ---- PAINEL ---- */
+.l-painel .q-grid { flex: 1; display: grid; gap: 1.6rem; grid-template-columns: repeat(2, 1fr); min-height: 0; }
+.l-painel .q-grid.n3, .l-painel .q-grid.n5, .l-painel .q-grid.n6 { grid-template-columns: repeat(3, 1fr); }
+.m-cotacoes .q-card {
+  background: var(--surface); border-radius: 1.5rem; padding: 2rem 2.2rem;
+  display: flex; flex-direction: column; justify-content: space-between; gap: .6rem;
+  border-top: .35rem solid var(--accent); min-height: 0;
+}
+.m-cotacoes .q-top { display: flex; justify-content: space-between; align-items: center; }
+.m-cotacoes .q-sym {
+  width: 3.8rem; height: 3.8rem; border-radius: 50%; background: var(--accent-a15); color: var(--accent);
+  display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.3rem;
+}
+.m-cotacoes .q-code { font-size: 1.1rem; font-weight: 800; letter-spacing: .1em; color: var(--muted); }
+.m-cotacoes .q-name { font-size: 1.6rem; font-weight: 700; }
+.m-cotacoes .q-val { font-size: 3.6rem; font-weight: 800; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.m-cotacoes .q-foot { display: flex; justify-content: space-between; align-items: center; font-size: 1.1rem; color: var(--muted); font-weight: 600; }
+.l-painel .q-grid.n5 .q-val, .l-painel .q-grid.n6 .q-val { font-size: 2.9rem; }
+
+.o-v .m-cotacoes { padding: 3.2rem 2.8rem; }
+.o-v .l-painel .q-grid, .o-v .l-painel .q-grid.n3, .o-v .l-painel .q-grid.n5, .o-v .l-painel .q-grid.n6 { grid-template-columns: 1fr; }
+.o-v .l-painel .q-grid.n5, .o-v .l-painel .q-grid.n6 { grid-template-columns: repeat(2, 1fr); }
+.o-v .l-painel .q-grid.n5 .q-val, .o-v .l-painel .q-grid.n6 .q-val { font-size: 2.4rem; }
+
+/* ---- DESTAQUE ---- */
+.l-destaque.m-cotacoes .q-hero { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 1.4rem; }
+.m-cotacoes .q-hero-sym {
+  width: 7rem; height: 7rem; border-radius: 1.8rem; background: var(--accent); color: var(--accent-text);
+  display: flex; align-items: center; justify-content: center; font-size: 2.6rem; font-weight: 900;
+}
+.m-cotacoes .q-hero-name { font-size: 3rem; font-weight: 800; }
+.m-cotacoes .q-hero-name small { font-size: 1.4rem; color: var(--muted); font-weight: 700; margin-left: .6rem; }
+.m-cotacoes .q-hero-val { font-size: 10rem; font-weight: 900; letter-spacing: -.05em; line-height: 1; font-variant-numeric: tabular-nums; }
+.m-cotacoes .q-hero .q-var { font-size: 1.8rem; }
+.m-cotacoes .q-today { font-size: 1.4rem; color: var(--muted); font-weight: 600; margin-left: .6rem; }
+.m-cotacoes .q-hero-range { display: flex; gap: 1.4rem; margin-top: 1rem; }
+.m-cotacoes .q-hero-range div { background: var(--surface); border-radius: 1rem; padding: 1.1rem 1.6rem; display: flex; flex-direction: column; gap: .2rem; }
+.m-cotacoes .q-hero-range small { font-size: .95rem; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+.m-cotacoes .q-hero-range b { font-size: 1.8rem; }
+.m-cotacoes .q-pager { display: flex; gap: .6rem; }
+.m-cotacoes .q-pager i { width: .9rem; height: .9rem; border-radius: 99rem; background: var(--text-a12); }
+.m-cotacoes .q-pager i.on { width: 2.8rem; background: var(--accent); }
+
+.o-v .m-cotacoes .q-hero-val { font-size: 7.5rem; }
+.o-v .m-cotacoes .q-hero-range { flex-direction: column; width: 100%; }

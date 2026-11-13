@@ -1,0 +1,143 @@
+{
+  "id": "rss",
+  "ordem": 1,
+  "status": "ativo",
+  "nome": "Notícias em Tempo Real",
+  "tag": "Mais vendido",
+  "icone": "news",
+  "chamada": "A TV do seu cliente vira um canal de notícias que se atualiza sozinho.",
+  "descricao": "Manchetes dos maiores portais do Brasil, com foto, resumo e fonte, rodando 24h sem ninguém precisar mexer. Conteúdo que prende o olhar na sala de espera, no caixa e no balcão — e faz o anúncio do seu cliente ser visto.",
+  "beneficios": [
+    "Mais de 20 assuntos: esportes, economia, saúde, agro, loterias, regional e muito mais",
+    "Atualização automática a cada 10 minutos",
+    "7 modelos de tela, todos em horizontal e vertical",
+    "Funciona offline com as últimas notícias salvas"
+  ],
+  "indicado": ["Padarias", "Clínicas", "Academias", "Supermercados", "Salões", "Escritórios"],
+  "script": "screen.js",
+  "estilo": "style.css",
+  "rotuloAssunto": "Assunto",
+  "rotuloFonte": "Fonte",
+  "padrao": { "assunto": "ultimas", "layout": "destaque", "tema": "noite", "tempo": 12 },
+  "layouts": [
+    { "id": "destaque", "nome": "Destaque TV", "descricao": "Foto em tela cheia com manchete em faixa, estilo telejornal." },
+    { "id": "revista", "nome": "Revista", "descricao": "Foto e texto lado a lado, com resumo e a próxima manchete." },
+    { "id": "cartao", "nome": "Cartão flutuante", "descricao": "Cartão central sobre fundo desfocado. Elegante e limpo." },
+    { "id": "manchetes", "nome": "Manchetes", "descricao": "Notícia principal e lista das próximas. Ideal para salas de espera." },
+    { "id": "faixa", "nome": "Faixa + letreiro", "descricao": "Manchete na parte inferior e letreiro correndo com todas as notícias." },
+    { "id": "lateral", "nome": "Relógio lateral", "descricao": "Painel com hora e data em destaque ao lado da notícia." },
+    { "id": "texto", "nome": "Tipográfico", "descricao": "Só texto, letras grandes. Perfeito para telas pequenas e leitura rápida." }
+  ],
+  "assuntos": [
+    { "id": "ultimas", "nome": "Últimas notícias", "fontes": [
+      { "id": "metropoles", "nome": "Metrópoles", "url": "https://www.metropoles.com/feed" },
+      { "id": "cnn-brasil", "nome": "CNN Brasil", "url": "https://www.cnnbrasil.com.br/feed/" },
+      { "id": "agencia-brasil", "nome": "Agência Brasil", "url": "https://agenciabrasil.ebc.com.br/rss/ultimasnoticias/feed.xml" }
+    ]},
+    { "id": "brasil", "nome": "Brasil", "fontes": [
+      { "id": "g1-brasil", "nome": "g1", "url": "https://g1.globo.com/rss/g1/brasil/" },
+      { "id": "agencia-brasil-geral", "nome": "Agência Brasil", "url": "https://agenciabrasil.ebc.com.br/rss/geral/feed.xml" },
+      { "id": "veja", "nome": "Veja", "url": "https://veja.abril.com.br/feed/" }
+    ]},
+    { "id": "mundo", "nome": "Mundo", "fontes": [
+      { "id": "bbc-brasil", "nome": "BBC News Brasil", "url": "https://www.bbc.com/portuguese/index.xml" },
+      { "id": "folha-mundo", "nome": "Folha", "url": "https://feeds.folha.uol.com.br/mundo/rss091.xml" },
+      { "id": "agencia-brasil-internacional", "nome": "Agência Brasil", "url": "https://agenciabrasil.ebc.com.br/rss/internacional/feed.xml" }
+    ]},
+    { "id": "esportes", "nome": "Esportes", "fontes": [
+      { "id": "ge", "nome": "ge", "url": "https://ge.globo.com/rss/ge/" },
+      { "id": "uol-esporte", "nome": "UOL Esporte", "url": "https://rss.uol.com.br/feed/esporte.xml" },
+      { "id": "placar", "nome": "Placar", "url": "https://placar.abril.com.br/feed/" }
+    ]},
+    { "id": "economia", "nome": "Economia e Finanças", "fontes": [
+      { "id": "g1-economia", "nome": "g1", "url": "https://g1.globo.com/rss/g1/economia/" },
+      { "id": "infomoney", "nome": "InfoMoney", "url": "https://www.infomoney.com.br/feed/" },
+      { "id": "exame", "nome": "Exame", "url": "https://exame.com/feed/" },
+      { "id": "gazeta-economia", "nome": "Gazeta do Povo", "url": "https://www.gazetadopovo.com.br/feed/rss/economia.xml" }
+    ]},
+    { "id": "negocios", "nome": "Negócios e Empreendedorismo", "fontes": [
+      { "id": "exame-negocios", "nome": "Exame", "url": "https://exame.com/feed/" },
+      { "id": "jornal-contabil", "nome": "Jornal Contábil", "url": "https://www.jornalcontabil.com.br/feed/" },
+      { "id": "money-times", "nome": "Money Times", "url": "https://www.moneytimes.com.br/feed/" }
+    ]},
+    { "id": "tecnologia", "nome": "Tecnologia", "fontes": [
+      { "id": "tecmundo", "nome": "TecMundo", "url": "https://rss.tecmundo.com.br/feed" },
+      { "id": "canaltech", "nome": "Canaltech", "url": "https://www.canaltech.com.br/rss/" },
+      { "id": "olhar-digital", "nome": "Olhar Digital", "url": "https://olhardigital.com.br/feed/" },
+      { "id": "mundo-conectado", "nome": "Mundo Conectado", "url": "https://www.mundoconectado.com.br/feed/" }
+    ]},
+    { "id": "saude", "nome": "Saúde", "fontes": [
+      { "id": "veja-saude", "nome": "Veja Saúde", "url": "https://saude.abril.com.br/feed/" },
+      { "id": "g1-saude", "nome": "g1", "url": "https://g1.globo.com/rss/g1/ciencia-e-saude/" },
+      { "id": "agencia-brasil-saude", "nome": "Agência Brasil", "url": "https://agenciabrasil.ebc.com.br/rss/saude/feed.xml" }
+    ]},
+    { "id": "fitness", "nome": "Fitness e Bem-estar", "fontes": [
+      { "id": "boa-forma", "nome": "Boa Forma", "url": "https://boaforma.abril.com.br/feed/" },
+      { "id": "veja-saude-bem-estar", "nome": "Veja Saúde", "url": "https://saude.abril.com.br/feed/" }
+    ]},
+    { "id": "agronegocio", "nome": "Agronegócio", "fontes": [
+      { "id": "canal-rural", "nome": "Canal Rural", "url": "https://www.canalrural.com.br/feed/" },
+      { "id": "g1-agro", "nome": "g1 Agro", "url": "https://g1.globo.com/rss/g1/economia/agronegocios/" },
+      { "id": "gazeta-agro", "nome": "Gazeta do Povo", "url": "https://www.gazetadopovo.com.br/feed/rss/agronegocio.xml" },
+      { "id": "canal-rural-agricultura", "nome": "Canal Rural Agricultura", "url": "https://www.canalrural.com.br/agricultura/feed/" },
+      { "id": "canal-rural-pecuaria", "nome": "Canal Rural Pecuária", "url": "https://www.canalrural.com.br/pecuaria/feed/" }
+    ]},
+    { "id": "loterias", "nome": "Loterias", "fontes": [
+      { "id": "g1-loterias", "nome": "g1 Loterias", "url": "https://g1.globo.com/rss/g1/loterias/" }
+    ]},
+    { "id": "entretenimento", "nome": "Entretenimento e Música", "fontes": [
+      { "id": "g1-musica", "nome": "g1 Música", "url": "https://g1.globo.com/rss/g1/musica/" },
+      { "id": "capricho", "nome": "Capricho", "url": "https://capricho.abril.com.br/feed/" },
+      { "id": "veja-sp", "nome": "Veja SP", "url": "https://vejasp.abril.com.br/feed/" }
+    ]},
+    { "id": "curiosidades", "nome": "Curiosidades e Ciência", "fontes": [
+      { "id": "superinteressante", "nome": "Superinteressante", "url": "https://super.abril.com.br/feed/" },
+      { "id": "planeta-bizarro", "nome": "g1 Planeta Bizarro", "url": "https://g1.globo.com/rss/g1/planeta-bizarro/" },
+      { "id": "g1-natureza", "nome": "g1 Natureza", "url": "https://g1.globo.com/rss/g1/natureza/" }
+    ]},
+    { "id": "estilo-de-vida", "nome": "Estilo de Vida e Beleza", "fontes": [
+      { "id": "claudia", "nome": "Claudia", "url": "https://claudia.abril.com.br/feed/" },
+      { "id": "m-de-mulher", "nome": "M de Mulher", "url": "https://mdemulher.abril.com.br/feed/" },
+      { "id": "boa-forma-estilo", "nome": "Boa Forma", "url": "https://boaforma.abril.com.br/feed/" }
+    ]},
+    { "id": "casa-decoracao", "nome": "Casa e Decoração", "fontes": [
+      { "id": "casa-abril", "nome": "Casa.com.br", "url": "https://casa.abril.com.br/feed/" }
+    ]},
+    { "id": "turismo", "nome": "Turismo e Viagem", "fontes": [
+      { "id": "viagem-e-turismo", "nome": "Viagem e Turismo", "url": "https://viagemeturismo.abril.com.br/feed/" },
+      { "id": "folha-turismo", "nome": "Folha", "url": "https://feeds.folha.uol.com.br/turismo/rss091.xml" }
+    ]},
+    { "id": "gastronomia", "nome": "Gastronomia", "fontes": [
+      { "id": "folha-comida", "nome": "Folha Comida", "url": "https://feeds.folha.uol.com.br/comida/rss091.xml" }
+    ]},
+    { "id": "veiculos", "nome": "Carros e Veículos", "fontes": [
+      { "id": "quatro-rodas", "nome": "Quatro Rodas", "url": "https://quatrorodas.abril.com.br/feed/" },
+      { "id": "gazeta-automoveis", "nome": "Gazeta do Povo", "url": "https://www.gazetadopovo.com.br/feed/rss/automoveis.xml" }
+    ]},
+    { "id": "educacao", "nome": "Educação e Concursos", "fontes": [
+      { "id": "guia-do-estudante", "nome": "Guia do Estudante", "url": "https://guiadoestudante.abril.com.br/feed/" },
+      { "id": "agencia-brasil-educacao", "nome": "Agência Brasil", "url": "https://agenciabrasil.ebc.com.br/rss/educacao/feed.xml" },
+      { "id": "folha-educacao", "nome": "Folha", "url": "https://feeds.folha.uol.com.br/educacao/rss091.xml" }
+    ]},
+    { "id": "sustentabilidade", "nome": "Sustentabilidade", "fontes": [
+      { "id": "ecycle", "nome": "eCycle", "url": "https://www.ecycle.com.br/feed/" },
+      { "id": "g1-natureza-sustentavel", "nome": "g1 Natureza", "url": "https://g1.globo.com/rss/g1/natureza/" }
+    ]},
+    { "id": "politica", "nome": "Política", "fontes": [
+      { "id": "poder360", "nome": "Poder360", "url": "https://www.poder360.com.br/feed/" },
+      { "id": "agencia-brasil-politica", "nome": "Agência Brasil", "url": "https://agenciabrasil.ebc.com.br/rss/politica/feed.xml" }
+    ]},
+    { "id": "fe", "nome": "Fé e Espiritualidade", "fontes": [
+      { "id": "vatican-news", "nome": "Vatican News", "url": "https://www.vaticannews.va/pt.rss.xml" }
+    ]},
+    { "id": "regional", "nome": "Regional", "fonteObrigatoria": true, "fontes": [
+      { "id": "rio-de-janeiro", "nome": "g1 Rio de Janeiro", "url": "https://g1.globo.com/rss/g1/rio-de-janeiro/" },
+      { "id": "sao-paulo", "nome": "Veja SP", "url": "https://vejasp.abril.com.br/feed/" },
+      { "id": "minas-gerais", "nome": "Uai (MG)", "url": "https://www.uai.com.br/feed" },
+      { "id": "espirito-santo", "nome": "g1 Espírito Santo", "url": "https://g1.globo.com/rss/g1/espirito-santo/" },
+      { "id": "parana", "nome": "g1 Paraná", "url": "https://g1.globo.com/rss/g1/pr/parana/" },
+      { "id": "rio-grande-do-sul", "nome": "g1 Rio Grande do Sul", "url": "https://g1.globo.com/rss/g1/rs/rio-grande-do-sul/" },
+      { "id": "pernambuco", "nome": "g1 Pernambuco", "url": "https://g1.globo.com/rss/g1/pernambuco/" }
+    ]}
+  ]
+}

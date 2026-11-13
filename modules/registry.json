@@ -1,0 +1,4 @@
+{
+  "_comentario": "Lista de módulos do rsscreen. Para adicionar um módulo novo: crie a pasta modules/<id>/ com manifest.json (e screen.js se estiver ativo) e coloque o <id> aqui.",
+  "modulos": ["rss", "clima", "cotacoes", "loterias", "acougue", "ofertas"]
+}

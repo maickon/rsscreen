@@ -1,0 +1,117 @@
+{
+  "_comentario": "Pacotes prontos por segmento: combinações de telas que mais vendem para pequenas e médias empresas de mídia indoor. Usados na landing page e no painel (gera todos os links de uma vez).",
+  "pacotes": [
+    {
+      "id": "padaria-cafe", "nome": "Padaria e Cafeteria", "tema": "noite",
+      "porque": "Cliente fica de 3 a 10 minutos na fila e no balcão. Notícias rápidas + clima seguram o olhar entre um anúncio e outro.",
+      "telas": [
+        { "modulo": "rss", "assunto": "ultimas", "layout": "destaque" },
+        { "modulo": "clima", "assunto": "cabo-frio-rj", "layout": "agora" },
+        { "modulo": "rss", "assunto": "entretenimento", "layout": "cartao" },
+        { "modulo": "rss", "assunto": "esportes", "layout": "faixa" }
+      ]
+    },
+    {
+      "id": "clinica-consultorio", "nome": "Clínica e Consultório", "tema": "claro",
+      "porque": "Sala de espera = público parado por 20 minutos ou mais. Saúde e curiosidades informam e reduzem a percepção de espera.",
+      "telas": [
+        { "modulo": "rss", "assunto": "saude", "layout": "manchetes" },
+        { "modulo": "rss", "assunto": "curiosidades", "layout": "revista" },
+        { "modulo": "rss", "assunto": "estilo-de-vida", "layout": "cartao" },
+        { "modulo": "clima", "assunto": "cabo-frio-rj", "layout": "semana" }
+      ]
+    },
+    {
+      "id": "academia", "nome": "Academia e Estúdio", "tema": "grafite",
+      "porque": "Tela vista de longe, em movimento. Layouts com letras grandes, esportes e fitness combinam com a energia do ambiente.",
+      "telas": [
+        { "modulo": "rss", "assunto": "esportes", "layout": "destaque" },
+        { "modulo": "rss", "assunto": "fitness", "layout": "texto" },
+        { "modulo": "rss", "assunto": "saude", "layout": "faixa" }
+      ]
+    },
+    {
+      "id": "salao-beleza", "nome": "Salão de Beleza e Estética", "tema": "vinho",
+      "porque": "Atendimento longo e público que gosta de novidades: beleza, estilo de vida e entretenimento rendem conversa.",
+      "telas": [
+        { "modulo": "rss", "assunto": "estilo-de-vida", "layout": "revista" },
+        { "modulo": "rss", "assunto": "entretenimento", "layout": "cartao" },
+        { "modulo": "rss", "assunto": "casa-decoracao", "layout": "manchetes" }
+      ]
+    },
+    {
+      "id": "agro", "nome": "Loja Agropecuária e Cooperativa", "tema": "floresta",
+      "porque": "Produtor rural quer saber de mercado, safra e clima. Conteúdo que ele não acha em outro lugar dentro da loja.",
+      "telas": [
+        { "modulo": "rss", "assunto": "agronegocio", "layout": "destaque" },
+        { "modulo": "cotacoes", "assunto": "principais", "layout": "painel" },
+        { "modulo": "clima", "assunto": "campos-dos-goytacazes-rj", "layout": "semana" }
+      ]
+    },
+    {
+      "id": "supermercado", "nome": "Supermercado e Mercadinho", "tema": "noite",
+      "porque": "Alto fluxo, filas no caixa e muitos anunciantes. Conteúdo variado mantém a tela interessante o dia todo.",
+      "telas": [
+        { "modulo": "rss", "assunto": "ultimas", "layout": "faixa" },
+        { "modulo": "rss", "assunto": "loterias", "layout": "manchetes" },
+        { "modulo": "rss", "assunto": "gastronomia", "layout": "cartao" },
+        { "modulo": "clima", "assunto": "cabo-frio-rj", "layout": "agora" }
+      ]
+    },
+    {
+      "id": "escritorio", "nome": "Escritório, Contabilidade e Coworking", "tema": "royal",
+      "porque": "Público profissional valoriza economia, negócios e câmbio. Passa credibilidade para a marca do cliente.",
+      "telas": [
+        { "modulo": "rss", "assunto": "economia", "layout": "revista" },
+        { "modulo": "rss", "assunto": "negocios", "layout": "lateral" },
+        { "modulo": "cotacoes", "assunto": "moedas", "layout": "painel" },
+        { "modulo": "rss", "assunto": "tecnologia", "layout": "manchetes" }
+      ]
+    },
+    {
+      "id": "hotel-pousada", "nome": "Hotel, Pousada e Turismo", "tema": "oceano",
+      "porque": "Hóspede quer saber do tempo e do que fazer. Clima + turismo + câmbio é o combo perfeito para recepção e restaurante.",
+      "telas": [
+        { "modulo": "clima", "assunto": "buzios-rj", "layout": "agora" },
+        { "modulo": "rss", "assunto": "turismo", "layout": "cartao" },
+        { "modulo": "cotacoes", "assunto": "turismo", "layout": "destaque" },
+        { "modulo": "clima", "assunto": "buzios-rj", "layout": "horas" }
+      ]
+    },
+    {
+      "id": "auto", "nome": "Oficina, Autopeças e Concessionária", "tema": "grafite",
+      "porque": "Cliente espera o serviço do carro. Notícias de veículos e esportes falam direto com esse público.",
+      "telas": [
+        { "modulo": "rss", "assunto": "veiculos", "layout": "destaque" },
+        { "modulo": "rss", "assunto": "esportes", "layout": "manchetes" },
+        { "modulo": "rss", "assunto": "ultimas", "layout": "faixa" }
+      ]
+    },
+    {
+      "id": "escola-curso", "nome": "Escola, Curso e Faculdade", "tema": "claro",
+      "porque": "Educação, concursos e tecnologia geram engajamento em corredores, cantinas e recepção.",
+      "telas": [
+        { "modulo": "rss", "assunto": "educacao", "layout": "manchetes" },
+        { "modulo": "rss", "assunto": "tecnologia", "layout": "revista" },
+        { "modulo": "rss", "assunto": "curiosidades", "layout": "texto" }
+      ]
+    },
+    {
+      "id": "restaurante-bar", "nome": "Restaurante, Bar e Lanchonete", "tema": "noite",
+      "porque": "Ambiente social: esportes e entretenimento puxam conversa e aumentam a permanência (e o consumo).",
+      "telas": [
+        { "modulo": "rss", "assunto": "esportes", "layout": "destaque" },
+        { "modulo": "rss", "assunto": "entretenimento", "layout": "faixa" },
+        { "modulo": "rss", "assunto": "gastronomia", "layout": "revista" }
+      ]
+    },
+    {
+      "id": "loja-religiosa", "nome": "Igreja e Loja de Artigos Religiosos", "tema": "areia",
+      "porque": "Conteúdo de fé com visual sereno, alinhado ao público e aos valores do ambiente.",
+      "telas": [
+        { "modulo": "rss", "assunto": "fe", "layout": "cartao" },
+        { "modulo": "rss", "assunto": "fe", "layout": "texto" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "loterias",
+  "ordem": 4,
+  "status": "em-breve",
+  "nome": "Resultados de Loterias",
+  "icone": "ticket",
+  "chamada": "Mega-Sena, Quina, Lotofácil: os resultados que todo mundo quer ver.",
+  "descricao": "Telas com os números sorteados, prêmios acumulados e próximos concursos, atualizadas automaticamente. Perfeito para lotéricas, bancas, bares e comércios de bairro — o público procura a tela para conferir o jogo.",
+  "beneficios": [
+    "Mega-Sena, Quina, Lotofácil, Lotomania e mais",
+    "Destaque para prêmios acumulados",
+    "Horizontal e vertical"
+  ],
+  "indicado": ["Lotéricas", "Bancas", "Bares", "Mercados de bairro"]
+}

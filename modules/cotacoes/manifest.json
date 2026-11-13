@@ -1,0 +1,31 @@
+{
+  "id": "cotacoes",
+  "ordem": 3,
+  "status": "ativo",
+  "nome": "Cotações e Câmbio",
+  "tag": "Novo",
+  "icone": "chart",
+  "chamada": "Dólar, euro e cripto ao vivo na tela — o público para para conferir.",
+  "descricao": "Cotações atualizadas automaticamente durante o dia com variação, máxima e mínima. Um conteúdo de utilidade pública que gera atenção imediata em lojas, casas de câmbio, agências de turismo, escritórios e lojas do agro.",
+  "beneficios": [
+    "Moedas, criptomoedas ou painel completo",
+    "Setas de alta e baixa com cores automáticas",
+    "Atualização a cada 5 minutos",
+    "Modelos em horizontal e vertical"
+  ],
+  "indicado": ["Escritórios", "Contabilidades", "Agências de turismo", "Lojas"],
+  "script": "screen.js",
+  "estilo": "style.css",
+  "rotuloAssunto": "Painel",
+  "padrao": { "assunto": "principais", "layout": "painel", "tema": "noite", "tempo": 10 },
+  "layouts": [
+    { "id": "painel", "nome": "Painel completo", "descricao": "Todas as cotações do painel em uma única tela." },
+    { "id": "destaque", "nome": "Uma por vez", "descricao": "Cada cotação em destaque, com máxima e mínima do dia." }
+  ],
+  "assuntos": [
+    { "id": "principais", "nome": "Principais (dólar, euro, libra, bitcoin)", "pares": ["USD-BRL", "EUR-BRL", "GBP-BRL", "BTC-BRL"] },
+    { "id": "moedas", "nome": "Moedas estrangeiras", "pares": ["USD-BRL", "EUR-BRL", "GBP-BRL", "ARS-BRL", "CAD-BRL", "JPY-BRL"] },
+    { "id": "cripto", "nome": "Criptomoedas", "pares": ["BTC-BRL", "ETH-BRL", "SOL-BRL", "XRP-BRL", "LTC-BRL", "DOGE-BRL"] },
+    { "id": "turismo", "nome": "Câmbio para viagem", "pares": ["USD-BRL", "EUR-BRL", "ARS-BRL", "GBP-BRL"] }
+  ]
+}

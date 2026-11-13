@@ -1,0 +1,15 @@
+{
+  "id": "acougue",
+  "ordem": 5,
+  "status": "em-breve",
+  "nome": "Tabela de Preços (Açougue e Hortifrúti)",
+  "icone": "tag",
+  "chamada": "Troque a plaquinha de papel por uma tabela de preços digital que vende mais.",
+  "descricao": "Tabela de cortes, preços por quilo e ofertas do dia com visual profissional. O dono atualiza os preços em segundos e a tela muda na hora — sem impressão, sem retrabalho.",
+  "beneficios": [
+    "Preço por kg, unidade ou bandeja",
+    "Destaque de oferta do dia",
+    "Modelos para açougue, hortifrúti, padaria e lanchonete"
+  ],
+  "indicado": ["Açougues", "Hortifrútis", "Padarias", "Lanchonetes"]
+}

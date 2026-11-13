@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Painel · rsscreen</title>
+  <meta name="theme-color" content="#0A0A0A" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-title" content="rsscreen" />
+  <link rel="manifest" href="../manifest.webmanifest" />
+  <link rel="icon" href="../assets/img/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="../assets/img/apple-touch.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/brand.css" />
+  <link rel="stylesheet" href="../assets/css/painel.css" />
+</head>
+<body>
+
+  <!-- ================= LOGIN ================= -->
+  <section class="login" id="login" hidden>
+    <div class="login-side">
+      <a href="../" class="logo"><i data-logo></i><span><b>rs</b>screen</span></a>
+      <div class="login-pitch">
+        <h1>Conteúdo vivo para todas as suas telas.</h1>
+        <ul>
+          <li><i data-icon="link"></i> Gere links por cliente, assunto e modelo</li>
+          <li><i data-icon="whatsapp"></i> Envie tudo pelo WhatsApp em um clique</li>
+          <li><i data-icon="rotate"></i> Horizontal, vertical e rotação forçada</li>
+        </ul>
+      </div>
+      <small>Painel do administrador</small>
+    </div>
+    <div class="login-main">
+      <form class="login-card" id="loginForm" autocomplete="off">
+        <span class="login-ico"><i data-icon="key"></i></span>
+        <h2>Entrar no painel</h2>
+        <p>Use a sua chave de acesso de administrador.</p>
+        <label class="field">
+          <span>Chave de acesso</span>
+          <input class="input" id="loginKey" type="password" placeholder="sua-chave-de-acesso" autocapitalize="off" spellcheck="false" required />
+        </label>
+        <p class="login-error" id="loginError" hidden>Chave inválida. Confira e tente novamente.</p>
+        <button class="btn btn-primary btn-lg" type="submit">Entrar <i data-icon="arrow"></i></button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ================= APP ================= -->
+  <div class="app" id="app" hidden>
+    <aside class="side" id="side">
+      <div class="side-head">
+        <a href="#gerar" class="logo"><i data-logo></i><span><b>rs</b>screen</span></a>
+        <button class="side-close" id="sideClose" aria-label="Fechar menu"><i data-icon="x"></i></button>
+      </div>
+      <nav class="side-nav" id="sideNav">
+        <a href="#gerar" data-view="gerar"><i data-icon="link"></i> Gerar links</a>
+        <a href="#pacotes" data-view="pacotes"><i data-icon="package"></i> Pacotes prontos</a>
+        <a href="#links" data-view="links"><i data-icon="layers"></i> Meus links <em id="navLinksCount"></em></a>
+        <a href="#clientes" data-view="clientes"><i data-icon="users"></i> Clientes</a>
+        <a href="#modelos" data-view="modelos"><i data-icon="monitor"></i> Modelos de tela</a>
+        <a href="#modulos" data-view="modulos"><i data-icon="grid"></i> Módulos</a>
+      </nav>
+      <div class="side-foot">
+        <button class="side-install" id="installBtn" hidden><i data-icon="download"></i> Instalar app</button>
+        <a href="../" target="_blank" rel="noopener"><i data-icon="external"></i> Ver site</a>
+        <button id="logoutBtn"><i data-icon="logout"></i> Sair</button>
+      </div>
+    </aside>
+    <div class="side-backdrop" id="sideBackdrop"></div>
+
+    <div class="main">
+      <header class="topbar">
+        <button class="topbar-menu" id="menuBtn" aria-label="Abrir menu"><i data-icon="menu"></i></button>
+        <a href="#gerar" class="logo topbar-logo"><i data-logo></i><span><b>rs</b>screen</span></a>
+      </header>
+
+      <!-- ===== GERAR LINKS ===== -->
+      <section class="view" id="view-gerar">
+        <div class="page-head">
+          <div>
+            <h1>Gerar links</h1>
+            <p>Monte as telas do cliente. Selecione vários assuntos, modelos e orientações para gerar todas as combinações de uma vez.</p>
+          </div>
+        </div>
+
+        <div class="gen-grid">
+          <div class="card gen-form">
+            <div class="step">
+              <div class="step-title"><span>1</span> Cliente</div>
+              <div class="row-2">
+                <select class="select" id="gCliente"></select>
+              </div>
+              <p class="hint" id="gClienteInfo"></p>
+            </div>
+
+            <div class="step">
+              <div class="step-title"><span>2</span> Conteúdo</div>
+              <div class="seg-light" id="gModulo"></div>
+            </div>
+
+            <div class="step">
+              <div class="step-title"><span>3</span> <b id="gAssuntoLabel">Assuntos</b> <small id="gAssuntoCount"></small></div>
+              <input class="input input-sm" id="gAssuntoBusca" placeholder="Filtrar…" />
+              <div class="chips" id="gAssuntos"></div>
+              <div class="field fonte-field" id="gFonteWrap" hidden>
+                <span id="gFonteLabel">Fonte</span>
+                <select class="select" id="gFonte"></select>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="step-title"><span>4</span> Modelos de tela <small id="gLayoutCount"></small></div>
+              <div class="chips" id="gLayouts"></div>
+            </div>
+
+            <div class="step">
+              <div class="step-title"><span>5</span> Orientação e cores</div>
+              <div class="chips" id="gOrient">
+                <button class="chip" data-v="horizontal"><i data-icon="monitor"></i> Horizontal</button>
+                <button class="chip" data-v="vertical"><i data-icon="phone"></i> Vertical</button>
+              </div>
+              <div class="themes" id="gTema"></div>
+            </div>
+
+            <details class="step adv">
+              <summary><i data-icon="chevron"></i> Opções avançadas</summary>
+              <div class="row-2">
+                <label class="field"><span>Tempo por slide (segundos)</span><input class="input" id="gTempo" type="number" min="4" max="120" placeholder="Padrão do módulo" /></label>
+                <label class="field"><span>Girar tela (TV box que não gira)</span>
+                  <select class="select" id="gGirar"><option value="">Não girar</option><option value="90">90° (horário)</option><option value="270">270° (anti-horário)</option></select>
+                </label>
+              </div>
+            </details>
+
+            <div class="gen-submit">
+              <p id="gSummary"></p>
+              <button class="btn btn-primary btn-lg" id="gGenerate"><i data-icon="sparkles"></i> <span>Gerar links</span></button>
+            </div>
+          </div>
+
+          <div class="gen-side">
+            <div class="card preview-card">
+              <div class="card-head">
+                <div><h3>Pré-visualização</h3><p id="pvLabel">—</p></div>
+                <a class="btn btn-ghost btn-sm" id="pvOpen" target="_blank" rel="noopener"><i data-icon="external"></i> Modo teste</a>
+              </div>
+              <div class="pv-stage" id="pvStage">
+                <div class="device-tv" id="pvDevice"><div class="screen"><iframe id="pvFrame" title="Pré-visualização"></iframe></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card results" id="results" hidden>
+          <div class="card-head results-head">
+            <div><h3 id="resTitle">Links gerados</h3><p id="resSub"></p></div>
+            <div class="results-actions">
+              <button class="btn btn-ghost btn-sm" id="resCopyAll"><i data-icon="copy"></i> Copiar links</button>
+              <button class="btn btn-ghost btn-sm" id="resCopyMsg"><i data-icon="copy"></i> Copiar mensagem</button>
+              <a class="btn btn-primary btn-sm" id="resWhats" target="_blank" rel="noopener"><i data-icon="whatsapp"></i> Enviar no WhatsApp</a>
+            </div>
+          </div>
+          <div class="link-list" id="resList"></div>
+        </div>
+      </section>
+
+      <!-- ===== PACOTES ===== -->
+      <section class="view" id="view-pacotes" hidden>
+        <div class="page-head">
+          <div>
+            <h1>Pacotes prontos</h1>
+            <p>Combinações de telas que mais vendem por segmento. Escolha o cliente e gere o pacote inteiro em um clique.</p>
+          </div>
+        </div>
+        <div class="card toolbar">
+          <label class="field"><span>Cliente</span><select class="select" id="pCliente"></select></label>
+          <label class="field"><span>Cidade (telas de clima)</span><select class="select" id="pCidade"></select></label>
+          <div class="field"><span>Orientação</span>
+            <div class="chips" id="pOrient">
+              <button class="chip on" data-v="horizontal"><i data-icon="monitor"></i> Horizontal</button>
+              <button class="chip" data-v="vertical"><i data-icon="phone"></i> Vertical</button>
+            </div>
+          </div>
+        </div>
+        <div class="pack-grid" id="packGrid"></div>
+      </section>
+
+      <!-- ===== MEUS LINKS ===== -->
+      <section class="view" id="view-links" hidden>
+        <div class="page-head">
+          <div>
+            <h1>Meus links</h1>
+            <p>Histórico de links gerados, salvo neste navegador. Exporte um backup para usar em outro aparelho.</p>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-ghost btn-sm" id="lExport"><i data-icon="download"></i> Exportar</button>
+            <label class="btn btn-ghost btn-sm"><i data-icon="upload"></i> Importar<input type="file" id="lImport" accept="application/json" hidden /></label>
+          </div>
+        </div>
+        <div class="card toolbar">
+          <label class="field"><span>Cliente</span><select class="select" id="lCliente"></select></label>
+          <label class="field grow"><span>Buscar</span><input class="input" id="lBusca" placeholder="Assunto, modelo, cidade…" /></label>
+        </div>
+        <div id="lGroups"></div>
+      </section>
+
+      <!-- ===== CLIENTES ===== -->
+      <section class="view" id="view-clientes" hidden>
+        <div class="page-head">
+          <div>
+            <h1>Clientes</h1>
+            <p>Clientes cadastrados em <code>config/clientes.js</code>. A chave de cada um é gerada automaticamente a partir do nome.</p>
+          </div>
+        </div>
+        <div class="client-grid">
+          <div class="card">
+            <div class="card-head"><div><h3>Cadastrados</h3><p id="cCount"></p></div></div>
+            <div class="table-wrap"><table class="table" id="cTable"></table></div>
+          </div>
+          <div class="card new-client">
+            <div class="card-head"><div><h3>Cadastrar novo cliente</h3><p>Sem banco de dados: o cadastro é uma linha no arquivo de configuração.</p></div></div>
+            <label class="field"><span>Nome do cliente</span><input class="input" id="ncNome" placeholder="Ex.: Mercado Bom Preço" /></label>
+            <label class="field"><span>WhatsApp (opcional, com DDD)</span><input class="input" id="ncWhats" inputmode="tel" placeholder="Ex.: 22 99999-0000" /></label>
+            <div class="nc-out" id="ncOut" hidden>
+              <div class="kv"><span>Chave gerada</span><code id="ncKey"></code></div>
+              <div class="kv"><span>Linha para colar em <code>clientes</code></span><pre id="ncLine"></pre></div>
+              <button class="btn btn-dark btn-sm" id="ncCopy"><i data-icon="copy"></i> Copiar linha</button>
+            </div>
+            <ol class="howto">
+              <li>Abra o arquivo <code>config/clientes.js</code></li>
+              <li>Cole a linha dentro da lista <code>clientes: [ … ]</code></li>
+              <li>Salve, faça commit e push no Git. O Cloudflare publica sozinho.</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== MODELOS ===== -->
+      <section class="view" id="view-modelos" hidden>
+        <div class="page-head">
+          <div>
+            <h1>Modelos de tela</h1>
+            <p>Todos os modelos rodando ao vivo. Use como vitrine para mostrar ao cliente ou escolha um para gerar links.</p>
+          </div>
+        </div>
+        <div class="card toolbar">
+          <div class="field"><span>Conteúdo</span><div class="seg-light" id="mModulo"></div></div>
+          <div class="field"><span>Orientação</span>
+            <div class="chips" id="mOrient">
+              <button class="chip on" data-v="horizontal"><i data-icon="monitor"></i> Horizontal</button>
+              <button class="chip" data-v="vertical"><i data-icon="phone"></i> Vertical</button>
+            </div>
+          </div>
+          <label class="field"><span>Cores</span><select class="select" id="mTema"></select></label>
+        </div>
+        <div class="model-grid" id="modelGrid"></div>
+      </section>
+
+      <!-- ===== MÓDULOS ===== -->
+      <section class="view" id="view-modulos" hidden>
+        <div class="page-head">
+          <div>
+            <h1>Módulos</h1>
+            <p>Cada tipo de tela é um módulo com seu próprio manifesto. A landing page e este painel leem os manifestos automaticamente.</p>
+          </div>
+        </div>
+        <div class="mod-grid" id="modGrid"></div>
+        <div class="card help">
+          <h3>Como adicionar um módulo novo</h3>
+          <ol class="howto">
+            <li>Crie a pasta <code>modules/&lt;id&gt;/</code> com um <code>manifest.json</code> (nome, textos de venda, assuntos e layouts).</li>
+            <li>Se o módulo estiver ativo, crie <code>screen.js</code> (busca e desenho da tela) e <code>style.css</code>.</li>
+            <li>Inclua o <code>&lt;id&gt;</code> em <code>modules/registry.json</code>. Pronto: ele aparece na landing, no painel e nas telas.</li>
+          </ol>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="../config/clientes.js"></script>
+  <script src="../assets/js/core.js"></script>
+  <script src="../assets/js/icons.js"></script>
+  <script src="../assets/js/painel.js"></script>
+</body>
+</html>

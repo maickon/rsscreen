@@ -1,0 +1,99 @@
+/* Módulo Clima */
+.m-clima { --cloud: #e2e8f0; padding: 3.2rem 3.8rem; display: flex; flex-direction: column; gap: 2.4rem; }
+[data-tema="claro"] .m-clima, [data-tema="areia"] .m-clima { --cloud: #94a3b8; }
+
+.m-clima .w-bg {
+  position: absolute; inset: 0; z-index: -1;
+  background:
+    radial-gradient(circle at 12% 10%, var(--accent-a35) 0, transparent 42%),
+    radial-gradient(circle at 95% 100%, var(--accent-a15) 0, transparent 50%),
+    var(--bg);
+}
+.m-clima > * { position: relative; }
+.m-clima .w-ico { width: 5rem; height: 5rem; flex: none; }
+.m-clima .w-drop { width: 1.3rem; height: 1.3rem; flex: none; }
+
+.m-clima .w-head { display: flex; justify-content: space-between; align-items: flex-start; }
+.m-clima .w-city { font-size: 2.6rem; font-weight: 800; letter-spacing: -.02em; }
+.m-clima .w-date { font-size: 1.35rem; color: var(--muted); font-weight: 600; margin-top: .3rem; }
+.m-clima .w-clock { font-size: 3.2rem; }
+.m-clima .w-title { font-size: 1.5rem; font-weight: 600; color: var(--muted); }
+.m-clima .w-title b { color: var(--text); }
+
+/* ---- AGORA ---- */
+.l-agora .w-agora { flex: 1; display: grid; grid-template-columns: 1.05fr 1fr; gap: 3rem; min-height: 0; }
+.m-clima .w-now { display: flex; flex-direction: column; justify-content: center; gap: 1rem; }
+.m-clima .w-now-main { display: flex; align-items: center; gap: 2rem; }
+.m-clima .w-now-main .w-ico { width: 13rem; height: 13rem; }
+.m-clima .w-temp { font-size: 11rem; font-weight: 800; line-height: .9; letter-spacing: -.05em; }
+.m-clima .w-temp sup { font-size: 3.4rem; vertical-align: top; letter-spacing: 0; margin-left: .4rem; color: var(--muted); }
+.m-clima .w-cond { font-size: 2.6rem; font-weight: 700; }
+.m-clima .w-range { font-size: 1.5rem; color: var(--muted); }
+.m-clima .w-range b { color: var(--text); }
+.m-clima .w-details { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 1.6rem; }
+.m-clima .w-details div { background: var(--surface); border-radius: 1rem; padding: 1.1rem 1.2rem; display: flex; flex-direction: column; gap: .3rem; }
+.m-clima .w-details small { font-size: .95rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 700; }
+.m-clima .w-details b { font-size: 1.7rem; }
+
+.l-agora .w-days { display: flex; flex-direction: column; gap: .9rem; justify-content: center; }
+.m-clima .w-day {
+  display: grid; grid-template-columns: 8rem 4rem 1fr auto 5.5rem; align-items: center; gap: 1.2rem;
+  background: var(--surface); border-radius: 1.1rem; padding: .9rem 1.6rem;
+}
+.m-clima .w-day .w-ico { width: 4rem; height: 4rem; }
+.m-clima .w-dname { font-size: 1.5rem; font-weight: 800; display: flex; flex-direction: column; }
+.m-clima .w-dname small { font-size: 1rem; color: var(--muted); font-weight: 600; }
+.m-clima .w-dcond { font-size: 1.15rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.m-clima .w-dtemps { font-size: 1.6rem; display: flex; gap: .8rem; align-items: baseline; }
+.m-clima .w-dtemps span { color: var(--muted); font-size: 1.3rem; }
+.m-clima .w-rain { display: flex; align-items: center; gap: .3rem; font-size: 1.15rem; color: #60a5fa; font-weight: 700; }
+
+.o-v .m-clima { padding: 3.2rem 2.8rem; }
+.o-v .l-agora .w-agora { grid-template-columns: 1fr; grid-template-rows: auto 1fr; gap: 2.4rem; }
+.o-v .m-clima .w-now { align-items: center; text-align: center; }
+.o-v .m-clima .w-details { grid-template-columns: repeat(2, 1fr); width: 100%; }
+.o-v .m-clima .w-day { grid-template-columns: 8rem 4.5rem 1fr auto 6rem; padding: 1.2rem 1.6rem; }
+
+/* ---- SEMANA ---- */
+.l-semana .w-week { flex: 1; display: grid; grid-template-columns: repeat(7, 1fr); gap: 1.2rem; min-height: 0; }
+.m-clima .w-col {
+  background: var(--surface); border-radius: 1.4rem; padding: 2rem 1rem;
+  display: flex; flex-direction: column; align-items: center; justify-content: space-around; text-align: center; gap: .8rem;
+}
+.m-clima .w-col:first-child { outline: .25rem solid var(--accent); }
+.m-clima .w-col .w-ico { width: 6.5rem; height: 6.5rem; }
+.m-clima .w-col .w-dname { align-items: center; font-size: 1.7rem; }
+.m-clima .w-col .w-dcond { white-space: normal; font-size: 1.05rem; min-height: 2.6rem; }
+.m-clima .w-col .w-dtemps { flex-direction: column; gap: .2rem; align-items: center; }
+.m-clima .w-col .w-dtemps b { font-size: 2.4rem; }
+
+.o-v .l-semana .w-week { grid-template-columns: 1fr; grid-template-rows: repeat(7, 1fr); gap: .9rem; }
+.o-v .m-clima .w-col { flex-direction: row; justify-content: space-between; padding: .6rem 1.8rem; text-align: left; }
+.o-v .m-clima .w-col .w-dname { align-items: flex-start; width: 8rem; }
+.o-v .m-clima .w-col .w-ico { width: 5rem; height: 5rem; }
+.o-v .m-clima .w-col .w-dcond { flex: 1; min-height: 0; font-size: 1.25rem; }
+.o-v .m-clima .w-col .w-dtemps { flex-direction: row; gap: .8rem; align-items: baseline; }
+.o-v .m-clima .w-col .w-dtemps b { font-size: 2rem; }
+
+/* ---- HORAS ---- */
+.l-horas .w-hours { flex: 1; display: grid; grid-template-columns: repeat(12, 1fr); gap: .8rem; min-height: 0; }
+.m-clima .w-hour {
+  background: var(--surface); border-radius: 1.2rem; padding: 1.6rem .4rem;
+  display: flex; flex-direction: column; align-items: center; gap: 1rem;
+}
+.m-clima .w-hour:first-child { outline: .25rem solid var(--accent); }
+.m-clima .w-hh { font-size: 1.3rem; font-weight: 700; color: var(--muted); }
+.m-clima .w-hour .w-ico { width: 4.4rem; height: 4.4rem; }
+.m-clima .w-ht { font-size: 2.1rem; font-weight: 800; }
+.m-clima .w-bar { flex: 1; width: .9rem; border-radius: 99rem; background: var(--text-a12); position: relative; overflow: hidden; }
+.m-clima .w-bar i { position: absolute; left: 0; right: 0; bottom: 0; height: var(--p); background: var(--accent); border-radius: 99rem; }
+.m-clima .w-hp { font-size: 1.15rem; font-weight: 700; color: #60a5fa; }
+
+.o-v .l-horas .w-hours { grid-template-columns: 1fr; grid-template-rows: repeat(12, 1fr); gap: .6rem; }
+.o-v .m-clima .w-hour { flex-direction: row; padding: .3rem 1.6rem; gap: 1.6rem; }
+.o-v .m-clima .w-hh { width: 6rem; font-size: 1.4rem; }
+.o-v .m-clima .w-hour .w-ico { width: 3.8rem; height: 3.8rem; }
+.o-v .m-clima .w-ht { width: 5rem; font-size: 1.9rem; }
+.o-v .m-clima .w-bar { flex: 1; height: .9rem; width: auto; }
+.o-v .m-clima .w-bar i { top: 0; bottom: 0; right: auto; height: auto; width: var(--p); }
+.o-v .m-clima .w-hp { width: 4rem; text-align: right; }

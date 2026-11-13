@@ -1,0 +1,23 @@
+{
+  "name": "rsscreen — Painel",
+  "short_name": "rsscreen",
+  "description": "Gere e envie links de telas de mídia indoor.",
+  "lang": "pt-BR",
+  "start_url": "./painel/",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0A0A0A",
+  "theme_color": "#0A0A0A",
+  "categories": ["business", "productivity"],
+  "icons": [
+    { "src": "assets/img/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/img/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/img/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "assets/img/icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ],
+  "shortcuts": [
+    { "name": "Gerar links", "url": "./painel/#gerar" },
+    { "name": "Meus links", "url": "./painel/#links" }
+  ]
+}

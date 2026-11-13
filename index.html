@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>rsscreen — Conteúdo automático para mídia indoor</title>
+  <meta name="description" content="Notícias, previsão do tempo e cotações que se atualizam sozinhas nas telas de mídia indoor. Layouts horizontais e verticais, sem a nossa marca, prontos para revender." />
+  <meta name="theme-color" content="#0A0A0A" />
+  <meta property="og:title" content="rsscreen — Conteúdo automático para mídia indoor" />
+  <meta property="og:description" content="Telas de notícias, clima e cotações que se atualizam sozinhas. Horizontal e vertical. Sem marca d'água." />
+  <meta property="og:image" content="assets/img/icon-512.png" />
+  <link rel="icon" href="assets/img/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="assets/img/icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/brand.css" />
+  <link rel="stylesheet" href="assets/css/landing.css" />
+</head>
+<body>
+
+  <!-- ===== MENU (preto) ===== -->
+  <header class="nav" id="nav">
+    <div class="wrap nav-inner">
+      <a href="#topo" class="logo"><i data-logo></i><span><b>rs</b>screen</span></a>
+      <nav class="nav-links" id="navLinks">
+        <a href="#modulos">Conteúdos</a>
+        <a href="#modelos">Modelos de tela</a>
+        <a href="#segmentos">Segmentos</a>
+        <a href="#como-funciona">Como funciona</a>
+        <a href="#duvidas">Dúvidas</a>
+      </nav>
+      <div class="nav-cta">
+        <a class="btn btn-primary btn-sm js-wa" data-msg="Olá! Quero conhecer o rsscreen para minhas telas de mídia indoor." href="#"><i data-icon="whatsapp"></i><span>Falar no WhatsApp</span></a>
+        <button class="nav-toggle" id="navToggle" aria-label="Abrir menu"><i data-icon="menu"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <main id="topo">
+    <!-- ===== HERO ===== -->
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <span class="badge badge-brand"><i data-icon="sparkles"></i> Para empresas de mídia indoor</span>
+          <h1>Suas telas com conteúdo <em>vivo</em>, 24h por dia, sem você mexer em nada.</h1>
+          <p class="lead">Notícias, previsão do tempo e cotações que se atualizam sozinhas. Você só cola um link no player — e entrega aos seus anunciantes uma tela que <strong>as pessoas param para olhar</strong>.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary btn-lg js-wa" data-msg="Olá! Vi o site do rsscreen e quero uma demonstração para minhas telas." href="#"><i data-icon="whatsapp"></i> Quero uma demonstração</a>
+            <a class="btn btn-ghost btn-lg" href="#modelos"><i data-icon="eye"></i> Ver telas ao vivo</a>
+          </div>
+          <ul class="hero-proof">
+            <li><i data-icon="check"></i> Horizontal e vertical</li>
+            <li><i data-icon="check"></i> Sem a nossa marca na tela</li>
+            <li><i data-icon="check"></i> Funciona em qualquer player</li>
+          </ul>
+        </div>
+        <div class="hero-visual" aria-label="Exemplo de telas ao vivo">
+          <div class="device-tv hero-tv"><div class="screen"><iframe id="heroTv" title="Tela horizontal ao vivo" loading="eager"></iframe></div></div>
+          <div class="device-totem hero-totem"><div class="screen"><iframe id="heroTotem" title="Tela vertical ao vivo" loading="eager"></iframe></div></div>
+          <span class="live-pill"><i></i> Ao vivo agora</span>
+        </div>
+      </div>
+      <div class="wrap stats" id="stats">
+        <div><b data-stat="assuntos">20+</b><span>assuntos de conteúdo</span></div>
+        <div><b data-stat="layouts">12+</b><span>modelos de tela</span></div>
+        <div><b>2</b><span>orientações em todos os modelos</span></div>
+        <div><b>24h</b><span>atualização automática</span></div>
+      </div>
+    </section>
+
+    <!-- ===== MÓDULOS (lidos dos manifestos) ===== -->
+    <section class="section" id="modulos">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">Conteúdos disponíveis</span>
+          <h2>Tudo o que uma tela de mídia indoor precisa para prender a atenção</h2>
+          <p>Cada conteúdo é um módulo. Novos módulos entram no sistema constantemente — e aparecem aqui automaticamente.</p>
+        </div>
+        <div class="modules" id="modulesGrid">
+          <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== MODELOS AO VIVO ===== -->
+    <section class="section section-dark" id="modelos">
+      <div class="wrap">
+        <div class="section-head on-dark">
+          <span class="eyebrow">Modelos de tela</span>
+          <h2>Veja as telas funcionando agora — com conteúdo real</h2>
+          <p>Todos os modelos existem em <strong>horizontal (16:9)</strong> e <strong>vertical (9:16)</strong>, com 8 combinações de cores neutras que combinam com qualquer marca.</p>
+        </div>
+        <div class="showcase">
+          <div class="showcase-controls">
+            <div class="seg" id="showModule"></div>
+            <div class="seg seg-sm" id="showOrient">
+              <button data-o="horizontal" class="on"><i data-icon="monitor"></i> Horizontal</button>
+              <button data-o="vertical"><i data-icon="phone"></i> Vertical</button>
+            </div>
+          </div>
+          <div class="showcase-body">
+            <ul class="layout-list" id="layoutList"></ul>
+            <div class="showcase-stage" id="showStage">
+              <div class="device-tv" id="showDevice"><div class="screen"><iframe id="showFrame" title="Pré-visualização do modelo" loading="lazy"></iframe></div></div>
+            </div>
+          </div>
+          <div class="theme-row" id="themeRow"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SEGMENTOS ===== -->
+    <section class="section" id="segmentos">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">Pacotes prontos por segmento</span>
+          <h2>As telas que mais vendem para pequenos e médios anunciantes</h2>
+          <p>Combinações testadas para cada tipo de ponto. Você escolhe o pacote, nós entregamos os links.</p>
+        </div>
+        <div class="segments" id="segmentsGrid"></div>
+      </div>
+    </section>
+
+    <!-- ===== COMO FUNCIONA ===== -->
+    <section class="section section-soft" id="como-funciona">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">Como funciona</span>
+          <h2>Do WhatsApp para a tela em minutos</h2>
+        </div>
+        <ol class="steps">
+          <li><span>1</span><h3>Escolha os conteúdos</h3><p>Assunto, modelo, cores e orientação. Monte quantas telas quiser para cada ponto.</p></li>
+          <li><span>2</span><h3>Receba seus links</h3><p>Cada tela é um link exclusivo e legível, enviado direto no seu WhatsApp.</p></li>
+          <li><span>3</span><h3>Cole no player</h3><p>Funciona em Smart TV, TV box, mini PC, Chromecast e softwares de mídia indoor que abrem URL.</p></li>
+          <li><span>4</span><h3>Pronto, 24h no ar</h3><p>O conteúdo se atualiza sozinho e continua rodando mesmo se a internet oscilar.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ===== VANTAGENS ===== -->
+    <section class="section" id="vantagens">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">Por que rsscreen</span>
+          <h2>Feito para quem vive de mídia indoor</h2>
+        </div>
+        <div class="features">
+          <div class="feature"><i data-icon="shield"></i><h3>Sem a nossa marca</h3><p>As telas não exibem logo nem cores do rsscreen. O conteúdo é seu para revender com a sua marca.</p></div>
+          <div class="feature"><i data-icon="refresh"></i><h3>Atualiza sozinho</h3><p>Notícias a cada 10 minutos, cotações a cada 5 e clima a cada 15. Zero trabalho manual.</p></div>
+          <div class="feature"><i data-icon="offline"></i><h3>À prova de queda de internet</h3><p>A tela guarda o último conteúdo e continua rodando. Quando a conexão volta, atualiza.</p></div>
+          <div class="feature"><i data-icon="rotate"></i><h3>Horizontal, vertical e girada</h3><p>Todos os modelos nas duas orientações — e rotação forçada para TV box que não gira a imagem.</p></div>
+          <div class="feature"><i data-icon="zap"></i><h3>Leve para qualquer aparelho</h3><p>Sem instalação e sem aplicativo. Roda liso até em TV box simples.</p></div>
+          <div class="feature"><i data-icon="layers"></i><h3>Sempre crescendo</h3><p>Novos conteúdos e modelos entram no sistema sem custo de implantação para você.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== DÚVIDAS ===== -->
+    <section class="section section-soft" id="duvidas">
+      <div class="wrap narrow">
+        <div class="section-head">
+          <span class="eyebrow">Dúvidas frequentes</span>
+          <h2>Perguntas que todo mundo faz</h2>
+        </div>
+        <div class="faq">
+          <details><summary>Em quais players funciona?<i data-icon="chevron"></i></summary><p>Em qualquer aparelho ou software que abra uma página da internet: Smart TVs com navegador, TV box Android, mini PCs, Chromecast, Fire TV e as principais plataformas de mídia indoor que aceitam conteúdo por URL/HTML.</p></details>
+          <details><summary>Aparece alguma marca do rsscreen na tela?<i data-icon="chevron"></i></summary><p>Não. As telas são neutras, sem logo e sem as cores do rsscreen. Você pode revender o conteúdo como seu.</p></details>
+          <details><summary>Preciso atualizar alguma coisa?<i data-icon="chevron"></i></summary><p>Não. O conteúdo é buscado e atualizado automaticamente. Você configura uma vez e esquece.</p></details>
+          <details><summary>E se a internet do ponto cair?<i data-icon="chevron"></i></summary><p>A tela continua exibindo o último conteúdo carregado e volta a atualizar sozinha quando a conexão retorna.</p></details>
+          <details><summary>Quantas telas posso ter?<i data-icon="chevron"></i></summary><p>Quantas precisar. Você pode ter vários links por ponto, combinando assuntos, modelos e cores diferentes.</p></details>
+          <details><summary>Como contrato?<i data-icon="chevron"></i></summary><p>É só chamar no WhatsApp. Montamos uma demonstração com as telas ideais para os seus pontos e anunciantes.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CTA FINAL ===== -->
+    <section class="cta-final">
+      <div class="wrap cta-inner">
+        <div>
+          <h2>Pronto para deixar suas telas mais interessantes que o celular?</h2>
+          <p>Fale com a gente e receba uma demonstração com os seus pontos em minutos.</p>
+        </div>
+        <a class="btn btn-primary btn-lg js-wa" data-msg="Olá! Quero contratar o rsscreen para minhas telas de mídia indoor." href="#"><i data-icon="whatsapp"></i> Chamar no WhatsApp</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <a href="#topo" class="logo"><i data-logo></i><span><b>rs</b>screen</span></a>
+      <p>Conteúdo automático para mídia indoor · © <span id="year"></span> rsscreen</p>
+      <a class="footer-admin" href="painel/">Área do administrador</a>
+    </div>
+  </footer>
+
+  <a class="wa-float js-wa" data-msg="Olá! Vim pelo site do rsscreen." href="#" aria-label="Falar no WhatsApp"><i data-icon="whatsapp"></i></a>
+
+  <script src="config/clientes.js"></script>
+  <script src="assets/js/core.js"></script>
+  <script src="assets/js/icons.js"></script>
+  <script src="assets/js/landing.js"></script>
+</body>
+</html>

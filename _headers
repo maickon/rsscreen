@@ -1,0 +1,19 @@
+# Arquivos que mudam com frequência: sempre revalidar
+/config/*
+  Cache-Control: no-cache
+/modules/*
+  Cache-Control: no-cache
+/sw.js
+  Cache-Control: no-cache
+/manifest.webmanifest
+  Cache-Control: no-cache
+
+# Painel e telas não devem ser indexados
+/painel/*
+  X-Robots-Tag: noindex, nofollow
+/tela/*
+  X-Robots-Tag: noindex, nofollow
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
