@@ -37,8 +37,13 @@ O painel, na aba **Clientes**, mostra a chave e monta essa linha para você copi
 
 - Bloquear um cliente: `ativo: false` na linha dele.
 - `demo: true` marca o cliente usado nas telas ao vivo da landing (aparece o selo "DEMONSTRAÇÃO").
-- A chave do administrador é o nome em `admin.nome` codificado com o `segredo`.
-  Trocar o `segredo` muda **todas** as chaves (inclusive a sua).
+- Trocar o `segredo` muda **todas** as chaves dos clientes (e os links já enviados param).
+
+## Senha do painel
+
+O painel pede uma senha. Em `config/clientes.js` fica só o hash dela (`admin.senhaHash`),
+nunca a senha. Para trocar: **Painel > Clientes > Trocar senha do painel**, copie a linha
+gerada, cole no lugar de `senhaHash`, faça commit e push.
 
 ## Endereço da tela
 
@@ -76,15 +81,30 @@ Módulos com `"status": "em-breve"` aparecem na landing como "Em breve".
 
 ## Comportamento das telas
 
+- O link da tela é público: abre em qualquer navegador, TV, TV box, player ou sistema de
+  mídia indoor (por URL/página web), sem login.
+- Se o site escolhido bloquear ou cair, a tela mostra a última cópia boa (até 7 dias) e,
+  sem ela, notícias dos outros sites do mesmo assunto. Ela não fica parada no "Carregando".
 - Notícias atualizam a cada 10 min, cotações a cada 5 min e clima a cada 15 min.
 - O último conteúdo fica salvo no aparelho: se a internet cair, a tela continua rodando.
 - A página recarrega a cada 6 h para receber atualizações do sistema.
 - Tudo escala pelo tamanho da tela (720p, 1080p, 4K), nas duas orientações.
 
+## Monitoramento
+
+**Painel > Monitoramento** mostra telas ligadas agora, requisições por dia, telas e clientes
+mais usados, IPs, localização, tipo de player, aparelhos e a saúde de cada feed RSS (ativo,
+instável ou recusado). O botão **Testar todos os feeds** consulta todos na hora.
+
+Os dados ficam num Durable Object com SQLite (`worker/stats.js`), criado automaticamente no
+deploy pelo `wrangler.jsonc` e incluído no plano gratuito. Os números são aproximados e
+ficam guardados por 35 dias. Funciona só no deploy como Worker (não em Pages).
+
 ## Segurança — leia
 
 Este é um site estático: **tudo o que está no repositório fica público**, inclusive
-`config/clientes.js`. Quem ler o código consegue descobrir as chaves. O modelo serve para
-organizar e identificar clientes, não para proteger um segredo de verdade. Não coloque
-senhas, e-mails ou dados sensíveis nesse arquivo. O histórico de "Meus links" fica salvo só
+`config/clientes.js`. Quem ler o código consegue descobrir as chaves dos clientes. O modelo
+serve para organizar e identificar clientes, não para proteger um segredo de verdade. A senha
+do painel não fica no arquivo (só o hash); as estatísticas só saem do servidor com a senha.
+Não coloque e-mails ou dados sensíveis nesse arquivo. O histórico de "Meus links" fica salvo só
 no navegador do painel; use **Exportar** para ter um backup.

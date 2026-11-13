@@ -6,5 +6,12 @@
   "assets": {
     "directory": ".",
     "binding": "ASSETS"
-  }
+  },
+  // Monitoramento (Painel > Monitoramento): contadores guardados num Durable Object com SQLite.
+  // É criado automaticamente no deploy e funciona no plano gratuito.
+  "durable_objects": {
+    "bindings": [{ "name": "STATS", "class_name": "Stats" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Stats"] }],
+  "observability": { "enabled": true }
 }

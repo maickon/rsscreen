@@ -59,7 +59,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 /* ---------- logo ---------- */
 .logo { display: inline-flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 800; font-size: 21px; letter-spacing: -.03em; }
 .logo b { color: var(--brand); font-weight: 800; }
-.logo span { color: var(--ink-text); }
+.logo span { color: #FFFFFF; }
 .logo.on-light span { color: var(--text); }
 
 /* ---------- botões ---------- */

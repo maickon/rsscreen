@@ -1,12 +1,15 @@
 // Cloudflare Pages Function (também usada pelo Worker em worker/index.js)
 //
-//   GET /api/rss?url=<feed>          → XML do feed, sem bloqueio de CORS (cache 5 min)
+//   GET /api/rss?url=<feed>          → XML do feed, sem bloqueio de CORS (cache 5 min; se o site
+//                                      falhar, entrega a última cópia boa guardada por até 7 dias)
 //   GET /api/rss?og=1&url=<notícia>  → {"image": "..."} com a imagem principal da página (cache 1 dia)
 //
 // Só aceita sites cadastrados em modules/rss/manifest.json — não é um proxy aberto.
 
 const FEED_TTL = 300;
 const OG_TTL = 86400;
+const STALE_TTL = 7 * 86400;
+const noop = () => {};
 const UA = 'Mozilla/5.0 (compatible; RSScreenBot/1.0)';
 let allowed = null;
 let allowedAt = 0;
@@ -106,6 +109,7 @@ async function handleOg(context, target) {
     const page = await fetch(target.toString(), { headers: { 'User-Agent': UA, 'Accept': 'text/html,*/*' }, redirect: 'follow' });
     if (page.ok) image = findImage(await readStart(page, 700000), page.url || target.toString());
   } catch (_) {}
+  (context.trackOg || noop)(baseDomain(target.hostname), !!image);
   const res = json({ image }, image ? OG_TTL : 3600);
   context.waitUntil(cache.put(key, res.clone()));
   return res;
@@ -123,30 +127,57 @@ async function decodeFeed(res) {
   return charset === 'utf-8' ? text : text.replace(/(<\?xml[^>]*encoding=["'])[\w-]+(["'])/i, '$1UTF-8$2');
 }
 
+function xmlResponse(body, ttl, extra) {
+  return new Response(body, {
+    status: 200,
+    headers: Object.assign({
+      'Content-Type': 'application/xml; charset=utf-8',
+      'Access-Control-Allow-Origin': '*',
+      'Cache-Control': 'public, max-age=' + ttl
+    }, extra || {})
+  });
+}
+
 async function handleFeed(context, target) {
+  const track = context.trackFeed || noop;
+  const url = target.toString();
   const cache = caches.default;
-  const key = new Request('https://rss-cache.rsscreen/' + encodeURIComponent(target.toString()));
+  const key = new Request('https://rss-cache.rsscreen/' + encodeURIComponent(url));
+  const staleKey = new Request('https://rss-stale.rsscreen/' + encodeURIComponent(url));
   const hit = await cache.match(key);
-  if (hit) return hit;
+  if (hit) { track(url, 'cache', {}); return hit; }
+  const t0 = Date.now();
+  let status = 0, err = '';
   try {
-    const upstream = await fetch(target.toString(), {
+    const upstream = await fetch(url, {
       headers: { 'User-Agent': UA, 'Accept': 'application/rss+xml, application/atom+xml, application/xml, text/xml, */*' },
       cf: { cacheTtl: FEED_TTL, cacheEverything: true }
     });
-    if (!upstream.ok) return reply('Fonte respondeu ' + upstream.status, 502);
-    const res = new Response(await decodeFeed(upstream), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/xml; charset=utf-8',
-        'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'public, max-age=' + FEED_TTL
+    status = upstream.status;
+    if (upstream.ok) {
+      const body = await decodeFeed(upstream);
+      if (/<(item|entry)[\s>]/i.test(body)) {
+        track(url, 'ok', { status, ms: Date.now() - t0 });
+        context.waitUntil(cache.put(key, xmlResponse(body, FEED_TTL)));
+        context.waitUntil(cache.put(staleKey, xmlResponse(body, STALE_TTL)));
+        return xmlResponse(body, FEED_TTL);
       }
-    });
-    context.waitUntil(cache.put(key, res.clone()));
-    return res;
-  } catch (err) {
-    return reply('Erro ao buscar feed: ' + err.message, 502);
+      err = 'Resposta sem notícias (o site pode estar pedindo verificação anti-robô)';
+    } else {
+      err = 'O site respondeu ' + status + (status === 403 || status === 429 ? ' (bloqueio de acesso automático)' : '');
+    }
+  } catch (e) {
+    err = 'Sem resposta: ' + (e && e.message ? e.message : e);
   }
+  // falhou: entrega a última cópia boa, se houver
+  const stale = await cache.match(staleKey);
+  if (stale) {
+    track(url, 'antigo', { status, err });
+    const body = await stale.text();
+    return xmlResponse(body, 60, { 'X-RS-Stale': '1' });
+  }
+  track(url, 'falha', { status, err });
+  return reply(err, 502);
 }
 
 export async function onRequestGet(context) {

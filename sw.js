@@ -1,7 +1,7 @@
 /* rsscreen — service worker
    - Painel instalável (PWA) e funcionando offline
    - Telas continuam rodando se a internet do ponto cair */
-const VERSION = 'rsscreen-v2';
+const VERSION = 'rsscreen-v3';
 const SHELL = [
   './',
   './index.html',
@@ -70,6 +70,8 @@ self.addEventListener('fetch', event => {
   if (url.origin !== self.location.origin) return; // fotos e APIs externas: direto da rede
 
   const p = url.pathname;
+  // sinais de uso, estatísticas e fotos das notícias: sempre direto da rede, sem guardar
+  if (p.indexOf('/api/hit') >= 0 || p.indexOf('/api/stats') >= 0 || (p.indexOf('/api/rss') >= 0 && url.searchParams.get('og'))) return;
   // HTML, configuração, manifestos, módulos e feeds: sempre tenta a versão mais nova
   if (req.mode === 'navigate' || p.indexOf('/config/') >= 0 || p.indexOf('/modules/') >= 0 ||
       p.indexOf('/api/') >= 0 || p.endsWith('.webmanifest')) {

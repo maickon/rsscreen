@@ -166,6 +166,7 @@ code { background: var(--bg-soft); border: 1px solid var(--line); padding: 1px 6
 
 /* ================= CLIENTES ================= */
 .client-grid { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.client-col { display: grid; gap: 20px; align-content: start; min-width: 0; }
 .table-wrap { overflow-x: auto; margin: 0 -22px -22px; }
 .table { width: 100%; border-collapse: collapse; font-size: 14px; }
 .table th { text-align: left; font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 700; padding: 10px 22px; background: var(--bg-soft); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
@@ -246,3 +247,44 @@ code { background: var(--bg-soft); border: 1px solid var(--line); padding: 1px 6
   .login-pitch ul { display: none; }
 }
 .site-field { margin-bottom: 12px; }
+
+/* ================= MONITORAMENTO ================= */
+.mon-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.select-sm { height: 36px; font-size: 13.5px; border-radius: 10px; width: auto; }
+#monBody { display: grid; gap: 20px; }
+.mon-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.kpi span { display: block; font-size: 12.5px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+.kpi b { display: block; font-family: var(--font-display); font-size: 34px; letter-spacing: -.03em; line-height: 1.15; margin: 6px 0 2px; color: var(--text); }
+.kpi small { color: var(--muted); font-size: 13px; }
+.kpi-bad { border-color: #FECACA; }
+.mon-chart { display: flex; align-items: stretch; gap: 2px; height: 180px; padding-top: 8px; }
+.mc-col { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; position: relative; outline: none; }
+.mc-bar { width: 100%; max-width: 44px; background: var(--brand); border-radius: 4px 4px 0 0; }
+.mc-col span { font-size: 11.5px; color: var(--muted); margin-top: 6px; height: 16px; }
+.mc-col::before { content: ''; position: absolute; left: 0; right: 0; bottom: 22px; border-bottom: 1px solid var(--line); }
+.mc-tip { position: absolute; bottom: calc(100% - 8px); left: 50%; transform: translateX(-50%); background: var(--ink); color: #fff; font-size: 12px; line-height: 1.45; padding: 8px 10px; border-radius: 8px; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .12s; z-index: 5; }
+.mc-tip b { display: block; color: var(--brand); }
+.mc-col:hover .mc-tip, .mc-col:focus .mc-tip { opacity: 1; }
+.mc-col:hover .mc-bar { background: var(--brand-600); }
+.mon-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.mon-top ol { list-style: none; display: grid; gap: 10px; }
+.mon-top li i { display: block; height: 4px; border-radius: 4px; background: var(--brand-100); margin-top: 4px; }
+.mt-row { display: flex; justify-content: space-between; gap: 10px; font-size: 13.5px; }
+.mt-key { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mt-key small { color: var(--muted); }
+.mt-warn { color: var(--danger); }
+.mt-url { color: var(--muted); word-break: break-all; white-space: normal !important; }
+.mon-empty { color: var(--muted); font-size: 14px; }
+.mon-filter { display: flex; gap: 6px; flex-wrap: wrap; }
+.mon-filter .chip { height: 32px; font-size: 13px; }
+.mon-foot { color: var(--muted); font-size: 12.5px; }
+.st { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 700; white-space: nowrap; padding: 3px 9px; border-radius: 999px; border: 1px solid; }
+.st .ico { width: 13px; height: 13px; }
+.st-ok { color: #067647; background: #ECFDF3; border-color: #ABEFC6; }
+.st-warn { color: #93370D; background: #FFFAEB; border-color: #FEDF89; }
+.st-bad { color: #B42318; background: #FEF3F2; border-color: #FECDCA; }
+.st-idle { color: var(--muted); background: var(--bg-soft); border-color: var(--line); }
+@media (max-width: 1100px) { .mon-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .mon-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .mon-grid { grid-template-columns: 1fr; } .kpi b { font-size: 26px; } .mon-chart { height: 140px; } }
+.mon-scroll { max-height: 520px; overflow-y: auto; }
+.mon-scroll thead th { position: sticky; top: 0; z-index: 1; }

@@ -8,7 +8,7 @@
   "chamada": "A TV do seu cliente vira um canal de notícias que se atualiza sozinho.",
   "descricao": "Manchetes dos maiores portais do Brasil, com foto, resumo e fonte, rodando 24h sem ninguém precisar mexer. Conteúdo que prende o olhar na sala de espera, no caixa e no balcão — e faz o anúncio do seu cliente ser visto.",
   "beneficios": [
-    "Mais de 20 assuntos e 35 sites: escolha o assunto, o site ou os dois",
+    "25 assuntos e mais de 90 sites: escolha o assunto, o site ou os dois",
     "Atualização automática a cada 10 minutos",
     "Toda notícia com foto: se o feed não traz imagem, buscamos na página",
     "7 modelos de tela, todos em horizontal e vertical",
@@ -28,40 +28,360 @@
   "rotuloFonte": "Fonte",
   "sites": [
     {
-      "id": "noticias-ao-minuto",
-      "nome": "Notícias ao Minuto"
-    },
-    {
-      "id": "g1",
-      "nome": "g1"
-    },
-    {
-      "id": "ge",
-      "nome": "ge"
-    },
-    {
-      "id": "cnn-brasil",
-      "nome": "CNN Brasil"
-    },
-    {
-      "id": "metropoles",
-      "nome": "Metrópoles"
+      "id": "adrenaline",
+      "nome": "Adrenaline"
     },
     {
       "id": "agencia-brasil",
       "nome": "Agência Brasil"
     },
     {
+      "id": "agencia-camara",
+      "nome": "Agência Câmara"
+    },
+    {
+      "id": "agencia-sebrae",
+      "nome": "Agência Sebrae"
+    },
+    {
+      "id": "agencia-senado",
+      "nome": "Agência Senado"
+    },
+    {
+      "id": "aleteia",
+      "nome": "Aleteia"
+    },
+    {
+      "id": "autoesporte",
+      "nome": "Autoesporte"
+    },
+    {
+      "id": "autopapo",
+      "nome": "AutoPapo"
+    },
+    {
       "id": "bbc",
       "nome": "BBC News Brasil"
+    },
+    {
+      "id": "boa-forma",
+      "nome": "Boa Forma"
+    },
+    {
+      "id": "canal-rural",
+      "nome": "Canal Rural"
+    },
+    {
+      "id": "canaltech",
+      "nome": "Canaltech"
+    },
+    {
+      "id": "cancao-nova",
+      "nome": "Canção Nova"
+    },
+    {
+      "id": "capricho",
+      "nome": "Capricho"
+    },
+    {
+      "id": "casa-e-jardim",
+      "nome": "Casa e Jardim"
+    },
+    {
+      "id": "casa-vogue",
+      "nome": "Casa Vogue"
+    },
+    {
+      "id": "casa",
+      "nome": "Casa.com.br"
+    },
+    {
+      "id": "ciclovivo",
+      "nome": "CicloVivo"
+    },
+    {
+      "id": "cinepop",
+      "nome": "CinePOP"
+    },
+    {
+      "id": "claudia",
+      "nome": "Claudia"
+    },
+    {
+      "id": "cnbb",
+      "nome": "CNBB"
+    },
+    {
+      "id": "cnn-brasil",
+      "nome": "CNN Brasil"
+    },
+    {
+      "id": "comida-e-receitas",
+      "nome": "Comida e Receitas"
+    },
+    {
+      "id": "compre-rural",
+      "nome": "Compre Rural"
+    },
+    {
+      "id": "drauzio-varella",
+      "nome": "Drauzio Varella"
+    },
+    {
+      "id": "dw",
+      "nome": "DW Brasil"
+    },
+    {
+      "id": "ecycle",
+      "nome": "eCycle"
+    },
+    {
+      "id": "elle",
+      "nome": "Elle"
+    },
+    {
+      "id": "espn",
+      "nome": "ESPN Brasil"
+    },
+    {
+      "id": "estadao",
+      "nome": "Estadão"
+    },
+    {
+      "id": "estrategia",
+      "nome": "Estratégia Concursos"
+    },
+    {
+      "id": "eurogamer",
+      "nome": "Eurogamer"
+    },
+    {
+      "id": "euronews",
+      "nome": "Euronews"
+    },
+    {
+      "id": "exame",
+      "nome": "Exame"
     },
     {
       "id": "folha",
       "nome": "Folha"
     },
     {
+      "id": "g1",
+      "nome": "g1"
+    },
+    {
+      "id": "galileu",
+      "nome": "Galileu"
+    },
+    {
+      "id": "gameblast",
+      "nome": "GameBlast"
+    },
+    {
+      "id": "gazeta-do-povo",
+      "nome": "Gazeta do Povo"
+    },
+    {
+      "id": "gazeta-esportiva",
+      "nome": "Gazeta Esportiva"
+    },
+    {
+      "id": "ge",
+      "nome": "ge"
+    },
+    {
+      "id": "glamour",
+      "nome": "Glamour"
+    },
+    {
+      "id": "globo-rural",
+      "nome": "Globo Rural"
+    },
+    {
+      "id": "guia-do-estudante",
+      "nome": "Guia do Estudante"
+    },
+    {
+      "id": "ign-brasil",
+      "nome": "IGN Brasil"
+    },
+    {
+      "id": "infomoney",
+      "nome": "InfoMoney"
+    },
+    {
+      "id": "jornal-contabil",
+      "nome": "Jornal Contábil"
+    },
+    {
+      "id": "jornal-da-usp",
+      "nome": "Jornal da USP"
+    },
+    {
+      "id": "jota",
+      "nome": "JOTA"
+    },
+    {
+      "id": "m-de-mulher",
+      "nome": "M de Mulher"
+    },
+    {
+      "id": "melhores-destinos",
+      "nome": "Melhores Destinos"
+    },
+    {
+      "id": "mercado-e-eventos",
+      "nome": "Mercado & Eventos"
+    },
+    {
+      "id": "metropoles",
+      "nome": "Metrópoles"
+    },
+    {
+      "id": "meugamer",
+      "nome": "MeuGamer"
+    },
+    {
+      "id": "money-times",
+      "nome": "Money Times"
+    },
+    {
+      "id": "mongabay",
+      "nome": "Mongabay Brasil"
+    },
+    {
+      "id": "motor1",
+      "nome": "Motor1"
+    },
+    {
+      "id": "mundo-boa-forma",
+      "nome": "Mundo Boa Forma"
+    },
+    {
+      "id": "mundo-conectado",
+      "nome": "Mundo Conectado"
+    },
+    {
+      "id": "music-non-stop",
+      "nome": "Music Non Stop"
+    },
+    {
+      "id": "noticias-automotivas",
+      "nome": "Notícias Automotivas"
+    },
+    {
+      "id": "oeco",
+      "nome": "O Eco"
+    },
+    {
+      "id": "olhar-digital",
+      "nome": "Olhar Digital"
+    },
+    {
+      "id": "olimpiada-todo-dia",
+      "nome": "Olimpíada Todo Dia"
+    },
+    {
+      "id": "paladar",
+      "nome": "Paladar (Estadão)"
+    },
+    {
+      "id": "pegn",
+      "nome": "PEGN"
+    },
+    {
+      "id": "placar",
+      "nome": "Placar"
+    },
+    {
+      "id": "poder360",
+      "nome": "Poder360"
+    },
+    {
+      "id": "popline",
+      "nome": "POPline"
+    },
+    {
+      "id": "porvir",
+      "nome": "Porvir"
+    },
+    {
+      "id": "quatro-rodas",
+      "nome": "Quatro Rodas"
+    },
+    {
+      "id": "rfi",
+      "nome": "RFI Brasil"
+    },
+    {
+      "id": "rolling-stone",
+      "nome": "Rolling Stone Brasil"
+    },
+    {
+      "id": "seu-dinheiro",
+      "nome": "Seu Dinheiro"
+    },
+    {
+      "id": "showmetech",
+      "nome": "Showmetech"
+    },
+    {
+      "id": "socientifica",
+      "nome": "SoCientífica"
+    },
+    {
+      "id": "steal-the-look",
+      "nome": "Steal the Look"
+    },
+    {
+      "id": "superinteressante",
+      "nome": "Superinteressante"
+    },
+    {
+      "id": "tangerina",
+      "nome": "Tangerina"
+    },
+    {
+      "id": "tecmundo",
+      "nome": "TecMundo"
+    },
+    {
+      "id": "tecnoblog",
+      "nome": "Tecnoblog"
+    },
+    {
+      "id": "tmdqa",
+      "nome": "Tenho Mais Discos Que Amigos"
+    },
+    {
+      "id": "terra",
+      "nome": "Terra"
+    },
+    {
+      "id": "trivela",
+      "nome": "Trivela"
+    },
+    {
+      "id": "tudocelular",
+      "nome": "TudoCelular"
+    },
+    {
+      "id": "uai",
+      "nome": "Uai"
+    },
+    {
       "id": "uol",
       "nome": "UOL"
+    },
+    {
+      "id": "valor",
+      "nome": "Valor Econômico"
+    },
+    {
+      "id": "vatican-news",
+      "nome": "Vatican News"
     },
     {
       "id": "veja",
@@ -76,100 +396,20 @@
       "nome": "Veja SP"
     },
     {
-      "id": "superinteressante",
-      "nome": "Superinteressante"
-    },
-    {
-      "id": "boa-forma",
-      "nome": "Boa Forma"
-    },
-    {
-      "id": "claudia",
-      "nome": "Claudia"
-    },
-    {
-      "id": "m-de-mulher",
-      "nome": "M de Mulher"
-    },
-    {
-      "id": "capricho",
-      "nome": "Capricho"
-    },
-    {
-      "id": "placar",
-      "nome": "Placar"
-    },
-    {
-      "id": "quatro-rodas",
-      "nome": "Quatro Rodas"
-    },
-    {
-      "id": "casa",
-      "nome": "Casa.com.br"
-    },
-    {
       "id": "viagem-e-turismo",
       "nome": "Viagem e Turismo"
     },
     {
-      "id": "guia-do-estudante",
-      "nome": "Guia do Estudante"
+      "id": "vivadecora",
+      "nome": "Viva Decora"
     },
     {
-      "id": "gazeta-do-povo",
-      "nome": "Gazeta do Povo"
+      "id": "vogue",
+      "nome": "Vogue"
     },
     {
-      "id": "infomoney",
-      "nome": "InfoMoney"
-    },
-    {
-      "id": "exame",
-      "nome": "Exame"
-    },
-    {
-      "id": "money-times",
-      "nome": "Money Times"
-    },
-    {
-      "id": "jornal-contabil",
-      "nome": "Jornal Contábil"
-    },
-    {
-      "id": "tecmundo",
-      "nome": "TecMundo"
-    },
-    {
-      "id": "canaltech",
-      "nome": "Canaltech"
-    },
-    {
-      "id": "olhar-digital",
-      "nome": "Olhar Digital"
-    },
-    {
-      "id": "mundo-conectado",
-      "nome": "Mundo Conectado"
-    },
-    {
-      "id": "canal-rural",
-      "nome": "Canal Rural"
-    },
-    {
-      "id": "poder360",
-      "nome": "Poder360"
-    },
-    {
-      "id": "ecycle",
-      "nome": "eCycle"
-    },
-    {
-      "id": "vatican-news",
-      "nome": "Vatican News"
-    },
-    {
-      "id": "uai",
-      "nome": "Uai"
+      "id": "webrun",
+      "nome": "Webrun"
     }
   ],
   "padrao": {
@@ -221,12 +461,6 @@
       "nome": "Últimas notícias",
       "fontes": [
         {
-          "id": "noticias-ao-minuto",
-          "site": "noticias-ao-minuto",
-          "nome": "Notícias ao Minuto",
-          "url": "https://www.noticiasaominuto.com.br/rss/ultima-hora"
-        },
-        {
           "id": "metropoles",
           "site": "metropoles",
           "nome": "Metrópoles",
@@ -243,6 +477,18 @@
           "site": "agencia-brasil",
           "nome": "Agência Brasil",
           "url": "https://agenciabrasil.ebc.com.br/rss/ultimasnoticias/feed.xml"
+        },
+        {
+          "id": "estadao",
+          "site": "estadao",
+          "nome": "Estadão",
+          "url": "https://www.estadao.com.br/arc/outboundfeeds/feeds/rss/sections/ultimas/"
+        },
+        {
+          "id": "terra",
+          "site": "terra",
+          "nome": "Terra",
+          "url": "https://www.terra.com.br/rss/"
         }
       ]
     },
@@ -255,15 +501,6 @@
           "site": "g1",
           "nome": "g1",
           "url": "https://g1.globo.com/rss/g1/brasil/"
-        },
-        {
-          "id": "noticias-ao-minuto",
-          "site": "noticias-ao-minuto",
-          "nome": "Notícias ao Minuto",
-          "url": "https://www.noticiasaominuto.com.br/rss/ultima-hora",
-          "categorias": [
-            "Brasil"
-          ]
         },
         {
           "id": "agencia-brasil-geral",
@@ -290,15 +527,6 @@
           "url": "https://www.bbc.com/portuguese/index.xml"
         },
         {
-          "id": "noticias-ao-minuto",
-          "site": "noticias-ao-minuto",
-          "nome": "Notícias ao Minuto",
-          "url": "https://www.noticiasaominuto.com.br/rss/ultima-hora",
-          "categorias": [
-            "Mundo"
-          ]
-        },
-        {
           "id": "folha-mundo",
           "site": "folha",
           "nome": "Folha",
@@ -309,6 +537,24 @@
           "site": "agencia-brasil",
           "nome": "Agência Brasil",
           "url": "https://agenciabrasil.ebc.com.br/rss/internacional/feed.xml"
+        },
+        {
+          "id": "dw",
+          "site": "dw",
+          "nome": "DW Brasil",
+          "url": "https://rss.dw.com/rdf/rss-br-all"
+        },
+        {
+          "id": "rfi",
+          "site": "rfi",
+          "nome": "RFI Brasil",
+          "url": "https://www.rfi.fr/br/rss"
+        },
+        {
+          "id": "euronews",
+          "site": "euronews",
+          "nome": "Euronews",
+          "url": "https://pt.euronews.com/rss"
         }
       ]
     },
@@ -323,15 +569,6 @@
           "url": "https://ge.globo.com/rss/ge/"
         },
         {
-          "id": "noticias-ao-minuto",
-          "site": "noticias-ao-minuto",
-          "nome": "Notícias ao Minuto",
-          "url": "https://www.noticiasaominuto.com.br/rss/ultima-hora",
-          "categorias": [
-            "Esporte"
-          ]
-        },
-        {
           "id": "uol-esporte",
           "site": "uol",
           "nome": "UOL Esporte",
@@ -341,7 +578,31 @@
           "id": "placar",
           "site": "placar",
           "nome": "Placar",
-          "url": "https://placar.abril.com.br/feed/"
+          "url": "https://placar.com/feed/"
+        },
+        {
+          "id": "gazeta-esportiva",
+          "site": "gazeta-esportiva",
+          "nome": "Gazeta Esportiva",
+          "url": "https://www.gazetaesportiva.com/feed/"
+        },
+        {
+          "id": "trivela",
+          "site": "trivela",
+          "nome": "Trivela",
+          "url": "https://trivela.com.br/feed/"
+        },
+        {
+          "id": "espn",
+          "site": "espn",
+          "nome": "ESPN Brasil",
+          "url": "https://www.espn.com.br/rss/"
+        },
+        {
+          "id": "olimpiada-todo-dia",
+          "site": "olimpiada-todo-dia",
+          "nome": "Olimpíada Todo Dia",
+          "url": "https://www.olimpiadatododia.com.br/feed/"
         }
       ]
     },
@@ -354,15 +615,6 @@
           "site": "g1",
           "nome": "g1",
           "url": "https://g1.globo.com/rss/g1/economia/"
-        },
-        {
-          "id": "noticias-ao-minuto",
-          "site": "noticias-ao-minuto",
-          "nome": "Notícias ao Minuto",
-          "url": "https://www.noticiasaominuto.com.br/rss/ultima-hora",
-          "categorias": [
-            "Economia"
-          ]
         },
         {
           "id": "infomoney",
@@ -381,6 +633,18 @@
           "site": "gazeta-do-povo",
           "nome": "Gazeta do Povo",
           "url": "https://www.gazetadopovo.com.br/feed/rss/economia.xml"
+        },
+        {
+          "id": "valor",
+          "site": "valor",
+          "nome": "Valor Econômico",
+          "url": "https://valor.globo.com/rss/valor/"
+        },
+        {
+          "id": "seu-dinheiro",
+          "site": "seu-dinheiro",
+          "nome": "Seu Dinheiro",
+          "url": "https://www.seudinheiro.com/feed/"
         }
       ]
     },
@@ -405,6 +669,18 @@
           "site": "money-times",
           "nome": "Money Times",
           "url": "https://www.moneytimes.com.br/feed/"
+        },
+        {
+          "id": "pegn",
+          "site": "pegn",
+          "nome": "PEGN",
+          "url": "https://revistapegn.globo.com/rss/pegn/"
+        },
+        {
+          "id": "agencia-sebrae",
+          "site": "agencia-sebrae",
+          "nome": "Agência Sebrae",
+          "url": "https://agenciasebrae.com.br/feed/"
         }
       ]
     },
@@ -417,15 +693,6 @@
           "site": "tecmundo",
           "nome": "TecMundo",
           "url": "https://rss.tecmundo.com.br/feed"
-        },
-        {
-          "id": "noticias-ao-minuto",
-          "site": "noticias-ao-minuto",
-          "nome": "Notícias ao Minuto",
-          "url": "https://www.noticiasaominuto.com.br/rss/ultima-hora",
-          "categorias": [
-            "Tech"
-          ]
         },
         {
           "id": "canaltech",
@@ -444,6 +711,30 @@
           "site": "mundo-conectado",
           "nome": "Mundo Conectado",
           "url": "https://www.mundoconectado.com.br/feed/"
+        },
+        {
+          "id": "tecnoblog",
+          "site": "tecnoblog",
+          "nome": "Tecnoblog",
+          "url": "https://tecnoblog.net/feed/"
+        },
+        {
+          "id": "tudocelular",
+          "site": "tudocelular",
+          "nome": "TudoCelular",
+          "url": "https://www.tudocelular.com/feed/"
+        },
+        {
+          "id": "adrenaline",
+          "site": "adrenaline",
+          "nome": "Adrenaline",
+          "url": "https://www.adrenaline.com.br/feed/"
+        },
+        {
+          "id": "showmetech",
+          "site": "showmetech",
+          "nome": "Showmetech",
+          "url": "https://www.showmetech.com.br/feed/"
         }
       ]
     },
@@ -468,6 +759,12 @@
           "site": "agencia-brasil",
           "nome": "Agência Brasil",
           "url": "https://agenciabrasil.ebc.com.br/rss/saude/feed.xml"
+        },
+        {
+          "id": "drauzio-varella",
+          "site": "drauzio-varella",
+          "nome": "Drauzio Varella",
+          "url": "https://drauziovarella.uol.com.br/feed/"
         }
       ]
     },
@@ -486,6 +783,18 @@
           "site": "veja-saude",
           "nome": "Veja Saúde",
           "url": "https://saude.abril.com.br/feed/"
+        },
+        {
+          "id": "mundo-boa-forma",
+          "site": "mundo-boa-forma",
+          "nome": "Mundo Boa Forma",
+          "url": "https://www.mundoboaforma.com.br/feed/"
+        },
+        {
+          "id": "webrun",
+          "site": "webrun",
+          "nome": "Webrun",
+          "url": "https://www.webrun.com.br/feed/"
         }
       ]
     },
@@ -522,6 +831,18 @@
           "site": "canal-rural",
           "nome": "Canal Rural Pecuária",
           "url": "https://www.canalrural.com.br/pecuaria/feed/"
+        },
+        {
+          "id": "globo-rural",
+          "site": "globo-rural",
+          "nome": "Globo Rural",
+          "url": "https://globorural.globo.com/rss/globorural/"
+        },
+        {
+          "id": "compre-rural",
+          "site": "compre-rural",
+          "nome": "Compre Rural",
+          "url": "https://www.comprerural.com/feed/"
         }
       ]
     },
@@ -548,16 +869,6 @@
           "url": "https://g1.globo.com/rss/g1/musica/"
         },
         {
-          "id": "noticias-ao-minuto",
-          "site": "noticias-ao-minuto",
-          "nome": "Notícias ao Minuto",
-          "url": "https://www.noticiasaominuto.com.br/rss/ultima-hora",
-          "categorias": [
-            "Fama",
-            "Cultura"
-          ]
-        },
-        {
           "id": "capricho",
           "site": "capricho",
           "nome": "Capricho",
@@ -568,6 +879,24 @@
           "site": "veja-sp",
           "nome": "Veja SP",
           "url": "https://vejasp.abril.com.br/feed/"
+        },
+        {
+          "id": "cinepop",
+          "site": "cinepop",
+          "nome": "CinePOP",
+          "url": "https://cinepop.com.br/feed/"
+        },
+        {
+          "id": "popline",
+          "site": "popline",
+          "nome": "POPline",
+          "url": "https://portalpopline.com.br/feed/"
+        },
+        {
+          "id": "tangerina",
+          "site": "tangerina",
+          "nome": "Tangerina",
+          "url": "https://www.tangerina.news/feed/"
         }
       ]
     },
@@ -592,6 +921,24 @@
           "site": "g1",
           "nome": "g1 Natureza",
           "url": "https://g1.globo.com/rss/g1/natureza/"
+        },
+        {
+          "id": "galileu",
+          "site": "galileu",
+          "nome": "Galileu",
+          "url": "https://revistagalileu.globo.com/rss/galileu/"
+        },
+        {
+          "id": "jornal-da-usp",
+          "site": "jornal-da-usp",
+          "nome": "Jornal da USP",
+          "url": "https://jornal.usp.br/feed/"
+        },
+        {
+          "id": "socientifica",
+          "site": "socientifica",
+          "nome": "SoCientífica",
+          "url": "https://socientifica.com.br/feed/"
         }
       ]
     },
@@ -606,15 +953,6 @@
           "url": "https://claudia.abril.com.br/feed/"
         },
         {
-          "id": "noticias-ao-minuto",
-          "site": "noticias-ao-minuto",
-          "nome": "Notícias ao Minuto",
-          "url": "https://www.noticiasaominuto.com.br/rss/ultima-hora",
-          "categorias": [
-            "Lifestyle"
-          ]
-        },
-        {
           "id": "m-de-mulher",
           "site": "m-de-mulher",
           "nome": "M de Mulher",
@@ -625,6 +963,30 @@
           "site": "boa-forma",
           "nome": "Boa Forma",
           "url": "https://boaforma.abril.com.br/feed/"
+        },
+        {
+          "id": "elle",
+          "site": "elle",
+          "nome": "Elle",
+          "url": "https://elle.com.br/feed"
+        },
+        {
+          "id": "glamour",
+          "site": "glamour",
+          "nome": "Glamour",
+          "url": "https://glamour.globo.com/rss/glamour/"
+        },
+        {
+          "id": "vogue",
+          "site": "vogue",
+          "nome": "Vogue",
+          "url": "https://vogue.globo.com/rss/vogue/"
+        },
+        {
+          "id": "steal-the-look",
+          "site": "steal-the-look",
+          "nome": "Steal the Look",
+          "url": "https://stealthelook.com.br/feed/"
         }
       ]
     },
@@ -637,6 +999,24 @@
           "site": "casa",
           "nome": "Casa.com.br",
           "url": "https://casa.abril.com.br/feed/"
+        },
+        {
+          "id": "casa-vogue",
+          "site": "casa-vogue",
+          "nome": "Casa Vogue",
+          "url": "https://casavogue.globo.com/rss/casavogue/"
+        },
+        {
+          "id": "casa-e-jardim",
+          "site": "casa-e-jardim",
+          "nome": "Casa e Jardim",
+          "url": "https://revistacasaejardim.globo.com/rss/casaejardim/"
+        },
+        {
+          "id": "vivadecora",
+          "site": "vivadecora",
+          "nome": "Viva Decora",
+          "url": "https://www.vivadecora.com.br/pro/feed/"
         }
       ]
     },
@@ -655,6 +1035,18 @@
           "site": "folha",
           "nome": "Folha",
           "url": "https://feeds.folha.uol.com.br/turismo/rss091.xml"
+        },
+        {
+          "id": "melhores-destinos",
+          "site": "melhores-destinos",
+          "nome": "Melhores Destinos",
+          "url": "https://www.melhoresdestinos.com.br/feed"
+        },
+        {
+          "id": "mercado-e-eventos",
+          "site": "mercado-e-eventos",
+          "nome": "Mercado & Eventos",
+          "url": "https://www.mercadoeeventos.com.br/feed/"
         }
       ]
     },
@@ -667,6 +1059,18 @@
           "site": "folha",
           "nome": "Folha Comida",
           "url": "https://feeds.folha.uol.com.br/comida/rss091.xml"
+        },
+        {
+          "id": "paladar",
+          "site": "paladar",
+          "nome": "Paladar (Estadão)",
+          "url": "https://www.estadao.com.br/arc/outboundfeeds/feeds/rss/sections/paladar/"
+        },
+        {
+          "id": "comida-e-receitas",
+          "site": "comida-e-receitas",
+          "nome": "Comida e Receitas",
+          "url": "https://www.comidaereceitas.com.br/feed"
         }
       ]
     },
@@ -685,6 +1089,30 @@
           "site": "gazeta-do-povo",
           "nome": "Gazeta do Povo",
           "url": "https://www.gazetadopovo.com.br/feed/rss/automoveis.xml"
+        },
+        {
+          "id": "autoesporte",
+          "site": "autoesporte",
+          "nome": "Autoesporte",
+          "url": "https://autoesporte.globo.com/rss/autoesporte/"
+        },
+        {
+          "id": "motor1",
+          "site": "motor1",
+          "nome": "Motor1",
+          "url": "https://motor1.uol.com.br/rss/news/all/"
+        },
+        {
+          "id": "autopapo",
+          "site": "autopapo",
+          "nome": "AutoPapo",
+          "url": "https://autopapo.uol.com.br/feed/"
+        },
+        {
+          "id": "noticias-automotivas",
+          "site": "noticias-automotivas",
+          "nome": "Notícias Automotivas",
+          "url": "https://www.noticiasautomotivas.com.br/feed/"
         }
       ]
     },
@@ -709,6 +1137,18 @@
           "site": "folha",
           "nome": "Folha",
           "url": "https://feeds.folha.uol.com.br/educacao/rss091.xml"
+        },
+        {
+          "id": "porvir",
+          "site": "porvir",
+          "nome": "Porvir",
+          "url": "https://porvir.org/feed/"
+        },
+        {
+          "id": "estrategia",
+          "site": "estrategia",
+          "nome": "Estratégia Concursos",
+          "url": "https://www.estrategiaconcursos.com.br/blog/feed/"
         }
       ]
     },
@@ -727,6 +1167,24 @@
           "site": "g1",
           "nome": "g1 Natureza",
           "url": "https://g1.globo.com/rss/g1/natureza/"
+        },
+        {
+          "id": "ciclovivo",
+          "site": "ciclovivo",
+          "nome": "CicloVivo",
+          "url": "https://ciclovivo.com.br/feed/"
+        },
+        {
+          "id": "oeco",
+          "site": "oeco",
+          "nome": "O Eco",
+          "url": "https://oeco.org.br/feed/"
+        },
+        {
+          "id": "mongabay",
+          "site": "mongabay",
+          "nome": "Mongabay Brasil",
+          "url": "https://brasil.mongabay.com/feed/"
         }
       ]
     },
@@ -741,20 +1199,28 @@
           "url": "https://www.poder360.com.br/feed/"
         },
         {
-          "id": "noticias-ao-minuto",
-          "site": "noticias-ao-minuto",
-          "nome": "Notícias ao Minuto",
-          "url": "https://www.noticiasaominuto.com.br/rss/ultima-hora",
-          "categorias": [
-            "Política",
-            "Justiça"
-          ]
-        },
-        {
           "id": "agencia-brasil-politica",
           "site": "agencia-brasil",
           "nome": "Agência Brasil",
           "url": "https://agenciabrasil.ebc.com.br/rss/politica/feed.xml"
+        },
+        {
+          "id": "agencia-camara",
+          "site": "agencia-camara",
+          "nome": "Agência Câmara",
+          "url": "https://www.camara.leg.br/noticias/rss/ultimas-noticias"
+        },
+        {
+          "id": "agencia-senado",
+          "site": "agencia-senado",
+          "nome": "Agência Senado",
+          "url": "https://www12.senado.leg.br/noticias/feed/todasnoticias/RSS"
+        },
+        {
+          "id": "jota",
+          "site": "jota",
+          "nome": "JOTA",
+          "url": "https://www.jota.info/feed"
         }
       ]
     },
@@ -767,6 +1233,84 @@
           "site": "vatican-news",
           "nome": "Vatican News",
           "url": "https://www.vaticannews.va/pt.rss.xml"
+        },
+        {
+          "id": "cancao-nova",
+          "site": "cancao-nova",
+          "nome": "Canção Nova",
+          "url": "https://noticias.cancaonova.com/feed/"
+        },
+        {
+          "id": "cnbb",
+          "site": "cnbb",
+          "nome": "CNBB",
+          "url": "https://www.cnbb.org.br/feed/"
+        },
+        {
+          "id": "aleteia",
+          "site": "aleteia",
+          "nome": "Aleteia",
+          "url": "https://pt.aleteia.org/feed/"
+        }
+      ]
+    },
+    {
+      "id": "games",
+      "nome": "Games e eSports",
+      "fontes": [
+        {
+          "id": "ign-brasil",
+          "site": "ign-brasil",
+          "nome": "IGN Brasil",
+          "url": "https://br.ign.com/feed.xml"
+        },
+        {
+          "id": "eurogamer",
+          "site": "eurogamer",
+          "nome": "Eurogamer",
+          "url": "https://www.eurogamer.pt/feed"
+        },
+        {
+          "id": "gameblast",
+          "site": "gameblast",
+          "nome": "GameBlast",
+          "url": "https://www.gameblast.com.br/feeds/posts/default?alt=rss"
+        },
+        {
+          "id": "meugamer",
+          "site": "meugamer",
+          "nome": "MeuGamer",
+          "url": "https://meugamer.com/feed/"
+        }
+      ]
+    },
+    {
+      "id": "musica",
+      "nome": "Música",
+      "fontes": [
+        {
+          "id": "rolling-stone",
+          "site": "rolling-stone",
+          "nome": "Rolling Stone Brasil",
+          "url": "https://rollingstone.com.br/feed/"
+        },
+        {
+          "id": "tmdqa",
+          "site": "tmdqa",
+          "nome": "Tenho Mais Discos Que Amigos",
+          "url": "https://www.tenhomaisdiscosqueamigos.com/feed/"
+        },
+        {
+          "id": "music-non-stop",
+          "site": "music-non-stop",
+          "nome": "Music Non Stop",
+          "url": "https://musicnonstop.uol.com.br/feed/"
+        },
+        {
+          "id": "popline",
+          "site": "popline",
+          "nome": "POPline",
+          "url": "https://portalpopline.com.br/feed/"
         }
       ]
     },

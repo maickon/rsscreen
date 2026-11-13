@@ -23,7 +23,7 @@
   <!-- ================= LOGIN ================= -->
   <section class="login" id="login" hidden>
     <div class="login-side">
-      <a href="../" class="logo"><i data-logo></i><span><b>rs</b>screen</span></a>
+      <a href="../" class="logo"><i data-logo></i><span><b>rss</b>creen</span></a>
       <div class="login-pitch">
         <h1>Conteúdo vivo para todas as suas telas.</h1>
         <ul>
@@ -35,15 +35,15 @@
       <small>Painel do administrador</small>
     </div>
     <div class="login-main">
-      <form class="login-card" id="loginForm" autocomplete="off">
+      <form class="login-card" id="loginForm">
         <span class="login-ico"><i data-icon="key"></i></span>
         <h2>Entrar no painel</h2>
-        <p>Use a sua chave de acesso de administrador.</p>
+        <p>Digite a sua senha de administrador.</p>
         <label class="field">
-          <span>Chave de acesso</span>
-          <input class="input" id="loginKey" type="password" placeholder="sua-chave-de-acesso" autocapitalize="off" spellcheck="false" required />
+          <span>Senha</span>
+          <input class="input" id="loginKey" type="password" placeholder="••••••••" autocomplete="current-password" autocapitalize="off" spellcheck="false" required />
         </label>
-        <p class="login-error" id="loginError" hidden>Chave inválida. Confira e tente novamente.</p>
+        <p class="login-error" id="loginError" hidden>Senha incorreta. Confira e tente novamente.</p>
         <button class="btn btn-primary btn-lg" type="submit">Entrar <i data-icon="arrow"></i></button>
       </form>
     </div>
@@ -53,7 +53,7 @@
   <div class="app" id="app" hidden>
     <aside class="side" id="side">
       <div class="side-head">
-        <a href="#gerar" class="logo"><i data-logo></i><span><b>rs</b>screen</span></a>
+        <a href="#gerar" class="logo"><i data-logo></i><span><b>rss</b>creen</span></a>
         <button class="side-close" id="sideClose" aria-label="Fechar menu"><i data-icon="x"></i></button>
       </div>
       <nav class="side-nav" id="sideNav">
@@ -63,6 +63,7 @@
         <a href="#clientes" data-view="clientes"><i data-icon="users"></i> Clientes</a>
         <a href="#modelos" data-view="modelos"><i data-icon="monitor"></i> Modelos de tela</a>
         <a href="#modulos" data-view="modulos"><i data-icon="grid"></i> Módulos</a>
+        <a href="#monitor" data-view="monitor"><i data-icon="chart"></i> Monitoramento</a>
       </nav>
       <div class="side-foot">
         <button class="side-install" id="installBtn" hidden><i data-icon="download"></i> Instalar app</button>
@@ -75,7 +76,7 @@
     <div class="main">
       <header class="topbar">
         <button class="topbar-menu" id="menuBtn" aria-label="Abrir menu"><i data-icon="menu"></i></button>
-        <a href="#gerar" class="logo topbar-logo"><i data-logo></i><span><b>rs</b>screen</span></a>
+        <a href="#gerar" class="logo topbar-logo"><i data-logo></i><span><b>rss</b>creen</span></a>
       </header>
 
       <!-- ===== GERAR LINKS ===== -->
@@ -225,6 +226,7 @@
             <div class="card-head"><div><h3>Cadastrados</h3><p id="cCount"></p></div></div>
             <div class="table-wrap"><table class="table" id="cTable"></table></div>
           </div>
+          <div class="client-col">
           <div class="card new-client">
             <div class="card-head"><div><h3>Cadastrar novo cliente</h3><p>Sem banco de dados: o cadastro é uma linha no arquivo de configuração.</p></div></div>
             <label class="field"><span>Nome do cliente</span><input class="input" id="ncNome" placeholder="Ex.: Mercado Bom Preço" /></label>
@@ -239,6 +241,19 @@
               <li>Cole a linha dentro da lista <code>clientes: [ … ]</code></li>
               <li>Salve, faça commit e push no Git. O Cloudflare publica sozinho.</li>
             </ol>
+          </div>
+          <div class="card new-client">
+            <div class="card-head"><div><h3>Trocar senha do painel</h3><p>A senha nunca fica escrita no arquivo público, só o hash dela.</p></div></div>
+            <label class="field"><span>Nova senha</span><input class="input" id="pwNova" type="password" autocomplete="new-password" placeholder="Mínimo 8 caracteres" /></label>
+            <div class="nc-out" id="pwOut" hidden>
+              <div class="kv"><span>Linha para colar em <code>admin</code></span><pre id="pwLine"></pre></div>
+              <button class="btn btn-dark btn-sm" id="pwCopy"><i data-icon="copy"></i> Copiar linha</button>
+            </div>
+            <ol class="howto">
+              <li>Em <code>config/clientes.js</code>, troque a linha <code>senhaHash</code> pela gerada</li>
+              <li>Faça commit e push. Depois entre de novo com a senha nova.</li>
+            </ol>
+          </div>
           </div>
         </div>
       </section>
@@ -262,6 +277,26 @@
           <label class="field"><span>Cores</span><select class="select" id="mTema"></select></label>
         </div>
         <div class="model-grid" id="modelGrid"></div>
+      </section>
+
+      <!-- ===== MONITORAMENTO ===== -->
+      <section class="view" id="view-monitor" hidden>
+        <div class="page-head">
+          <div>
+            <h1>Monitoramento</h1>
+            <p>Uso dos seus links e saúde dos feeds RSS. Os números são aproximados e atualizados a cada poucos segundos pelo servidor.</p>
+          </div>
+          <div class="mon-actions">
+            <select class="select select-sm" id="monDias">
+              <option value="1">Hoje</option>
+              <option value="7" selected>Últimos 7 dias</option>
+              <option value="30">Últimos 30 dias</option>
+            </select>
+            <button class="btn btn-ghost btn-sm" id="monRefresh"><i data-icon="refresh"></i> Atualizar</button>
+            <button class="btn btn-primary btn-sm" id="monCheck"><i data-icon="zap"></i> Testar todos os feeds</button>
+          </div>
+        </div>
+        <div id="monBody"><div class="empty">Carregando…</div></div>
       </section>
 
       <!-- ===== MÓDULOS ===== -->

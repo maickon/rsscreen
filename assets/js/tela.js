@@ -27,13 +27,13 @@
   let manifest = null, mod = null;
   let data = [], slides = [], idx = 0, elapsed = 0, paused = false;
   let lastUpdate = null, offline = false, lastError = '';
-  let progressEl = null, offlineEl = null;
+  let progressEl = null, offlineEl = null, failures = 0;
 
   /* =================== API para os módulos =================== */
   const WEEKDAYS = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
   const MONTHS = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
 
-  function pad(n) { return String(n).padStart(2, '0'); }
+  function pad(n) { n = String(n); return n.length < 2 ? '0' + n : n; }
 
   function timeAgo(ts) {
     if (!ts) return '';
@@ -51,7 +51,9 @@
   function fetchWithTimeout(url, ms) {
     const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
     const t = setTimeout(() => ctrl && ctrl.abort(), ms || 15000);
-    return fetch(url, ctrl ? { signal: ctrl.signal } : {}).finally(() => clearTimeout(t));
+    return fetch(url, ctrl ? { signal: ctrl.signal } : {}).then(
+      r => { clearTimeout(t); return r; },
+      e => { clearTimeout(t); throw e; });
   }
 
   // Busca XML/HTML de terceiros via proxy próprio (Cloudflare Pages Function) com fallback público
@@ -60,9 +62,9 @@
     if (location.protocol !== 'file:') tries.push(RS.ROOT_URL + 'api/rss?url=' + encodeURIComponent(url));
     tries.push('https://api.allorigins.win/raw?url=' + encodeURIComponent(url));
     let lastErr;
-    for (const u of tries) {
+    for (let i = 0; i < tries.length; i++) {
       try {
-        const res = await fetchWithTimeout(u, 15000);
+        const res = await fetchWithTimeout(tries[i], i === 0 ? 15000 : 8000);
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const text = await res.text();
         if (text && text.indexOf('<') !== -1) return text;
@@ -76,6 +78,13 @@
     const res = await fetchWithTimeout(url, 15000);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     return res.json();
+  }
+
+  // Promise.allSettled não existe em players antigos (Chrome < 76)
+  function settle(promises) {
+    return Promise.all(promises.map(p => Promise.resolve(p).then(
+      value => ({ status: 'fulfilled', value }),
+      reason => ({ status: 'rejected', reason }))));
   }
 
   function placeholder(label) {
@@ -117,7 +126,7 @@
   window.RSScreen = {
     register(id, def) { modules[id] = def; },
     esc: RS.esc,
-    fetchText, fetchJson, timeAgo, media, placeholder, imgFail, clockHtml, pad,
+    fetchText, fetchJson, timeAgo, settle, media, placeholder, imgFail, clockHtml, pad,
     WEEKDAYS, MONTHS
   };
 
@@ -273,6 +282,7 @@
       const fresh = await mod.load(ctx);
       if (!fresh || !fresh.length) throw new Error('Nenhum conteúdo retornado');
       data = fresh;
+      failures = 0;
       offline = false;
       lastError = '';
       lastUpdate = Date.now();
@@ -293,8 +303,9 @@
       lastError = e.message || String(e);
       offline = true;
       if (!data.length) {
+        failures++;
         statusScreen('Conectando…', 'Não foi possível carregar o conteúdo agora. Nova tentativa em instantes.', true);
-        setTimeout(() => refresh(true), 30000);
+        setTimeout(() => refresh(true), failures < 3 ? 10000 : 30000);
       } else {
         ensureChrome();
       }
@@ -357,6 +368,7 @@
 
     const client = RS.findClient(state.cliente);
     if (!client) {
+      ping(true);
       statusScreen('Tela não autorizada', 'O código desta tela não foi encontrado. Fale com o seu fornecedor de conteúdo para receber o link correto.');
       return;
     }
@@ -401,8 +413,31 @@
       rebuild();
     }
     await refresh(!cached);
+    startPing();
     startLoop();
     setInterval(() => refresh(false), (mod.refreshMinutes || 10) * 60 * 1000);
+  }
+
+  /* =================== registro de uso (painel > Monitoramento) =================== */
+  // Imagem 1x1: funciona em qualquer player, não bloqueia nada e não exige CORS.
+  function deviceId() {
+    try {
+      let id = localStorage.getItem('rs_device');
+      if (!id) { id = Date.now().toString(36) + Math.random().toString(36).slice(2, 8); localStorage.setItem('rs_device', id); }
+      return id;
+    } catch (_) { return ''; }
+  }
+  function ping(first) {
+    if (location.protocol === 'file:' || state.teste) return;
+    const q = ['cliente', 'modulo', 'assunto', 'fonte', 'layout', 'orientacao']
+      .map(k => k + '=' + encodeURIComponent(state[k] || '')).join('&');
+    const img = new Image();
+    img.src = RS.ROOT_URL + 'api/hit?' + q + '&d=' + encodeURIComponent(deviceId()) +
+      '&ok=' + (data.length && !offline ? 1 : 0) + (first ? '&novo=1' : '') + '&_=' + Date.now();
+  }
+  function startPing() {
+    ping(true);
+    setInterval(() => ping(false), 5 * 60 * 1000);
   }
 
   /* =================== modo teste =================== */

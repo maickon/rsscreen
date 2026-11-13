@@ -5,7 +5,6 @@
   const $ = s => document.querySelector(s);
   const $$ = s => Array.from(document.querySelectorAll(s));
 
-  const AUTH_KEY = 'rs_admin_v1';
   const LINKS_KEY = 'rs_links_v1';
   const MAX_COMBOS = 80;
 
@@ -47,9 +46,14 @@
   const MOD_ICON = m => (m && m.icone) || 'sparkles';
 
   /* =================== autenticação =================== */
-  const adminHash = RS.hash('auth|' + RS.adminKey());
+  // A senha fica só neste aparelho (para consultar as estatísticas); o arquivo público guarda apenas o hash.
+  const AUTH = 'rs_admin_v2';
+  const senhaHashCfg = String((RS.CFG.admin && RS.CFG.admin.senhaHash) || '').toLowerCase();
+  try { localStorage.removeItem('rs_admin_v1'); } catch (_) {}
 
-  function isLogged() { return store.get(AUTH_KEY, '') === adminHash; }
+  function session() { return store.get(AUTH, null); }
+  function adminSenha() { const s = session(); return (s && s.senha) || ''; }
+  function isLogged() { const s = session(); return !!(s && senhaHashCfg && s.hash === senhaHashCfg); }
 
   function showLogin() {
     $('#app').hidden = true;
@@ -57,28 +61,35 @@
     setTimeout(() => $('#loginKey').focus(), 50);
   }
 
-  $('#loginForm').addEventListener('submit', e => {
+  $('#loginForm').addEventListener('submit', async e => {
     e.preventDefault();
-    const v = RS.slugify($('#loginKey').value);
-    if (v && v === RS.adminKey()) {
-      store.set(AUTH_KEY, adminHash);
+    const senha = $('#loginKey').value;
+    let h = '';
+    try { h = await RS.passwordHash(senha); } catch (_) {
+      $('#loginError').textContent = 'Este navegador não permite o login (abra o painel pelo endereço https).';
+      $('#loginError').hidden = false;
+      return;
+    }
+    if (senha && h === senhaHashCfg) {
+      store.set(AUTH, { hash: h, senha });
       $('#loginError').hidden = true;
       $('#loginKey').value = '';
       start();
     } else {
+      $('#loginError').textContent = 'Senha incorreta. Confira e tente novamente.';
       $('#loginError').hidden = false;
       $('#loginKey').select();
     }
   });
 
   $('#logoutBtn').addEventListener('click', () => {
-    localStorage.removeItem(AUTH_KEY);
+    try { localStorage.removeItem(AUTH); } catch (_) {}
     location.hash = '';
     showLogin();
   });
 
   /* =================== navegação =================== */
-  const VIEWS = ['gerar', 'pacotes', 'links', 'clientes', 'modelos', 'modulos'];
+  const VIEWS = ['gerar', 'pacotes', 'links', 'clientes', 'modelos', 'modulos', 'monitor'];
 
   function route() {
     const v = (location.hash || '#gerar').slice(1);
@@ -88,6 +99,7 @@
     $('#app').classList.remove('menu-open');
     if (view === 'links') renderLinks();
     if (view === 'modelos') renderModels();
+    if (view === 'monitor') loadMonitor();
     window.scrollTo(0, 0);
   }
   window.addEventListener('hashchange', route);
@@ -529,6 +541,18 @@
   $('#ncWhats').addEventListener('input', updateNewClient);
   $('#ncCopy').addEventListener('click', () => copy($('#ncLine').textContent, 'Linha copiada — cole em config/clientes.js'));
 
+  $('#pwNova').addEventListener('input', async () => {
+    const v = $('#pwNova').value;
+    if (v.length < 8) { $('#pwOut').hidden = true; return; }
+    try {
+      const h = await RS.passwordHash(v);
+      if ($('#pwNova').value !== v) return;
+      $('#pwLine').textContent = "senhaHash: '" + h + "'";
+      $('#pwOut').hidden = false;
+    } catch (_) { $('#pwOut').hidden = true; }
+  });
+  $('#pwCopy').addEventListener('click', () => copy($('#pwLine').textContent, 'Linha copiada — cole em config/clientes.js'));
+
   /* =================== MODELOS =================== */
   const MD = { modulo: 'rss', orient: 'horizontal', tema: '' };
 
@@ -602,6 +626,187 @@
     await installEvt.userChoice;
     installEvt = null;
     $('#installBtn').hidden = true;
+  });
+
+  /* =================== MONITORAMENTO =================== */
+  let monData = null, monLoading = false;
+
+  async function api(path, opts) {
+    const res = await fetch(RS.ROOT_URL + path, Object.assign({ cache: 'no-store', headers: { 'X-Admin-Senha': adminSenha() } }, opts || {}));
+    let body = null;
+    try { body = await res.json(); } catch (_) {}
+    if (!res.ok) throw new Error((body && body.erro) || ('Erro ' + res.status));
+    return body;
+  }
+
+  const fmtN = n => Number(n || 0).toLocaleString('pt-BR');
+  function ago(t) {
+    if (!t) return '—';
+    const s = (Date.now() - t) / 1000;
+    if (s < 60) return 'agora';
+    if (s < 3600) return 'há ' + Math.round(s / 60) + ' min';
+    if (s < 86400) return 'há ' + Math.round(s / 3600) + ' h';
+    return 'há ' + Math.round(s / 86400) + ' d';
+  }
+
+  // estado do feed: considera o último uso real e o último teste manual
+  function feedState(f) {
+    const lastBad = Math.max(f.t_fail || 0, f.check_ok === 0 ? f.t_check || 0 : 0);
+    const lastGood = Math.max(f.t_ok || 0, f.check_ok === 1 ? f.t_check || 0 : 0);
+    if (!lastBad && !lastGood) return { k: 'idle', label: 'Sem uso', icon: 'clock' };
+    if (lastGood >= lastBad) return { k: 'ok', label: 'Ativo', icon: 'check' };
+    if (f.stale && lastGood) return { k: 'warn', label: 'Instável', icon: 'offline' };
+    return { k: 'bad', label: 'Recusado', icon: 'x' };
+  }
+
+  function topList(title, rows, empty, fmtKey) {
+    const max = rows.length ? rows[0].n : 1;
+    return '<div class="card mon-top"><div class="card-head"><div><h3>' + esc(title) + '</h3></div></div>' +
+      (rows.length ? '<ol>' + rows.map(r =>
+        '<li><div class="mt-row"><span class="mt-key">' + (fmtKey ? fmtKey(r.key) : esc(r.key)) + '</span><b>' + fmtN(r.n) + '</b></div>' +
+        '<i style="width:' + Math.max(2, Math.round(r.n / max * 100)) + '%"></i></li>').join('') + '</ol>'
+      : '<p class="mon-empty">' + esc(empty || 'Sem dados no período.') + '</p>') + '</div>';
+  }
+
+  function clientName(key) {
+    const c = clients.find(x => x.chave === key);
+    return c ? esc(c.nome) + ' <small class="mono">' + esc(key) + '</small>' : esc(key) + ' <small class="mt-warn">chave desconhecida</small>';
+  }
+  function telaName(key) {
+    const i = key.indexOf(' · ');
+    if (i < 0) return esc(key);
+    const parts = key.slice(i + 3).split('/');
+    const c = clients.find(x => x.chave === key.slice(0, i));
+    return '<b>' + esc(c ? c.nome : key.slice(0, i)) + '</b> <small>' + esc(parts.filter(p => p && p !== '-').join(' · ')) + '</small>';
+  }
+
+  function renderMonitor() {
+    const d = monData;
+    const body = $('#monBody');
+    if (!d) return;
+    const feeds = (d.cadastro || []).map(c => {
+      const st = (d.feeds || []).find(f => f.url === c.url) || {};
+      return Object.assign({}, c, st, { url: c.url, state: feedState(st) });
+    });
+    const order = { bad: 0, warn: 1, ok: 2, idle: 3 };
+    feeds.sort((a, b) => order[a.state.k] - order[b.state.k] || (b.req || 0) - (a.req || 0));
+    const bad = feeds.filter(f => f.state.k === 'bad').length;
+    const warn = feeds.filter(f => f.state.k === 'warn').length;
+    const okN = feeds.filter(f => f.state.k === 'ok').length;
+    const tot = (d.porDia || []).reduce((s, x) => s + x.total, 0);
+    const devs = d.dispositivos || [];
+
+    // gráfico de barras: requisições por dia
+    const days = [];
+    for (let i = d.dias - 1; i >= 0; i--) {
+      const key = new Date(Date.now() - i * 86400000).toISOString().slice(0, 10);
+      days.push((d.porDia || []).find(x => x.day === key) || { day: key, total: 0, rss: 0, og: 0, hit: 0 });
+    }
+    const maxDay = Math.max.apply(null, days.map(x => x.total).concat([1]));
+    const chart = '<div class="mon-chart" role="img" aria-label="Requisições por dia">' + days.map(x =>
+      '<div class="mc-col" tabindex="0"><div class="mc-tip"><b>' + x.day.split('-').reverse().slice(0, 2).join('/') + '</b>' + fmtN(x.total) + ' requisições<br>' +
+        fmtN(x.hit) + ' sinais de tela · ' + fmtN(x.rss) + ' feeds · ' + fmtN(x.og) + ' fotos</div>' +
+        '<div class="mc-bar" style="height:' + (x.total ? Math.max(3, x.total / maxDay * 100) : 0) + '%"></div>' +
+        '<span>' + (d.dias <= 7 ? ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'][new Date(x.day + 'T12:00:00').getDay()] : x.day.slice(8)) + '</span></div>').join('') + '</div>';
+
+    body.innerHTML =
+      '<div class="mon-kpis">' +
+        '<div class="card kpi"><span>Telas ligadas agora</span><b>' + fmtN(d.ativosAgora) + '</b><small>sinal nos últimos 12 min</small></div>' +
+        '<div class="card kpi"><span>Telas no período</span><b>' + fmtN(devs.length) + '</b><small>aparelhos diferentes</small></div>' +
+        '<div class="card kpi"><span>Requisições</span><b>' + fmtN(tot) + '</b><small>' + (d.dias === 1 ? 'hoje' : 'últimos ' + d.dias + ' dias') + '</small></div>' +
+        '<div class="card kpi' + (bad ? ' kpi-bad' : '') + '"><span>Feeds com problema</span><b>' + fmtN(bad + warn) + '</b><small>' + okN + ' ativos · ' + feeds.length + ' cadastrados</small></div>' +
+      '</div>' +
+      '<div class="card"><div class="card-head"><div><h3>Requisições por dia</h3><p>Sinais das telas (a cada 5 min), leituras de feed e buscas de foto.</p></div></div>' + chart + '</div>' +
+
+      '<div class="card"><div class="card-head"><div><h3>Feeds RSS</h3><p>“Recusado” = o site bloqueou ou não respondeu na última tentativa. As telas usam a última cópia boa (até 7 dias) e, sem ela, os outros sites do assunto.</p></div>' +
+        '<div class="mon-filter" id="monFeedFilter"><button class="chip on" data-f="">Todos</button><button class="chip" data-f="bad">Com problema</button><button class="chip" data-f="ok">Ativos</button><button class="chip" data-f="idle">Sem uso</button></div></div>' +
+        '<div class="table-wrap mon-scroll"><table class="table mon-feeds"><thead><tr><th>Status</th><th>Site / feed</th><th>Assuntos</th><th>Último resultado</th><th>Leituras</th><th>Falhas</th><th>Último sucesso</th></tr></thead><tbody>' +
+        feeds.map(f => '<tr data-st="' + f.state.k + '">' +
+          '<td><span class="st st-' + f.state.k + '">' + ICON(f.state.icon) + f.state.label + '</span></td>' +
+          '<td><b>' + esc(f.nome) + '</b><br><small class="mono mt-url">' + esc(f.url.replace(/^https?:\/\//, '')) + '</small></td>' +
+          '<td><small>' + esc(f.assuntos.join(', ')) + '</small></td>' +
+          '<td><small>' + (f.t_check && f.t_check >= (f.t_fail || 0) && f.t_check >= (f.t_ok || 0) ? 'Teste ' + ago(f.t_check) + ': ' + esc(f.check_msg || '') :
+            f.t_fail && f.t_fail > (f.t_ok || 0) ? esc(f.err || 'falha') + ' · ' + ago(f.t_fail) :
+            f.t_ok ? 'OK · ' + (f.ms ? f.ms + ' ms' : '') + ' · ' + ago(f.t_ok) : '—') + '</small></td>' +
+          '<td>' + fmtN(f.req) + '</td><td>' + (f.fail ? '<b class="mt-warn">' + fmtN(f.fail) + '</b>' : '0') + '</td>' +
+          '<td><small>' + ago(f.t_ok) + '</small></td></tr>').join('') +
+        '</tbody></table></div></div>' +
+
+      '<div class="mon-grid">' +
+        topList('Telas mais usadas', d.telas || [], 'Nenhuma tela enviou sinal ainda.', telaName) +
+        topList('Clientes', d.clientes || [], '', clientName) +
+        topList('IPs que mais acessam', d.ips || [], '') +
+        topList('Localização', d.paises || [], '') +
+        topList('Tipo de player', d.players || [], '') +
+        topList('Fotos não encontradas (por site)', d.ogVazio || [], 'Todas as fotos foram encontradas.') +
+      '</div>' +
+
+      '<div class="card"><div class="card-head"><div><h3>Aparelhos</h3><p>Cada TV, player ou navegador que abriu um link no período. “Ligada” = enviou sinal nos últimos 12 minutos.</p></div></div>' +
+        (devs.length ? '<div class="table-wrap"><table class="table"><thead><tr><th>Status</th><th>Cliente / tela</th><th>Local</th><th>Player</th><th>IP</th><th>Último sinal</th><th>Sinais</th></tr></thead><tbody>' +
+        devs.map(v => {
+          const on = Date.now() - v.last < 12 * 60000;
+          return '<tr><td><span class="st ' + (on ? (v.ok ? 'st-ok' : 'st-warn') : 'st-idle') + '">' + ICON(on ? (v.ok ? 'check' : 'offline') : 'clock') + (on ? (v.ok ? 'Ligada' : 'Sem conteúdo') : 'Desligada') + '</span></td>' +
+            '<td>' + telaName(v.cliente + ' · ' + v.tela) + '</td><td><small>' + esc(v.local || '—') + '</small></td>' +
+            '<td><small title="' + esc(v.ua) + '">' + esc(v.player) + '</small></td><td><small class="mono">' + esc(v.ip) + '</small></td>' +
+            '<td><small>' + ago(v.last) + '</small></td><td>' + fmtN(v.beats) + '</td></tr>';
+        }).join('') + '</tbody></table></div>' : '<p class="mon-empty">Nenhuma tela abriu um link no período.</p>') + '</div>' +
+
+      '<div class="card"><div class="card-head"><div><h3>Erros recentes</h3><p>Últimas recusas de feeds registradas pelo servidor.</p></div>' +
+        '<button class="btn btn-ghost btn-sm" id="monReset"><i data-icon="trash"></i> Zerar estatísticas</button></div>' +
+        ((d.erros || []).length ? '<div class="table-wrap"><table class="table"><thead><tr><th>Quando</th><th>Feed</th><th>Erro</th></tr></thead><tbody>' +
+          d.erros.map(e => '<tr><td><small>' + ago(e.t) + '</small></td><td><small class="mono mt-url">' + esc(e.url.replace(/^https?:\/\//, '')) + '</small></td><td><small>' + esc(e.msg) + '</small></td></tr>').join('') +
+          '</tbody></table></div>' : '<p class="mon-empty">Nenhum erro registrado.</p>') + '</div>' +
+      '<p class="mon-foot">Atualizado ' + new Date(d.gerado).toLocaleTimeString('pt-BR') + '. Os IPs e aparelhos ficam guardados por 35 dias.</p>';
+    hydrateIcons(body);
+  }
+
+  async function loadMonitor() {
+    if (monLoading) return;
+    monLoading = true;
+    if (!monData) $('#monBody').innerHTML = '<div class="empty">Carregando…</div>';
+    try {
+      monData = await api('api/stats?dias=' + $('#monDias').value);
+      renderMonitor();
+    } catch (e) {
+      $('#monBody').innerHTML = '<div class="empty"><b>Não foi possível carregar o monitoramento.</b><br>' + esc(e.message) +
+        (/senha/i.test(e.message) ? '<br>Saia e entre de novo com a senha atual.' : '<br>O monitoramento só funciona no site publicado na Cloudflare.') + '</div>';
+    }
+    monLoading = false;
+  }
+
+  $('#monDias').addEventListener('change', () => { monData = null; loadMonitor(); });
+  $('#monRefresh').addEventListener('click', loadMonitor);
+  $('#monBody').addEventListener('click', async e => {
+    const chip = e.target.closest('#monFeedFilter .chip');
+    if (chip) {
+      $$('#monFeedFilter .chip').forEach(c => c.classList.toggle('on', c === chip));
+      const f = chip.dataset.f;
+      $$('.mon-feeds tbody tr').forEach(tr => { tr.hidden = f && !(f === 'bad' ? /bad|warn/.test(tr.dataset.st) : tr.dataset.st === f); });
+      return;
+    }
+    if (e.target.closest('#monReset')) {
+      if (!confirm('Zerar todas as estatísticas? Isso não afeta as telas.')) return;
+      try { await api('api/stats/reset', { method: 'POST' }); toast('Estatísticas zeradas'); monData = null; loadMonitor(); }
+      catch (err) { toast(err.message, 'x'); }
+    }
+  });
+  $('#monCheck').addEventListener('click', async () => {
+    const btn = $('#monCheck');
+    btn.disabled = true;
+    let from = 0, bad = 0, done = 0;
+    try {
+      while (from !== null) {
+        btn.innerHTML = ICON('refresh') + ' Testando… ' + done;
+        const r = await api('api/stats/check?inicio=' + from);
+        done += r.resultados.length;
+        bad += r.resultados.filter(x => !x.ok).length;
+        from = r.proximo;
+      }
+      toast(done + ' feeds testados · ' + bad + ' com problema', bad ? 'x' : 'check');
+      await loadMonitor();
+    } catch (e) { toast(e.message, 'x'); }
+    btn.disabled = false;
+    btn.innerHTML = ICON('zap') + ' Testar todos os feeds';
   });
 
   /* =================== início =================== */

@@ -149,10 +149,11 @@
 
   async function fetchOg(link) {
     if (location.protocol !== 'file:') {
+      // o servidor responde rápido (com cache de 1 dia); se ele falhar, não insiste em proxies lentos
       try {
         const d = await S.fetchJson(RS.ROOT_URL + 'api/rss?og=1&url=' + encodeURIComponent(link));
-        if (d && typeof d.image === 'string') return d.image;
-      } catch (_) {}
+        return d && typeof d.image === 'string' ? d.image : '';
+      } catch (_) { return ''; }
     }
     // sem a função do Cloudflare (ex.: teste local): lê a página por um proxy público
     try {
@@ -175,13 +176,28 @@
         cache[it.link] = it.imagem;
       }
     }
-    await Promise.all([worker(), worker(), worker(), worker()]);
+    // no máximo 8 s: a tela abre com o que já tem foto e completa o resto na próxima atualização
+    await Promise.race([
+      Promise.all([worker(), worker(), worker(), worker()]),
+      new Promise(r => setTimeout(r, 8000))
+    ]);
     ogSave(cache);
   }
 
   async function load(ctx) {
-    const fontes = ctx.fonte ? [ctx.fonte] : (ctx.assunto.fontes || []).slice(0, 4);
-    const results = await Promise.allSettled(fontes.map(f => S.fetchText(f.url).then(x => parseFeed(x, f))));
+    if (ctx.fonte) {
+      // site escolhido; se ele estiver fora do ar ou bloqueado, a tela usa os outros sites do assunto
+      try { return await loadFrom([ctx.fonte], ctx); } catch (e) {
+        console.warn('[rss] fonte escolhida falhou, usando as demais do assunto:', e.message);
+      }
+    }
+    const outras = (ctx.assunto.fontes || []).filter(f => f !== ctx.fonte);
+    return loadFrom(outras.slice(0, 4), ctx);
+  }
+
+  async function loadFrom(fontes, ctx) {
+    if (!fontes.length) throw new Error('Nenhuma fonte cadastrada');
+    const results = await S.settle(fontes.map(f => S.fetchText(f.url).then(x => parseFeed(x, f))));
     const lists = results.filter(r => r.status === 'fulfilled' && r.value.length).map(r => r.value);
     if (!lists.length) throw new Error('Nenhuma fonte respondeu');
     // intercala as fontes e remove manchetes repetidas

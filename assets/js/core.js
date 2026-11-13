@@ -41,15 +41,16 @@
   // Chave do cliente = nome em formato de URL + código único derivado do nome
   function clientKey(nome) {
     const base = slugify(nome).slice(0, 28).replace(/-+$/, '') || 'cliente';
-    const code = hash(normalize(nome) + '|' + CFG.segredo, 7).padStart(6, '0').slice(-5);
+    const code = ('000000' + hash(normalize(nome) + '|' + CFG.segredo, 7)).slice(-5);
     return base + '-' + code;
   }
 
-  // Chave do administrador = nome codificado
-  function adminKey() {
-    const nome = (CFG.admin && CFG.admin.nome) || 'admin';
-    const code = hash('admin|' + normalize(nome) + '|' + CFG.segredo, 13).padStart(10, '0').slice(-8);
-    return slugify(nome) + '-' + code;
+  // Senha do painel → hash PBKDF2 (o mesmo cálculo é feito no Worker para liberar as estatísticas)
+  async function passwordHash(senha) {
+    const enc = new TextEncoder();
+    const key = await crypto.subtle.importKey('raw', enc.encode(String(senha || '')), 'PBKDF2', false, ['deriveBits']);
+    const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', salt: enc.encode('rsscreen|admin'), iterations: 10000, hash: 'SHA-256' }, key, 256);
+    return Array.from(new Uint8Array(bits)).map(b => ('0' + b.toString(16)).slice(-2)).join('');
   }
 
   function clients() {
@@ -171,7 +172,7 @@
   window.RS = {
     CFG, ROOT_URL, THEMES, ORIENTACOES,
     normalize, slugify, hash, esc,
-    clientKey, adminKey, clients, findClient, demoClient,
+    clientKey, passwordHash, clients, findClient, demoClient,
     theme, loadManifest, loadModules, fetchJson,
     buildScreenUrl, whatsappLink, copyText, registerSW
   };
