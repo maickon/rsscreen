@@ -1,0 +1,119 @@
+/* Módulo Loterias (1rem = 1% do lado maior da tela) */
+.m-loterias .lt-wrap {
+  --lc: var(--accent);
+  position: absolute; inset: 0; padding: 3rem 3.6rem;
+  display: flex; flex-direction: column; gap: 2rem;
+}
+.m-loterias .lt-wrap > * { position: relative; }
+.m-loterias .lt-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background:
+    radial-gradient(circle at 100% 0%, var(--lc) 0, transparent 46%),
+    radial-gradient(circle at 0% 100%, var(--accent-a15) 0, transparent 40%),
+    var(--bg);
+  opacity: .9;
+}
+.m-loterias .lt-bg.big { background: radial-gradient(circle at 50% 45%, var(--lc) 0, transparent 62%), var(--bg); }
+
+.m-loterias .lt-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 2rem; }
+.m-loterias .lt-name { font-size: 3rem; font-weight: 900; letter-spacing: -.02em; display: flex; align-items: center; gap: 1rem; line-height: 1.1; }
+.m-loterias .lt-dot { width: 1.6rem; height: 1.6rem; border-radius: 50%; background: var(--lc); box-shadow: 0 0 0 .35rem var(--text-a12); flex: none; }
+.m-loterias .lt-sub { font-size: 1.4rem; color: var(--muted); font-weight: 600; margin-top: .4rem; }
+.m-loterias .lt-clock { font-size: 3rem; font-weight: 800; }
+.m-loterias .lt-lbl { font-size: 1.15rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: .6rem 0 .8rem; }
+
+/* ---- bolas ---- */
+.m-loterias .lt-main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 1.2rem; min-height: 0; }
+.m-loterias .lt-balls { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.4rem; max-width: 100%; }
+.m-loterias .lt-ball {
+  width: 8.4rem; height: 8.4rem; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 3.6rem; font-weight: 900; font-variant-numeric: tabular-nums;
+  color: #fff; background: radial-gradient(circle at 32% 28%, rgba(255,255,255,.35), transparent 45%), var(--lc);
+  box-shadow: 0 .6rem 1.6rem rgba(0,0,0,.28), inset 0 -.4rem .8rem rgba(0,0,0,.18);
+}
+.slide.show .m-loterias .lt-ball, .slide.show .lt-ball { animation: lt-pop .55s cubic-bezier(.2,.9,.3,1.3) both; }
+@keyframes lt-pop { from { transform: scale(.3); opacity: 0; } to { transform: none; opacity: 1; } }
+.m-loterias .lt-balls.n7 .lt-ball { width: 7.6rem; height: 7.6rem; font-size: 3.2rem; }
+.m-loterias .lt-balls.n15 { max-width: 64rem; gap: 1rem; }
+.m-loterias .lt-balls.n15 .lt-ball { width: 6.6rem; height: 6.6rem; font-size: 2.7rem; }
+.m-loterias .lt-balls.n20 { max-width: 66rem; gap: .9rem; }
+.m-loterias .lt-balls.n20 .lt-ball { width: 5.6rem; height: 5.6rem; font-size: 2.3rem; }
+.m-loterias .lt-balls.b2 .lt-ball { width: 6.4rem; height: 6.4rem; font-size: 2.7rem; filter: saturate(.8) brightness(.9); }
+.m-loterias .lt-balls.sm { justify-content: flex-start; gap: .5rem; }
+.m-loterias .lt-balls.sm .lt-ball { width: 3.4rem; height: 3.4rem; font-size: 1.45rem; box-shadow: none; }
+.m-loterias .lt-balls.sm.n15 .lt-ball, .m-loterias .lt-balls.sm.n20 .lt-ball { width: 2.7rem; height: 2.7rem; font-size: 1.15rem; }
+.m-loterias .lt-extra { font-size: 1.7rem; color: var(--muted); font-weight: 600; }
+.m-loterias .lt-extra b { color: var(--text); font-weight: 800; margin-left: .4rem; }
+
+/* ---- federal e loteca ---- */
+.m-loterias .lt-bilhetes { display: grid; gap: .9rem; width: min(70rem, 100%); }
+.m-loterias .lt-bil { display: grid; grid-template-columns: 4rem 1fr auto; align-items: center; gap: 1.2rem; background: var(--surface-a90); border-radius: 1rem; padding: .9rem 1.6rem; border-left: .4rem solid var(--lc); }
+.m-loterias .lt-bil small { font-size: 1.4rem; font-weight: 800; color: var(--muted); }
+.m-loterias .lt-bil b { font-size: 3rem; font-weight: 900; letter-spacing: .08em; font-variant-numeric: tabular-nums; }
+.m-loterias .lt-bil span { font-size: 1.6rem; font-weight: 700; color: var(--muted); }
+.m-loterias .lt-loteca { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem 2rem; width: 100%; }
+.m-loterias .lt-jogo { display: grid; grid-template-columns: 2.4rem 1fr auto 1fr; gap: .8rem; align-items: center; font-size: 1.25rem; font-weight: 600; }
+.m-loterias .lt-jogo i { font-style: normal; color: var(--muted); font-weight: 800; }
+.m-loterias .lt-jogo b { background: var(--lc); color: #fff; border-radius: .5rem; padding: .2rem .7rem; font-variant-numeric: tabular-nums; }
+.m-loterias .lt-jogo span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.m-loterias .lt-jogo span:last-child { text-align: right; }
+
+/* ---- rodapé: situação e próximo ---- */
+.m-loterias .lt-bottom { display: flex; gap: 1.6rem; align-items: stretch; }
+.m-loterias .lt-status { flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; border-radius: 1.4rem; padding: 1.4rem 2rem; font-size: 2.4rem; font-weight: 900; letter-spacing: -.01em; }
+.m-loterias .lt-status.acc { background: var(--lc); color: #fff; letter-spacing: .06em; }
+.m-loterias .lt-status.win { background: var(--surface-a90); color: var(--text); }
+.m-loterias .lt-next { flex: 1.3; display: flex; flex-direction: column; justify-content: center; gap: .2rem; background: var(--surface-a90); border-radius: 1.4rem; padding: 1.2rem 2rem; }
+.m-loterias .lt-next span { font-size: 1.3rem; font-weight: 700; color: var(--muted); }
+.m-loterias .lt-next b { font-size: 2.8rem; font-weight: 900; letter-spacing: -.02em; }
+.m-loterias .lt-next b.lt-mini { font-size: 1.9rem; letter-spacing: .04em; font-variant-numeric: tabular-nums; }
+
+/* ---- próximo prêmio ---- */
+.m-loterias .lt-hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: .6rem; }
+.m-loterias .lt-tag { background: #fff; color: #111; font-weight: 900; font-size: 1.8rem; letter-spacing: .2em; padding: .5rem 1.6rem; border-radius: 99rem; margin-bottom: 1rem; }
+.m-loterias .lt-pode { font-size: 2.6rem; font-weight: 700; color: var(--muted); }
+.m-loterias .lt-valor { font-size: 11rem; font-weight: 900; letter-spacing: -.04em; line-height: 1; text-shadow: 0 .5rem 2.5rem rgba(0,0,0,.35); }
+.m-loterias .lt-quando { font-size: 2.4rem; font-weight: 700; margin-top: .8rem; }
+
+/* ---- premiação e ganhadores ---- */
+.m-loterias .lt-split { flex: 1; display: grid; grid-template-columns: 1.4fr 1fr; gap: 2rem; min-height: 0; }
+.m-loterias .lt-faixas, .m-loterias .lt-cidades { background: var(--surface-a90); border-radius: 1.6rem; padding: 1.6rem 2.2rem; display: flex; flex-direction: column; gap: .4rem; min-height: 0; overflow: hidden; }
+.m-loterias .lt-faixa { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 1rem; align-items: center; padding: .85rem 0; border-bottom: 1px solid var(--text-a12); font-size: 1.5rem; font-weight: 600; }
+.m-loterias .lt-faixa:last-child { border-bottom: 0; }
+.m-loterias .lt-faixa span:nth-child(2) { color: var(--muted); }
+.m-loterias .lt-faixa b { text-align: right; font-weight: 800; font-variant-numeric: tabular-nums; }
+.m-loterias .lt-cidade { display: flex; justify-content: space-between; gap: 1rem; padding: .7rem 0; border-bottom: 1px solid var(--text-a12); font-size: 1.6rem; }
+.m-loterias .lt-cidade span { color: var(--muted); font-weight: 700; }
+.m-loterias .lt-cidades .lt-status, .m-loterias .lt-cidades .lt-next { flex: none; margin-top: .8rem; }
+
+/* ---- painel ---- */
+.m-loterias .lt-grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 1fr; gap: 1.6rem; min-height: 0; }
+.m-loterias .lt-grid.n1 { grid-template-columns: 1fr; }
+.m-loterias .lt-card { background: var(--surface-a90); border-radius: 1.5rem; padding: 1.6rem 2rem; display: flex; flex-direction: column; justify-content: space-between; gap: 1rem; border-top: .45rem solid var(--lc); min-height: 0; overflow: hidden; }
+.m-loterias .lt-card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+.m-loterias .lt-card-head b { font-size: 2rem; font-weight: 900; }
+.m-loterias .lt-card-head small { font-size: 1.2rem; color: var(--muted); font-weight: 700; }
+.m-loterias .lt-card .lt-bilhetes { gap: .3rem; }
+.m-loterias .lt-card .lt-bil { padding: .25rem .8rem; grid-template-columns: 2.4rem 1fr; }
+.m-loterias .lt-card .lt-bil b { font-size: 1.5rem; }
+.m-loterias .lt-card .lt-bil small { font-size: 1rem; }
+.m-loterias .lt-card .lt-extra { font-size: 1.2rem; }
+.m-loterias .lt-card-foot { display: flex; justify-content: space-between; align-items: center; font-size: 1.3rem; }
+.m-loterias .lt-card-foot .acc { background: var(--lc); color: #fff; font-weight: 800; padding: .25rem .8rem; border-radius: .5rem; text-transform: uppercase; letter-spacing: .06em; font-size: 1.1rem; }
+.m-loterias .lt-card-foot b { font-size: 2rem; font-weight: 900; }
+
+/* ---- vertical ---- */
+.o-v .m-loterias .lt-wrap { padding: 3.2rem 2.8rem; gap: 2.4rem; }
+.o-v .m-loterias .lt-name { font-size: 3.4rem; }
+.o-v .m-loterias .lt-ball { width: 9.6rem; height: 9.6rem; font-size: 4.2rem; }
+.o-v .m-loterias .lt-balls.n6 { max-width: 36rem; }
+.o-v .m-loterias .lt-balls.n15 .lt-ball { width: 7.6rem; height: 7.6rem; font-size: 3.1rem; }
+.o-v .m-loterias .lt-balls.n20 .lt-ball { width: 6.4rem; height: 6.4rem; font-size: 2.6rem; }
+.o-v .m-loterias .lt-balls.sm .lt-ball { width: 3.6rem; height: 3.6rem; font-size: 1.5rem; }
+.o-v .m-loterias .lt-bottom { flex-direction: column; }
+.o-v .m-loterias .lt-valor { font-size: 8.6rem; }
+.o-v .m-loterias .lt-split { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+.o-v .m-loterias .lt-grid { grid-template-columns: 1fr; }
+.o-v .m-loterias .lt-loteca { grid-template-columns: 1fr; }
+.o-v .m-loterias .lt-jogo { font-size: 1.5rem; }

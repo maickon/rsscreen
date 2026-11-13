@@ -361,12 +361,34 @@
     ctx.tempo = state.tempo >= 4 ? state.tempo : (pad_.tempo || 12);
   }
 
+  // Cliente: banco D1 (via /api/cliente) → cópia salva no aparelho → config/clientes.js
+  async function resolveClient(chave) {
+    const local = RS.findClient(chave);
+    if (!chave || location.protocol === 'file:') return local;
+    const memKey = 'rs_cli_' + chave;
+    try {
+      const res = await fetchWithTimeout(RS.ROOT_URL + 'api/cliente?chave=' + encodeURIComponent(chave), 6000);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const r = await res.json();
+      if (r && r.banco) {
+        const c = r.cliente ? { nome: r.cliente.nome, chave: r.cliente.chave, ativo: r.cliente.ativo, demo: r.cliente.demo } : null;
+        try { if (c) localStorage.setItem(memKey, JSON.stringify(c)); else localStorage.removeItem(memKey); } catch (_) {}
+        return c;
+      }
+      return local;
+    } catch (_) {
+      // sem internet ou servidor fora: usa o que já sabia
+      try { const saved = JSON.parse(localStorage.getItem(memKey) || 'null'); if (saved) return saved; } catch (_) {}
+      return local;
+    }
+  }
+
   async function init() {
     fit();
     applyTheme();
     statusScreen('Carregando…', '', true);
 
-    const client = RS.findClient(state.cliente);
+    const client = await resolveClient(state.cliente);
     if (!client) {
       ping(true);
       statusScreen('Tela não autorizada', 'O código desta tela não foi encontrado. Fale com o seu fornecedor de conteúdo para receber o link correto.');

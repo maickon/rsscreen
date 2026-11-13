@@ -5,10 +5,18 @@
 //   /api/stats        relatório do painel          (exige a senha do administrador)
 //   /api/stats/check  testa feeds agora             (exige a senha do administrador)
 //   /api/stats/reset  zera as estatísticas          (exige a senha do administrador)
+//   /api/cliente      a tela confere se a chave do cliente existe e está ativa (D1)
+//   /api/admin/clientes[/importar]  cadastro de clientes no D1 (exige a senha)
+//   /api/loterias     últimos resultados guardados (as telas leem daqui)
+//   /api/admin/loterias  status e "atualizar agora" (exige a senha)
+//
+// Cron (wrangler.jsonc → triggers): busca os resultados de loterias depois dos sorteios.
 //
 // (functions/api/rss.js também funciona sozinho se o projeto for criado como Pages, sem o monitoramento.)
 import { onRequestGet } from '../functions/api/rss.js';
 import { Stats, trackRequest, trackFeed, trackOg, trackHit, maybeFlush, statsStub } from './stats.js';
+import { listClientes, countClientes, getCliente, saveCliente, deleteCliente, importClientes } from './clientes.js';
+import { loteriasResponse, updateAll, JOGOS } from './loterias.js';
 
 export { Stats };
 
@@ -16,7 +24,7 @@ const GIF = Uint8Array.from(atob('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAA
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'X-Admin-Senha, Content-Type',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
+  'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS'
 };
 
 function json(obj, status) {
@@ -91,8 +99,18 @@ async function checkOne(url) {
   }
 }
 
+async function readJson(request) {
+  try { return await request.json(); } catch (_) { return {}; }
+}
+
 /* ---------- rotas ---------- */
 export default {
+  // Cron: resultados de loterias (só busca os jogos cujo sorteio já aconteceu)
+  async scheduled(event, env, ctx) {
+    const stub = statsStub(env);
+    if (stub) ctx.waitUntil(updateAll(env, stub, false));
+  },
+
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const path = url.pathname;
@@ -113,6 +131,67 @@ export default {
       trackHit(request, url.searchParams);
       maybeFlush(env, waitUntil);
       return new Response(GIF, { headers: { 'Content-Type': 'image/gif', 'Cache-Control': 'no-store', 'Access-Control-Allow-Origin': '*' } });
+    }
+
+    if (path === '/api/cliente') {
+      // Resposta: { banco: true|false, cliente: {...}|null }. Sem banco (ou banco vazio) a tela usa o config/clientes.js
+      const chave = (url.searchParams.get('chave') || '').toLowerCase().slice(0, 60);
+      const headers = Object.assign({ 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'public, max-age=60' }, CORS);
+      try {
+        const n = await countClientes(env);
+        if (n <= 0) return new Response(JSON.stringify({ banco: false }), { headers });
+        const c = chave ? await getCliente(env, chave) : null;
+        return new Response(JSON.stringify({ banco: true, cliente: c ? { chave: c.chave, nome: c.nome, ativo: !!c.ativo, demo: !!c.demo } : null }), { headers });
+      } catch (e) {
+        return new Response(JSON.stringify({ banco: false, erro: 'indisponivel' }), { headers });
+      }
+    }
+
+    if (path === '/api/loterias') {
+      const stub = statsStub(env);
+      if (!stub) return json({ jogos: {}, erro: 'indisponível' }, 503);
+      trackRequest(request, 'loterias');
+      maybeFlush(env, waitUntil);
+      return loteriasResponse(env, stub, waitUntil);
+    }
+
+    if (path.startsWith('/api/admin/')) {
+      if (!(await isAdmin(request, env))) return json({ erro: 'Senha inválida' }, 401);
+      try {
+        if (path === '/api/admin/clientes') {
+          if (!env.DB) return json({ erro: 'Banco D1 não configurado', banco: false }, 503);
+          if (request.method === 'GET') return json({ banco: true, clientes: await listClientes(env) });
+          if (request.method === 'POST') { const b = await readJson(request); return json({ ok: true, cliente: await saveCliente(env, b, !!b.novo) }); }
+          if (request.method === 'DELETE') { await deleteCliente(env, url.searchParams.get('chave') || ''); return json({ ok: true }); }
+        }
+        if (path === '/api/admin/clientes/importar' && request.method === 'POST') {
+          if (!env.DB) return json({ erro: 'Banco D1 não configurado' }, 503);
+          const b = await readJson(request);
+          return json({ ok: true, importados: await importClientes(env, b.clientes) });
+        }
+        if (path === '/api/admin/loterias') {
+          const stub = statsStub(env);
+          if (!stub) return json({ erro: 'Durable Object indisponível' }, 503);
+          let resultado = null;
+          if (request.method === 'POST') {
+            resultado = await updateAll(env, stub, true);
+            await caches.default.delete(new Request('https://loterias-cache.rsscreen/v1'));
+          }
+          const rows = await stub.lotGetAll();
+          const mes = new Date(Date.now() - 3 * 3600 * 1000).toISOString().slice(0, 7);
+          return json({
+            resultado,
+            chave: !!env.APILOTERIAS_KEY,
+            fonte: env.LOTERIAS_FONTE === 'apiloterias' ? 'apiloterias' : 'caixa',
+            usoMes: await stub.lotUsage(mes, 0),
+            limite: Number(env.APILOTERIAS_LIMITE) || 450,
+            jogos: JOGOS.map(j => { const r = rows[j.id] || {}; return { id: j.id, nome: j.nome, concurso: r.concurso || 0, data: r.data || '', fonte: r.fonte || '', obtido: r.obtido || 0, proximo: r.proximo || null, erro: r.erro || '', erroEm: r.erroEm || 0 }; })
+          });
+        }
+      } catch (e) {
+        return json({ erro: e.message || String(e) }, 400);
+      }
+      return json({ erro: 'Rota desconhecida' }, 404);
     }
 
     if (path.startsWith('/api/stats')) {

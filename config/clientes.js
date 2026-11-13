@@ -44,6 +44,18 @@ window.RSSCREEN_CONFIG = {
     'Qualquer dúvida é só chamar por aqui. 🚀',
 
   // ------------------------------------------------------------------
+  // PLANOS — aparecem no cadastro de clientes e no Guia do painel.
+  // valor = preço sugerido POR TELA por mês (mude à vontade).
+  // ------------------------------------------------------------------
+  planos: [
+    { id: 'essencial',  nome: 'Essencial',      valor: 19.90, descricao: 'Notícias de todos os assuntos, clima e cotações, em todos os modelos de tela.' },
+    { id: 'completo',   nome: 'Completo',       valor: 29.90, descricao: 'Tudo do Essencial + loterias + os módulos novos assim que lançados, com trocas de conteúdo à vontade.' },
+    { id: 'rede',       nome: 'Rede (10+ telas)', valor: 14.90, descricao: 'Plano Completo com preço por tela para operadores com 10 telas ou mais.' },
+    { id: 'gerenciado', nome: 'Tela gerenciada', valor: 79.90, descricao: 'Você monta e cuida da programação do estabelecimento (configuração do player incluída, equipamento à parte).' },
+    { id: 'cortesia',   nome: 'Cortesia / teste', valor: 0, descricao: 'Sem cobrança: período de teste, permuta ou demonstração.' }
+  ],
+
+  // ------------------------------------------------------------------
   // CLIENTES — só o nome é obrigatório.
   // Campos opcionais: whatsapp (para enviar os links direto), ativo
   // ------------------------------------------------------------------

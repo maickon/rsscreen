@@ -64,6 +64,7 @@
         <a href="#modelos" data-view="modelos"><i data-icon="monitor"></i> Modelos de tela</a>
         <a href="#modulos" data-view="modulos"><i data-icon="grid"></i> Módulos</a>
         <a href="#monitor" data-view="monitor"><i data-icon="chart"></i> Monitoramento</a>
+        <a href="#guia" data-view="guia"><i data-icon="tag"></i> Guia de vendas</a>
       </nav>
       <div class="side-foot">
         <button class="side-install" id="installBtn" hidden><i data-icon="download"></i> Instalar app</button>
@@ -218,16 +219,40 @@
         <div class="page-head">
           <div>
             <h1>Clientes</h1>
-            <p>Clientes cadastrados em <code>config/clientes.js</code>. A chave de cada um é gerada automaticamente a partir do nome.</p>
+            <p id="cIntro">Clientes cadastrados em <code>config/clientes.js</code>. A chave de cada um é gerada automaticamente a partir do nome.</p>
           </div>
         </div>
+        <div class="db-banner" id="dbBanner" hidden></div>
+        <div class="mon-kpis client-kpis" id="cKpis" hidden></div>
         <div class="client-grid">
           <div class="card">
             <div class="card-head"><div><h3>Cadastrados</h3><p id="cCount"></p></div></div>
             <div class="table-wrap"><table class="table" id="cTable"></table></div>
           </div>
           <div class="client-col">
-          <div class="card new-client">
+          <form class="card new-client" id="dbForm" hidden autocomplete="off">
+            <div class="card-head"><div><h3 id="dbFormTitle">Cadastrar cliente</h3><p id="dbFormSub">Salvo no banco de dados: vale na hora, sem commit.</p></div>
+              <button type="button" class="btn btn-ghost btn-sm" id="dbNew" hidden><i data-icon="plus"></i> Novo</button></div>
+            <label class="field"><span>Nome do cliente</span><input class="input" id="dbNome" required maxlength="80" placeholder="Ex.: Mercado Bom Preço" /></label>
+            <div class="kv"><span>Chave (vai no link e nunca muda)</span><code id="dbKey">—</code></div>
+            <label class="field"><span>WhatsApp (com DDD)</span><input class="input" id="dbWhats" inputmode="tel" placeholder="Ex.: 22 99999-0000" /></label>
+            <div class="row-2">
+              <label class="field"><span>Plano</span><select class="select" id="dbPlano"></select></label>
+              <label class="field"><span>Telas</span><input class="input" id="dbTelas" type="number" min="0" max="9999" value="1" /></label>
+            </div>
+            <div class="row-2">
+              <label class="field"><span>Valor mensal (R$)</span><input class="input" id="dbValor" type="number" min="0" step="0.01" /></label>
+              <label class="field"><span>Dia de vencimento</span><input class="input" id="dbVenc" type="number" min="0" max="31" placeholder="Ex.: 10" /></label>
+            </div>
+            <p class="hint" id="dbPlanoInfo"></p>
+            <label class="field"><span>Observações (só você vê)</span><textarea class="input" id="dbObs" rows="2" maxlength="500" placeholder="Ex.: 2 TVs na padaria do centro, paga por Pix"></textarea></label>
+            <label class="check"><input type="checkbox" id="dbAtivo" checked /> Cliente ativo (desmarque para suspender as telas)</label>
+            <div class="db-acts">
+              <button class="btn btn-primary" type="submit" id="dbSave"><i data-icon="check"></i> Salvar cliente</button>
+              <button class="btn btn-ghost" type="button" id="dbDelete" hidden><i data-icon="trash"></i> Excluir</button>
+            </div>
+          </form>
+          <div class="card new-client" id="fileClientCard">
             <div class="card-head"><div><h3>Cadastrar novo cliente</h3><p>Sem banco de dados: o cadastro é uma linha no arquivo de configuração.</p></div></div>
             <label class="field"><span>Nome do cliente</span><input class="input" id="ncNome" placeholder="Ex.: Mercado Bom Preço" /></label>
             <label class="field"><span>WhatsApp (opcional, com DDD)</span><input class="input" id="ncWhats" inputmode="tel" placeholder="Ex.: 22 99999-0000" /></label>
@@ -277,6 +302,114 @@
           <label class="field"><span>Cores</span><select class="select" id="mTema"></select></label>
         </div>
         <div class="model-grid" id="modelGrid"></div>
+      </section>
+
+      <!-- ===== GUIA DE VENDAS ===== -->
+      <section class="view" id="view-guia" hidden>
+        <div class="page-head">
+          <div>
+            <h1>Guia de vendas</h1>
+            <p>Quanto cobrar, o que cada plano entrega, o que o cliente acessa e como conduzir a venda. Os preços dos planos vêm de <code>config/clientes.js</code> (<code>planos</code>) e podem ser mudados lá.</p>
+          </div>
+        </div>
+
+        <div class="guide">
+          <div class="card guide-hero">
+            <h2>Como o rsscreen gera dinheiro para você</h2>
+            <p>Você vende uma <b>assinatura mensal por tela</b>. O cliente recebe links de conteúdo que abrem em qualquer TV, TV Box, navegador ou sistema de mídia indoor e se atualizam sozinhos, 24 horas por dia. Seu custo de servidor é praticamente zero (plano gratuito da Cloudflare), então quase todo o valor da mensalidade é margem.</p>
+            <div class="guide-steps">
+              <div><b>1</b><span>Mostre a demonstração ao vivo</span></div>
+              <div><b>2</b><span>Libere 7 dias grátis (plano Cortesia)</span></div>
+              <div><b>3</b><span>Feche o plano e o valor</span></div>
+              <div><b>4</b><span>Gere os links e envie pelo WhatsApp</span></div>
+              <div><b>5</b><span>Cobre todo mês por Pix</span></div>
+            </div>
+          </div>
+
+          <h3 class="guide-title">Planos e preços sugeridos</h3>
+          <div class="plan-grid" id="guiaPlanos"></div>
+          <p class="hint">Valores por tela/mês. Referência de mercado (nov/2026): sistemas de mídia indoor cobram de R$ 15 a R$ 50 por tela/mês, já com player (WayIndoor R$ 14,90 · Attractive R$ 15 · PlayTVi R$ 24,90 a R$ 29,90 · Musardos R$ 29,90 a R$ 49,90). Como o rsscreen entrega <b>conteúdo que funciona no player que o cliente já usa</b>, o preço fica abaixo da assinatura de um sistema completo, e o operador soma o rsscreen ao que já tem sem trocar de sistema.</p>
+
+          <div class="guide-2">
+            <div class="card">
+              <h3>Exemplos de mensalidade</h3>
+              <div class="table-wrap"><table class="table" id="guiaExemplos"></table></div>
+            </div>
+            <div class="card">
+              <h3>Regras comerciais recomendadas</h3>
+              <ul class="guide-list">
+                <li><b>Teste grátis:</b> 7 dias no plano Cortesia. Depois, suspenda (desmarque "Cliente ativo") ou mude para o plano pago.</li>
+                <li><b>Cobrança:</b> mensal, antecipada, por Pix. Cadastre o <b>dia de vencimento</b> de cada cliente.</li>
+                <li><b>Anual:</b> 12 meses pelo preço de 10 (2 meses grátis) para quem paga à vista.</li>
+                <li><b>Configuração:</b> no plano Tela gerenciada, cobre de R$ 50 a R$ 150 por tela para instalar e configurar o player (uma vez só).</li>
+                <li><b>Equipamento:</b> TV e TV Box são do cliente. Se você fornecer, cobre à parte ou em comodato com fidelidade.</li>
+                <li><b>Atraso:</b> aviso no 3º dia; suspensão no 10º dia (só desmarcar "Cliente ativo", e as telas mostram "Tela suspensa"). Ao pagar, reative na hora.</li>
+                <li><b>Reajuste:</b> uma vez por ano, avisado com 30 dias de antecedência.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="guide-2">
+            <div class="card">
+              <h3>O que o cliente recebe</h3>
+              <ul class="guide-list ok">
+                <li>Links de tela prontos (um por conteúdo, modelo e orientação)</li>
+                <li>Abre em qualquer TV, TV Box, PC, navegador ou sistema de mídia indoor</li>
+                <li>Horizontal e vertical, inclusive TV de pé (totem)</li>
+                <li>Atualização automática: notícias a cada 10 min, cotações a cada 5 min, loterias logo após o sorteio</li>
+                <li>Continua rodando se a internet cair (mostra o último conteúdo salvo)</li>
+                <li>Troca de assunto, modelo ou tema pelo WhatsApp (você gera o link novo em segundos)</li>
+                <li>Suporte pelo seu WhatsApp</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h3>O que o cliente não tem</h3>
+              <ul class="guide-list no">
+                <li>Acesso ao painel: só você administra</li>
+                <li>Upload de anúncios próprios (próxima etapa do sistema)</li>
+                <li>Player ou equipamento incluído: ele usa o que já tem</li>
+                <li>Conteúdos fora do plano (ex.: loterias no Essencial)</li>
+              </ul>
+              <p class="hint">Dica: cada link carrega a chave do cliente. Se ele parar de pagar, suspenda o cadastro e todas as telas dele param juntas, sem precisar mexer nos aparelhos.</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Calculadora: quanto o seu cliente ganha (argumento de venda)</h3>
+            <p class="hint">O operador de mídia indoor ganha vendendo anúncios nas telas. Mostre a conta: o conteúdo rsscreen deixa a tela interessante, e uma tela olhada vende mais anúncio.</p>
+            <div class="calc">
+              <label class="field"><span>Telas do cliente</span><input class="input" id="calcTelas" type="number" min="1" value="3" /></label>
+              <label class="field"><span>Anunciantes (na rede toda)</span><input class="input" id="calcAnunc" type="number" min="0" value="6" /></label>
+              <label class="field"><span>Preço por anunciante (R$/mês)</span><input class="input" id="calcPreco" type="number" min="0" value="80" /></label>
+              <label class="field"><span>Plano rsscreen</span><select class="select" id="calcPlano"></select></label>
+            </div>
+            <div class="calc-out" id="calcOut"></div>
+            <p class="hint">Os preços de anúncio variam muito por cidade e ponto (padaria de bairro, clínica, academia). Use os valores que o cliente já pratica.</p>
+          </div>
+
+          <div class="guide-2">
+            <div class="card">
+              <h3>Mensagens prontas para o WhatsApp</h3>
+              <div class="msg" data-msg="1"><b>Primeiro contato</b><p>Oi, tudo bem? Eu forneço conteúdo automático para TVs de mídia indoor: notícias, clima, cotações e resultados de loterias, atualizados sozinhos, em horizontal ou vertical. Funciona no player que você já usa. Posso te mandar uma tela de demonstração?</p><button class="btn btn-ghost btn-sm" data-copymsg>Copiar</button></div>
+              <div class="msg"><b>Fechamento</b><p>Te libero 7 dias grátis para testar nas suas TVs. Se gostar, o plano Completo sai por R$ 29,90 por tela/mês, sem fidelidade. Quantas telas você tem hoje?</p><button class="btn btn-ghost btn-sm" data-copymsg>Copiar</button></div>
+              <div class="msg"><b>Cobrança</b><p>Oi! Passando para lembrar da mensalidade das suas telas, que vence dia {dia}. Segue a chave Pix: {pix}. Qualquer coisa estou por aqui!</p><button class="btn btn-ghost btn-sm" data-copymsg>Copiar</button></div>
+            </div>
+            <div class="card">
+              <h3>Seus custos para operar</h3>
+              <div class="table-wrap"><table class="table">
+                <thead><tr><th>Item</th><th>Custo</th></tr></thead>
+                <tbody>
+                  <tr><td>Hospedagem, banco de dados e monitoramento (Cloudflare)</td><td>R$ 0 no plano gratuito</td></tr>
+                  <tr><td>Notícias, clima e cotações</td><td>R$ 0 (fontes públicas)</td></tr>
+                  <tr><td>Loterias (API da Caixa)</td><td>R$ 0</td></tr>
+                  <tr><td>Loterias pela apiloterias.com (opcional, reserva)</td><td>R$ 15/mês (500 consultas)</td></tr>
+                  <tr><td>Domínio próprio (opcional)</td><td>cerca de R$ 40/ano</td></tr>
+                </tbody>
+              </table></div>
+              <p class="hint">O plano gratuito da Cloudflare aguenta centenas de telas. O Monitoramento mostra o uso real.</p>
+            </div>
+          </div>
+        </div>
       </section>
 
       <!-- ===== MONITORAMENTO ===== -->

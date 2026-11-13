@@ -7,11 +7,21 @@
     "directory": ".",
     "binding": "ASSETS"
   },
-  // Monitoramento (Painel > Monitoramento): contadores guardados num Durable Object com SQLite.
-  // É criado automaticamente no deploy e funciona no plano gratuito.
+  // Monitoramento e resultados de loterias: Durable Object com SQLite (criado no deploy, plano gratuito).
   "durable_objects": {
     "bindings": [{ "name": "STATS", "class_name": "Stats" }]
   },
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Stats"] }],
+  // Clientes: banco D1. Sem "database_id", o próprio deploy cria o banco e o vincula
+  // (provisionamento automático do Wrangler). A tabela é criada sozinha no primeiro uso.
+  "d1_databases": [{ "binding": "DB", "database_name": "rsscreen" }],
+  // Loterias: busca resultados às 21:30, 22:30, 23:30 e 00:30 (horário de Brasília) e às 08:00.
+  "triggers": { "crons": ["30 0-3 * * *", "0 11 * * *"] },
+  "vars": {
+    // "caixa" (grátis, padrão) ou "apiloterias" (usa primeiro a API paga; chave no secret APILOTERIAS_KEY)
+    "LOTERIAS_FONTE": "caixa",
+    // Limite de segurança de requisições por mês à apiloterias (o plano Básico tem 500)
+    "APILOTERIAS_LIMITE": "450"
+  },
   "observability": { "enabled": true }
 }

@@ -24,20 +24,41 @@ Cada `git push` publica uma versão nova.
 `worker/index.js`. No projeto Worker, o comando de deploy é `npx wrangler deploy` (padrão).
 O nome em `wrangler.jsonc` (`rsscreen`) deve ser igual ao nome do Worker no Cloudflare.
 
-## Cadastrar cliente
+## Cadastrar cliente (banco D1)
 
-Edite **`config/clientes.js`** e adicione uma linha na lista `clientes`:
+Os clientes ficam no **Cloudflare D1**. O banco é criado sozinho no primeiro deploy (o
+`wrangler.jsonc` declara o binding `DB` sem `database_id`) e a tabela é criada no primeiro uso.
 
-```js
-{ nome: 'Mercado Bom Preço', whatsapp: '22999990000' },
-```
+1. Abra **Painel > Clientes**. Na primeira vez aparece o botão **Importar clientes**, que copia
+   a lista do `config/clientes.js` para o banco **com as mesmas chaves** (nenhum link para).
+2. Cadastre, edite, suspenda ou exclua pelo formulário: vale nas telas em até 1 minuto, sem commit.
+3. Cada cliente tem plano, número de telas, valor mensal, dia de vencimento e observações.
+   O painel soma o faturamento mensal previsto.
 
-A chave única do cliente é gerada a partir do nome (ex.: `mercado-bom-preco-xium8`).
-O painel, na aba **Clientes**, mostra a chave e monta essa linha para você copiar.
-
-- Bloquear um cliente: `ativo: false` na linha dele.
+- A chave nunca muda ao editar o nome, então os links enviados continuam valendo.
+- Suspender = desmarcar "Cliente ativo". As telas mostram "Tela suspensa".
+- **Reserva:** se o banco estiver vazio ou fora do ar, as telas usam o `config/clientes.js`
+  e a última resposta salva no aparelho. Depois de importar, o banco passa a ser a lista oficial.
 - `demo: true` marca o cliente usado nas telas ao vivo da landing (aparece o selo "DEMONSTRAÇÃO").
 - Trocar o `segredo` muda **todas** as chaves dos clientes (e os links já enviados param).
+- Os planos e preços sugeridos ficam em `planos` no `config/clientes.js` (aparecem no cadastro
+  e no **Guia de vendas** do painel).
+
+## Loterias
+
+Módulo `modules/loterias` com 11 loterias e 4 modelos (resultado, próximo prêmio, painel e
+premiação/ganhadores).
+
+- O Worker busca os resultados pelo **Cron** (21:30, 22:30, 23:30, 00:30 e 08:00, horário de
+  Brasília) e guarda no Durable Object. As telas leem só essa cópia, então o número de telas
+  não gasta consultas.
+- Fonte principal: **API pública da Caixa** (grátis). Reserva opcional: **apiloterias.com**.
+  Para ativar a reserva, assine um plano e cadastre a chave como secret:
+  `npx wrangler secret put APILOTERIAS_KEY` (ou no painel da Cloudflare: Worker > Settings >
+  Variables and Secrets). O limite de segurança é `APILOTERIAS_LIMITE` (450/mês). Para usar a
+  apiloterias como principal, mude `LOTERIAS_FONTE` para `apiloterias` no `wrangler.jsonc`.
+- **Painel > Monitoramento > Loterias** mostra o último concurso de cada jogo, a fonte, as falhas e
+  o botão **Atualizar agora**.
 
 ## Senha do painel
 

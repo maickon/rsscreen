@@ -30,8 +30,17 @@
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) { toast('Armazenamento do navegador indisponível', 'x'); } }
   };
 
-  const clients = RS.clients();
-  const activeClients = clients.filter(c => c.ativo);
+  let clients = RS.clients();
+  let activeClients = clients.filter(c => c.ativo);
+  let dbMode = false;          // true = clientes vêm do banco D1
+  const PLANOS = (RS.CFG.planos || []);
+  const planoById = id => PLANOS.find(p => p.id === id);
+  const money = v => 'R$ ' + Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  function setClients(list) {
+    clients = list;
+    activeClients = clients.filter(c => c.ativo);
+  }
   let modules = [];          // todos os manifestos
   let active = [];           // apenas ativos
   let pacotes = [];
@@ -89,7 +98,7 @@
   });
 
   /* =================== navegação =================== */
-  const VIEWS = ['gerar', 'pacotes', 'links', 'clientes', 'modelos', 'modulos', 'monitor'];
+  const VIEWS = ['gerar', 'pacotes', 'links', 'clientes', 'modelos', 'modulos', 'monitor', 'guia'];
 
   function route() {
     const v = (location.hash || '#gerar').slice(1);
@@ -100,6 +109,7 @@
     if (view === 'links') renderLinks();
     if (view === 'modelos') renderModels();
     if (view === 'monitor') loadMonitor();
+    if (view === 'guia') renderGuia();
     window.scrollTo(0, 0);
   }
   window.addEventListener('hashchange', route);
@@ -503,17 +513,111 @@
   });
 
   /* =================== CLIENTES =================== */
+  const fromDb = r => ({
+    nome: r.nome, chave: r.chave, whatsapp: r.whatsapp || '', ativo: !!r.ativo, demo: !!r.demo,
+    plano: r.plano || '', valor: Number(r.valor) || 0, telas: Number(r.telas) || 0, vencimento: Number(r.vencimento) || 0, obs: r.obs || ''
+  });
+
+  // Tenta o banco D1; sem ele (ou fora da Cloudflare) continua com o config/clientes.js
+  async function loadClientsDb() {
+    try {
+      const r = await api('api/admin/clientes');
+      dbMode = !!r.banco;
+      if (dbMode) {
+        const list = (r.clientes || []).map(fromDb);
+        const fileList = RS.clients();
+        if (!list.length && fileList.length) {
+          showBanner('import', fileList.length);
+          setClients(fileList);
+        } else {
+          setClients(list);
+          const faltam = fileList.filter(f => !list.some(c => c.chave === f.chave));
+          if (faltam.length) showBanner('faltam', faltam.length); else $('#dbBanner').hidden = true;
+        }
+      }
+    } catch (e) {
+      dbMode = false;
+      showBanner('arquivo', e.message);
+    }
+    applyClientMode();
+  }
+
+  function showBanner(kind, info) {
+    const b = $('#dbBanner');
+    b.hidden = false;
+    b.className = 'db-banner' + (kind === 'arquivo' ? ' muted' : '');
+    if (kind === 'import') {
+      b.innerHTML = '<div><b>Banco de dados pronto.</b> Importe os ' + info + ' clientes do arquivo <code>config/clientes.js</code> para cadastrar pelo painel. As chaves continuam as mesmas: nenhum link para.</div>' +
+        '<button class="btn btn-primary btn-sm" data-import>' + ICON('upload') + ' Importar clientes</button>';
+    } else if (kind === 'faltam') {
+      b.innerHTML = '<div>' + info + ' cliente(s) do arquivo <code>config/clientes.js</code> ainda não estão no banco.</div>' +
+        '<button class="btn btn-dark btn-sm" data-import>' + ICON('upload') + ' Importar os que faltam</button>';
+    } else {
+      b.innerHTML = '<div><b>Modo arquivo:</b> o banco de dados não respondeu (' + esc(info) + '). O cadastro continua pelo <code>config/clientes.js</code>. No site publicado na Cloudflare o banco é criado sozinho no deploy.</div>';
+    }
+  }
+
+  $('#dbBanner').addEventListener('click', async e => {
+    if (!e.target.closest('[data-import]')) return;
+    try {
+      const list = RS.clients().map(c => {
+        const pl = c.demo ? 'cortesia' : ((PLANOS[0] && PLANOS[0].id) || '');
+        return { chave: c.chave, nome: c.nome, whatsapp: c.whatsapp, ativo: c.ativo, demo: c.demo, plano: pl, telas: 1, valor: c.demo ? 0 : ((planoById(pl) || {}).valor || 0) };
+      });
+      const r = await api('api/admin/clientes/importar', { method: 'POST', headers: { 'X-Admin-Senha': adminSenha(), 'Content-Type': 'application/json' }, body: JSON.stringify({ clientes: list }) });
+      toast(r.importados + ' clientes importados');
+      await loadClientsDb();
+      refreshClientViews();
+    } catch (err) { toast(err.message, 'x'); }
+  });
+
+  function applyClientMode() {
+    $('#dbForm').hidden = !dbMode;
+    $('#fileClientCard').hidden = dbMode;
+    $('#cIntro').innerHTML = dbMode
+      ? 'Clientes salvos no banco de dados da Cloudflare (D1). Cadastrar, editar ou suspender vale em até 1 minuto, sem commit.'
+      : 'Clientes cadastrados em <code>config/clientes.js</code>. A chave de cada um é gerada automaticamente a partir do nome.';
+  }
+
+  function refreshClientViews() {
+    if (!clients.some(c => c.chave === G.cliente && c.ativo)) {
+      const first = activeClients.find(c => !c.demo) || activeClients[0];
+      G.cliente = first ? first.chave : '';
+    }
+    renderClients();
+    renderGen();
+    renderPacks();
+  }
+
   function renderClients() {
     const counts = {};
     getLinks().forEach(r => { counts[r.cliente] = (counts[r.cliente] || 0) + 1; });
     $('#cCount').textContent = clients.length + ' cliente' + (clients.length !== 1 ? 's' : '') + ' · ' + activeClients.length + ' ativo' + (activeClients.length !== 1 ? 's' : '');
-    $('#cTable').innerHTML = '<thead><tr><th>Cliente</th><th>Chave</th><th>Status</th><th>Links</th><th></th></tr></thead><tbody>' +
+    if (dbMode) {
+      const pagantes = activeClients.filter(c => !c.demo);
+      const mrr = pagantes.reduce((t, c) => t + c.valor, 0);
+      const telas = pagantes.reduce((t, c) => t + c.telas, 0);
+      $('#cKpis').hidden = false;
+      $('#cKpis').innerHTML =
+        '<div class="card kpi"><span>Clientes ativos</span><b>' + pagantes.length + '</b><small>' + (clients.length - activeClients.length) + ' suspenso(s)</small></div>' +
+        '<div class="card kpi"><span>Telas contratadas</span><b>' + telas + '</b><small>soma dos clientes ativos</small></div>' +
+        '<div class="card kpi"><span>Faturamento mensal</span><b>' + money(mrr) + '</b><small>previsto pelos valores cadastrados</small></div>' +
+        '<div class="card kpi"><span>Ticket médio</span><b>' + money(pagantes.length ? mrr / pagantes.length : 0) + '</b><small>por cliente</small></div>';
+    } else {
+      $('#cKpis').hidden = true;
+    }
+    $('#cTable').innerHTML = '<thead><tr><th>Cliente</th><th>Chave</th>' + (dbMode ? '<th>Plano</th><th>Mensal</th>' : '') + '<th>Status</th><th>Links</th><th></th></tr></thead><tbody>' +
       clients.map(c => '<tr>' +
         '<td><b>' + esc(c.nome) + '</b>' + (c.whatsapp ? '<br><small style="color:var(--muted)">' + esc(c.whatsapp) + '</small>' : '') + '</td>' +
         '<td><span class="mono">' + esc(c.chave) + '</span></td>' +
+        (dbMode
+          ? '<td><small>' + esc((planoById(c.plano) || {}).nome || c.plano || '—') + (c.telas ? ' · ' + c.telas + ' tela' + (c.telas > 1 ? 's' : '') : '') + '</small></td>' +
+            '<td><small>' + (c.valor ? money(c.valor) : '—') + (c.vencimento ? '<br>dia ' + c.vencimento : '') + '</small></td>'
+          : '') +
         '<td>' + (!c.ativo ? '<span class="badge">Suspenso</span>' : c.demo ? '<span class="badge badge-brand">Demonstração</span>' : '<span class="badge badge-ok">Ativo</span>') + '</td>' +
         '<td>' + (counts[c.chave] || 0) + '</td>' +
         '<td><div class="acts">' +
+          (dbMode ? '<button class="btn btn-ghost btn-sm" data-edit="' + esc(c.chave) + '">Editar</button>' : '') +
           '<button class="btn btn-ghost btn-sm btn-icon" data-copy="' + esc(c.chave) + '" title="Copiar chave">' + ICON('copy') + '</button>' +
           (c.ativo ? '<button class="btn btn-dark btn-sm" data-gen="' + esc(c.chave) + '">' + ICON('link') + 'Gerar</button>' : '') +
         '</div></td>' +
@@ -524,7 +628,116 @@
     const cp = e.target.closest('[data-copy]');
     if (cp) return copy(cp.dataset.copy, 'Chave copiada');
     const g = e.target.closest('[data-gen]');
-    if (g) { G.cliente = g.dataset.gen; renderGen(); location.hash = '#gerar'; }
+    if (g) { G.cliente = g.dataset.gen; renderGen(); location.hash = '#gerar'; return; }
+    const ed = e.target.closest('[data-edit]');
+    if (ed) editClient(ed.dataset.edit);
+  });
+
+  /* ----- formulário do banco ----- */
+  let editing = null;   // chave em edição (null = cliente novo)
+
+  function fillPlanos(sel) {
+    $('#dbPlano').innerHTML = PLANOS.map(p => '<option value="' + esc(p.id) + '"' + (p.id === sel ? ' selected' : '') + '>' + esc(p.nome) + (p.valor ? ' · ' + money(p.valor) + '/tela' : '') + '</option>').join('') +
+      (sel && !planoById(sel) ? '<option value="' + esc(sel) + '" selected>' + esc(sel) + '</option>' : '');
+  }
+
+  function planoHint() {
+    const p = planoById($('#dbPlano').value);
+    const n = Number($('#dbTelas').value) || 0;
+    $('#dbPlanoInfo').textContent = p ? p.descricao + (p.valor ? ' Sugestão: ' + money(p.valor) + ' × ' + n + ' tela(s) = ' + money(p.valor * n) + '/mês.' : '') : '';
+  }
+
+  function suggestValor() {
+    const p = planoById($('#dbPlano').value);
+    if (p) $('#dbValor').value = (p.valor * (Number($('#dbTelas').value) || 0)).toFixed(2);
+    planoHint();
+  }
+
+  function resetForm() {
+    editing = null;
+    $('#dbForm').reset();
+    fillPlanos((PLANOS[0] || {}).id);
+    $('#dbTelas').value = 1;
+    $('#dbAtivo').checked = true;
+    suggestValor();
+    $('#dbKey').textContent = '—';
+    $('#dbFormTitle').textContent = 'Cadastrar cliente';
+    $('#dbFormSub').textContent = 'Salvo no banco de dados: vale na hora, sem commit.';
+    $('#dbDelete').hidden = true;
+    $('#dbNew').hidden = true;
+  }
+
+  function editClient(chave) {
+    const c = clients.find(x => x.chave === chave);
+    if (!c) return;
+    editing = chave;
+    $('#dbNome').value = c.nome;
+    $('#dbWhats').value = c.whatsapp;
+    fillPlanos(c.plano);
+    $('#dbTelas').value = c.telas;
+    $('#dbValor').value = c.valor ? c.valor.toFixed(2) : '';
+    $('#dbVenc').value = c.vencimento || '';
+    $('#dbObs').value = c.obs;
+    $('#dbAtivo').checked = c.ativo;
+    $('#dbKey').textContent = c.chave;
+    $('#dbFormTitle').textContent = 'Editar cliente';
+    $('#dbFormSub').textContent = 'A chave não muda ao trocar o nome: os links continuam valendo.';
+    $('#dbDelete').hidden = !!c.demo;
+    $('#dbNew').hidden = false;
+    planoHint();
+    $('#dbForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  $('#dbNome').addEventListener('input', () => {
+    if (editing) return;
+    const n = $('#dbNome').value.trim();
+    const k = n ? RS.clientKey(n) : '';
+    $('#dbKey').textContent = k ? k + (clients.some(c => c.chave === k) ? '  ⚠ já cadastrado' : '') : '—';
+  });
+  $('#dbPlano').addEventListener('change', suggestValor);
+  $('#dbTelas').addEventListener('input', suggestValor);
+  $('#dbNew').addEventListener('click', resetForm);
+
+  $('#dbForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const nome = $('#dbNome').value.trim();
+    if (!nome) return;
+    const cur = editing ? clients.find(x => x.chave === editing) : null;
+    const body = {
+      novo: !editing,
+      chave: editing || RS.clientKey(nome),
+      nome,
+      whatsapp: $('#dbWhats').value,
+      plano: $('#dbPlano').value,
+      telas: $('#dbTelas').value,
+      valor: $('#dbValor').value,
+      vencimento: $('#dbVenc').value,
+      obs: $('#dbObs').value,
+      ativo: $('#dbAtivo').checked,
+      demo: cur ? cur.demo : false
+    };
+    $('#dbSave').disabled = true;
+    try {
+      await api('api/admin/clientes', { method: 'POST', headers: { 'X-Admin-Senha': adminSenha(), 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      toast(editing ? 'Cliente atualizado' : 'Cliente cadastrado: ' + body.chave);
+      await loadClientsDb();
+      refreshClientViews();
+      resetForm();
+    } catch (err) { toast(err.message, 'x'); }
+    $('#dbSave').disabled = false;
+  });
+
+  $('#dbDelete').addEventListener('click', async () => {
+    if (!editing) return;
+    const c = clients.find(x => x.chave === editing);
+    if (!confirm('Excluir "' + (c ? c.nome : editing) + '"? As telas dele param de abrir. Para pausar sem perder o cadastro, desmarque "Cliente ativo".')) return;
+    try {
+      await api('api/admin/clientes?chave=' + encodeURIComponent(editing), { method: 'DELETE' });
+      toast('Cliente excluído');
+      await loadClientsDb();
+      refreshClientViews();
+      resetForm();
+    } catch (err) { toast(err.message, 'x'); }
   });
 
   function updateNewClient() {
@@ -628,6 +841,53 @@
     $('#installBtn').hidden = true;
   });
 
+  /* =================== GUIA DE VENDAS =================== */
+  const PLANO_INCLUI = {
+    essencial: ['Notícias: 25 assuntos e mais de 90 sites', 'Previsão do tempo', 'Cotações (dólar, euro, cripto)', 'Todos os modelos, horizontal e vertical', 'Até 3 links por tela'],
+    completo: ['Tudo do Essencial', 'Resultados de loterias', 'Módulos novos sem custo extra', 'Links e trocas ilimitadas', 'Suporte prioritário no WhatsApp'],
+    rede: ['Tudo do Completo', 'Preço por tela a partir de 10 telas', 'Pacotes prontos por segmento', 'Ideal para operadores de mídia indoor'],
+    gerenciado: ['Tudo do Completo', 'Você configura o player do cliente', 'Você monta a programação da TV', 'Ajustes mensais inclusos'],
+    cortesia: ['Acesso completo temporário', 'Para teste de 7 dias, permuta ou demonstração']
+  };
+  const DESTAQUE = 'completo';
+
+  function renderGuia() {
+    $('#guiaPlanos').innerHTML = PLANOS.map(p =>
+      '<div class="card plan' + (p.id === DESTAQUE ? ' plan-top' : '') + '">' +
+        (p.id === DESTAQUE ? '<span class="badge badge-dark">Mais vendido</span>' : '') +
+        '<h4>' + esc(p.nome) + '</h4>' +
+        '<div class="plan-price">' + (p.valor ? money(p.valor) + '<small>/tela/mês</small>' : 'Grátis') + '</div>' +
+        '<p>' + esc(p.descricao || '') + '</p>' +
+        '<ul>' + (PLANO_INCLUI[p.id] || []).map(x => '<li>' + ICON('check') + esc(x) + '</li>').join('') + '</ul>' +
+      '</div>').join('');
+    const pagos = PLANOS.filter(p => p.valor > 0);
+    $('#guiaExemplos').innerHTML = '<thead><tr><th>Plano</th><th>1 tela</th><th>3 telas</th><th>10 telas</th><th>Anual (1 tela)</th></tr></thead><tbody>' +
+      pagos.map(p => '<tr><td><b>' + esc(p.nome) + '</b></td><td>' + money(p.valor) + '</td><td>' + money(p.valor * 3) + '</td><td>' + money(p.valor * 10) + '</td><td>' + money(p.valor * 10) + '</td></tr>').join('') + '</tbody>';
+    $('#calcPlano').innerHTML = pagos.map(p => '<option value="' + esc(p.id) + '"' + (p.id === DESTAQUE ? ' selected' : '') + '>' + esc(p.nome) + ' · ' + money(p.valor) + '</option>').join('');
+    calc();
+    hydrateIcons($('#view-guia'));
+  }
+
+  function calc() {
+    const telas = Math.max(1, Number($('#calcTelas').value) || 1);
+    const anunc = Math.max(0, Number($('#calcAnunc').value) || 0);
+    const preco = Math.max(0, Number($('#calcPreco').value) || 0);
+    const p = planoById($('#calcPlano').value) || { valor: 0 };
+    // o mesmo anunciante costuma aparecer em todas as telas da rede: receita = anunciantes × preço
+    const receita = anunc * preco;
+    const custo = p.valor * telas;
+    $('#calcOut').innerHTML =
+      '<div><span>Receita com anúncios</span><b>' + money(receita) + '</b></div>' +
+      '<div><span>Conteúdo rsscreen (' + telas + ' tela' + (telas > 1 ? 's' : '') + ')</span><b>− ' + money(custo) + '</b></div>' +
+      '<div class="calc-total"><span>Sobra para o cliente</span><b>' + money(receita - custo) + '/mês</b></div>' +
+      '<div><span>O conteúdo custa</span><b>' + (receita ? (custo / receita * 100).toFixed(1).replace('.', ',') + '% da receita' : '—') + '</b></div>';
+  }
+  ['#calcTelas', '#calcAnunc', '#calcPreco', '#calcPlano'].forEach(s => $(s).addEventListener('input', calc));
+  $('#view-guia').addEventListener('click', e => {
+    const b = e.target.closest('[data-copymsg]');
+    if (b) copy(b.parentNode.querySelector('p').textContent, 'Mensagem copiada');
+  });
+
   /* =================== MONITORAMENTO =================== */
   let monData = null, monLoading = false;
 
@@ -716,6 +976,7 @@
         '<div class="card kpi"><span>Requisições</span><b>' + fmtN(tot) + '</b><small>' + (d.dias === 1 ? 'hoje' : 'últimos ' + d.dias + ' dias') + '</small></div>' +
         '<div class="card kpi' + (bad ? ' kpi-bad' : '') + '"><span>Feeds com problema</span><b>' + fmtN(bad + warn) + '</b><small>' + okN + ' ativos · ' + feeds.length + ' cadastrados</small></div>' +
       '</div>' +
+      '<div id="monLot"></div>' +
       '<div class="card"><div class="card-head"><div><h3>Requisições por dia</h3><p>Sinais das telas (a cada 5 min), leituras de feed e buscas de foto.</p></div></div>' + chart + '</div>' +
 
       '<div class="card"><div class="card-head"><div><h3>Feeds RSS</h3><p>“Recusado” = o site bloqueou ou não respondeu na última tentativa. As telas usam a última cópia boa (até 7 dias) e, sem ela, os outros sites do assunto.</p></div>' +
@@ -758,6 +1019,30 @@
           '</tbody></table></div>' : '<p class="mon-empty">Nenhum erro registrado.</p>') + '</div>' +
       '<p class="mon-foot">Atualizado ' + new Date(d.gerado).toLocaleTimeString('pt-BR') + '. Os IPs e aparelhos ficam guardados por 35 dias.</p>';
     hydrateIcons(body);
+    renderLot();
+  }
+
+  /* ----- loterias: status e atualização manual ----- */
+  let lotData = null;
+  function renderLot() {
+    const box = $('#monLot');
+    if (!box) return;
+    if (!lotData) { box.innerHTML = ''; return; }
+    const d = lotData;
+    box.innerHTML = '<div class="card"><div class="card-head"><div><h3>Loterias</h3><p>Fonte principal: <b>' + (d.fonte === 'apiloterias' ? 'apiloterias.com' : 'API da Caixa (grátis)') + '</b>' +
+      (d.chave ? ' · reserva apiloterias: ' + d.usoMes + ' de ' + d.limite + ' consultas usadas este mês' : ' · apiloterias sem chave (opcional)') +
+      '. Busca automática às 21:30, 22:30, 23:30, 00:30 e 08:00.</p></div>' +
+      '<button class="btn btn-dark btn-sm" id="lotUpdate">' + ICON('refresh') + ' Atualizar agora</button></div>' +
+      '<div class="table-wrap"><table class="table"><thead><tr><th>Loteria</th><th>Concurso</th><th>Sorteio</th><th>Próximo</th><th>Fonte</th><th>Atualizado</th></tr></thead><tbody>' +
+      d.jogos.map(j => '<tr><td><b>' + esc(j.nome) + '</b>' + (j.erro ? '<br><small class="mt-warn" title="' + esc(j.erro) + '">última tentativa falhou ' + ago(j.erroEm) + '</small>' : '') + '</td>' +
+        '<td>' + (j.concurso || '<span class="mt-warn">sem dados</span>') + '</td><td><small>' + esc(j.data.split('-').reverse().join('/')) + '</small></td>' +
+        '<td><small>' + (j.proximo && j.proximo.data ? esc(j.proximo.data.split('-').reverse().join('/')) : '—') + '</small></td>' +
+        '<td><small>' + esc(j.fonte || '—') + '</small></td><td><small>' + ago(j.obtido) + '</small></td></tr>').join('') +
+      '</tbody></table></div></div>';
+  }
+  async function loadLot() {
+    try { lotData = await api('api/admin/loterias'); } catch (_) { lotData = null; }
+    renderLot();
   }
 
   async function loadMonitor() {
@@ -767,6 +1052,7 @@
     try {
       monData = await api('api/stats?dias=' + $('#monDias').value);
       renderMonitor();
+      loadLot();
     } catch (e) {
       $('#monBody').innerHTML = '<div class="empty"><b>Não foi possível carregar o monitoramento.</b><br>' + esc(e.message) +
         (/senha/i.test(e.message) ? '<br>Saia e entre de novo com a senha atual.' : '<br>O monitoramento só funciona no site publicado na Cloudflare.') + '</div>';
@@ -782,6 +1068,18 @@
       $$('#monFeedFilter .chip').forEach(c => c.classList.toggle('on', c === chip));
       const f = chip.dataset.f;
       $$('.mon-feeds tbody tr').forEach(tr => { tr.hidden = f && !(f === 'bad' ? /bad|warn/.test(tr.dataset.st) : tr.dataset.st === f); });
+      return;
+    }
+    if (e.target.closest('#lotUpdate')) {
+      const btn = $('#lotUpdate');
+      btn.disabled = true; btn.textContent = 'Buscando resultados…';
+      try {
+        lotData = await api('api/admin/loterias', { method: 'POST' });
+        const novos = (lotData.resultado || []).filter(r => r.status === 'novo').length;
+        const falhas = (lotData.resultado || []).filter(r => r.status === 'falha').length;
+        toast(novos + ' resultado(s) novo(s)' + (falhas ? ' · ' + falhas + ' falha(s)' : ''), falhas ? 'x' : 'check');
+      } catch (err) { toast(err.message, 'x'); }
+      renderLot();
       return;
     }
     if (e.target.closest('#monReset')) {
@@ -826,6 +1124,8 @@
       toast('Erro ao carregar os módulos', 'x');
       return;
     }
+    await loadClientsDb();
+    if (dbMode) resetForm();
     const firstReal = activeClients.find(c => !c.demo) || activeClients[0];
     G.cliente = PK.cliente = firstReal ? firstReal.chave : '';
     G.modulo = active[0] ? active[0].id : 'rss';

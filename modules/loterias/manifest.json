@@ -1,15 +1,42 @@
 {
   "id": "loterias",
   "ordem": 4,
-  "status": "em-breve",
+  "status": "ativo",
   "nome": "Resultados de Loterias",
+  "tag": "Novo",
   "icone": "ticket",
   "chamada": "Mega-Sena, Quina, Lotofácil: os resultados que todo mundo quer ver.",
-  "descricao": "Telas com os números sorteados, prêmios acumulados e próximos concursos, atualizadas automaticamente. Perfeito para lotéricas, bancas, bares e comércios de bairro — o público procura a tela para conferir o jogo.",
+  "descricao": "Números sorteados, prêmios, cidades dos ganhadores e o valor estimado do próximo concurso, atualizados automaticamente depois de cada sorteio. Perfeito para lotéricas, bancas, bares e comércios de bairro: o público procura a tela para conferir o jogo.",
   "beneficios": [
-    "Mega-Sena, Quina, Lotofácil, Lotomania e mais",
-    "Destaque para prêmios acumulados",
-    "Horizontal e vertical"
+    "Mega-Sena, Lotofácil, Quina, +Milionária, Lotomania, Dupla Sena, Timemania, Dia de Sorte, Super Sete, Federal e Loteca",
+    "Destaque para prêmio acumulado e valor do próximo concurso",
+    "Resultado na tela minutos depois da divulgação",
+    "Modelos em horizontal e vertical"
   ],
-  "indicado": ["Lotéricas", "Bancas", "Bares", "Mercados de bairro"]
+  "indicado": ["Lotéricas", "Bancas", "Bares", "Padarias", "Mercados de bairro"],
+  "script": "screen.js",
+  "estilo": "style.css",
+  "rotuloAssunto": "Loterias",
+  "padrao": { "assunto": "principais", "layout": "resultado", "tema": "noite", "tempo": 12 },
+  "layouts": [
+    { "id": "resultado", "nome": "Resultado", "descricao": "Dezenas sorteadas em destaque, situação do prêmio e o próximo concurso." },
+    { "id": "premio", "nome": "Próximo prêmio", "descricao": "O valor estimado do próximo concurso bem grande, para chamar o apostador." },
+    { "id": "painel", "nome": "Painel de loterias", "descricao": "Várias loterias ao mesmo tempo, em grade." },
+    { "id": "ganhadores", "nome": "Premiação e ganhadores", "descricao": "Quanto pagou cada faixa e as cidades dos ganhadores." }
+  ],
+  "assuntos": [
+    { "id": "principais", "nome": "Principais (Mega, Lotofácil, Quina, +Milionária)", "jogos": ["megasena", "lotofacil", "quina", "maismilionaria"] },
+    { "id": "todas", "nome": "Todas as loterias", "jogos": ["megasena", "lotofacil", "quina", "maismilionaria", "lotomania", "duplasena", "timemania", "diadesorte", "supersete", "federal", "loteca"] },
+    { "id": "megasena", "nome": "Mega-Sena", "jogos": ["megasena"] },
+    { "id": "lotofacil", "nome": "Lotofácil", "jogos": ["lotofacil"] },
+    { "id": "quina", "nome": "Quina", "jogos": ["quina"] },
+    { "id": "maismilionaria", "nome": "+Milionária", "jogos": ["maismilionaria"] },
+    { "id": "lotomania", "nome": "Lotomania", "jogos": ["lotomania"] },
+    { "id": "duplasena", "nome": "Dupla Sena", "jogos": ["duplasena"] },
+    { "id": "timemania", "nome": "Timemania", "jogos": ["timemania"] },
+    { "id": "diadesorte", "nome": "Dia de Sorte", "jogos": ["diadesorte"] },
+    { "id": "supersete", "nome": "Super Sete", "jogos": ["supersete"] },
+    { "id": "federal", "nome": "Loteria Federal", "jogos": ["federal"] },
+    { "id": "loteca", "nome": "Loteca", "jogos": ["loteca"] }
+  ]
 }

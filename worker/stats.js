@@ -117,7 +117,34 @@ export class Stats extends DurableObject {
         ok INTEGER, first INTEGER, last INTEGER, beats INTEGER);
       CREATE TABLE IF NOT EXISTS errors (t INTEGER, url TEXT, status INTEGER, msg TEXT);
       CREATE TABLE IF NOT EXISTS meta (k TEXT PRIMARY KEY, v TEXT);
+      CREATE TABLE IF NOT EXISTS loterias (jogo TEXT PRIMARY KEY, dados TEXT, atualizado INTEGER);
     `);
+  }
+
+  /* ---------- resultados de loterias (worker/loterias.js) ---------- */
+  lotGetOne(jogo) {
+    const r = this.sql.exec('SELECT dados FROM loterias WHERE jogo = ?', jogo).toArray()[0];
+    return r ? JSON.parse(r.dados) : null;
+  }
+
+  lotGetAll() {
+    const out = {};
+    this.sql.exec('SELECT jogo, dados FROM loterias').toArray().forEach(r => { out[r.jogo] = JSON.parse(r.dados); });
+    return out;
+  }
+
+  lotPut(jogo, dados) {
+    this.sql.exec('INSERT INTO loterias (jogo, dados, atualizado) VALUES (?, ?, ?) ON CONFLICT (jogo) DO UPDATE SET dados = excluded.dados, atualizado = excluded.atualizado',
+      jogo, JSON.stringify(dados), Date.now());
+    return true;
+  }
+
+  // Requisições à apiloterias no mês (inc = 0 só consulta)
+  lotUsage(mes, inc) {
+    const k = 'apiloterias-' + mes;
+    if (inc) this.sql.exec("INSERT INTO meta (k, v) VALUES (?, ?) ON CONFLICT (k) DO UPDATE SET v = CAST(v AS INTEGER) + ?", k, String(inc), inc);
+    const r = this.sql.exec('SELECT v FROM meta WHERE k = ?', k).toArray()[0];
+    return r ? Number(r.v) : 0;
   }
 
   ingest(d, b) {
