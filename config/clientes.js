@@ -47,6 +47,7 @@ window.RSSCREEN_CONFIG = {
     { nome: 'Demonstração', demo: true },          // usado na landing page (exibe selo "demonstração")
     { nome: 'Padaria Pão Dourado', whatsapp: '' },
     { nome: 'Academia Força Total', whatsapp: '' },
-    { nome: 'Clínica Sorriso Lagos', whatsapp: '' }
+    { nome: 'Clínica Sorriso Lagos', whatsapp: '' },
+    { nome: 'Daniel', whatsapp: '5511997020095' },
   ]
 };
