@@ -1,0 +1,29 @@
+{
+  "id": "anuncios",
+  "ordem": 2,
+  "status": "ativo",
+  "nome": "Anúncios e Ofertas",
+  "tag": "Novo",
+  "icone": "tag",
+  "chamada": "Crie o anúncio do comerciante em 2 minutos, pelo celular, e ele aparece na TV na hora.",
+  "descricao": "O operador cadastra os anúncios dos seus anunciantes direto no painel: oferta com preço de/por, divulgação de serviço, aviso, evento, arte pronta ou vídeo. Cada anúncio tem período de exibição e tempo de tela, e o link do cliente mostra todos em sequência, sempre atualizado.",
+  "beneficios": [
+    "6 modelos prontos: oferta, serviço, aviso, evento, arte pronta e vídeo",
+    "Foto enviada pelo celular, já otimizada para a TV",
+    "Período de exibição: o anúncio entra e sai sozinho",
+    "Prévia ao vivo antes de publicar",
+    "Horizontal e vertical"
+  ],
+  "indicado": ["Operadores de mídia indoor", "Supermercados", "Farmácias", "Lojas", "Restaurantes"],
+  "script": "screen.js",
+  "estilo": "style.css",
+  "rotuloAssunto": "Anúncios",
+  "padrao": { "assunto": "todos", "layout": "padrao", "tema": "noite", "tempo": 10 },
+  "layouts": [
+    { "id": "padrao", "nome": "Modelo de cada anúncio", "descricao": "Cada anúncio aparece no modelo escolhido no cadastro." },
+    { "id": "moldura", "nome": "Com relógio e data", "descricao": "Os anúncios com uma faixa de relógio e data na parte de baixo." }
+  ],
+  "assuntos": [
+    { "id": "todos", "nome": "Todos os anúncios ativos do cliente" }
+  ]
+}

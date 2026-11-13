@@ -8,6 +8,8 @@
 //   /api/cliente      a tela confere se a chave do cliente existe e está ativa (D1)
 //   /api/admin/clientes[/importar]  cadastro de clientes no D1 (exige a senha)
 //   /api/loterias     últimos resultados guardados (as telas leem daqui)
+//   /api/anuncios     anúncios ativos do cliente; /api/midia/<id> fotos dos anúncios
+//   /api/admin/anuncios[/ordem], /api/admin/midia  cadastro de anúncios (exige a senha)
 //   /api/admin/loterias  status e "atualizar agora" (exige a senha)
 //
 // Cron (wrangler.jsonc → triggers): busca os resultados de loterias depois dos sorteios.
@@ -16,7 +18,8 @@
 import { onRequestGet } from '../functions/api/rss.js';
 import { Stats, trackRequest, trackFeed, trackOg, trackHit, maybeFlush, statsStub } from './stats.js';
 import { listClientes, countClientes, getCliente, saveCliente, deleteCliente, importClientes } from './clientes.js';
-import { loteriasResponse, updateAll, JOGOS } from './loterias.js';
+import { listAds, publicAds, saveAd, setAdsOrder, deleteAd, saveMedia, mediaResponse } from './anuncios.js';
+import { loteriasResponse, updateAll, updateStats, JOGOS, STATS_JOGOS } from './loterias.js';
 
 export { Stats };
 
@@ -108,7 +111,7 @@ export default {
   // Cron: resultados de loterias (só busca os jogos cujo sorteio já aconteceu)
   async scheduled(event, env, ctx) {
     const stub = statsStub(env);
-    if (stub) ctx.waitUntil(updateAll(env, stub, false));
+    if (stub) ctx.waitUntil(updateAll(env, stub, false).then(() => event.cron === '0 11 * * *' ? updateStats(env, stub, false) : null));
   },
 
   async fetch(request, env, ctx) {
@@ -133,6 +136,38 @@ export default {
       return new Response(GIF, { headers: { 'Content-Type': 'image/gif', 'Cache-Control': 'no-store', 'Access-Control-Allow-Origin': '*' } });
     }
 
+    if (path === '/api/anuncios') {
+      // Anúncios ativos do cliente para as telas (cache de 1 minuto)
+      const cliente = (url.searchParams.get('cliente') || '').toLowerCase().replace(/[^a-z0-9-]/g, '');
+      const headers = Object.assign({ 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'public, max-age=60' }, CORS);
+      if (!env.DB || !cliente) return new Response(JSON.stringify({ anuncios: [], banco: !!env.DB }), { headers });
+      trackRequest(request, 'anuncios');
+      maybeFlush(env, waitUntil);
+      const ck = new Request('https://anuncios-cache.rsscreen/' + cliente);
+      const hit = await caches.default.match(ck);
+      if (hit) return hit;
+      try {
+        const c = (await countClientes(env)) > 0 ? await getCliente(env, cliente) : { ativo: 1 };
+        const anuncios = c && c.ativo ? await publicAds(env, cliente) : [];
+        const res = new Response(JSON.stringify({ anuncios, banco: true }), { headers });
+        waitUntil(caches.default.put(ck, res.clone()));
+        return res;
+      } catch (e) {
+        return new Response(JSON.stringify({ anuncios: [], erro: 'indisponivel' }), { status: 503, headers });
+      }
+    }
+
+    if (path.startsWith('/api/midia/')) {
+      const id = path.slice('/api/midia/'.length).replace(/[^a-z0-9]/g, '');
+      if (!env.DB || !id) return new Response('Não encontrado', { status: 404 });
+      const ck = new Request('https://midia-cache.rsscreen/' + id);
+      const hit = await caches.default.match(ck);
+      if (hit) return hit;
+      const res = await mediaResponse(env, id);
+      if (res.ok) waitUntil(caches.default.put(ck, res.clone()));
+      return res;
+    }
+
     if (path === '/api/cliente') {
       // Resposta: { banco: true|false, cliente: {...}|null }. Sem banco (ou banco vazio) a tela usa o config/clientes.js
       const chave = (url.searchParams.get('chave') || '').toLowerCase().slice(0, 60);
@@ -152,7 +187,7 @@ export default {
       if (!stub) return json({ jogos: {}, erro: 'indisponível' }, 503);
       trackRequest(request, 'loterias');
       maybeFlush(env, waitUntil);
-      return loteriasResponse(env, stub, waitUntil);
+      return loteriasResponse(env, stub, waitUntil, request);
     }
 
     if (path.startsWith('/api/admin/')) {
@@ -169,13 +204,40 @@ export default {
           const b = await readJson(request);
           return json({ ok: true, importados: await importClientes(env, b.clientes) });
         }
+        if (path === '/api/admin/anuncios' || path === '/api/admin/anuncios/ordem' || path === '/api/admin/midia') {
+          if (!env.DB) return json({ erro: 'Banco D1 não configurado' }, 503);
+          const purge = c => caches.default.delete(new Request('https://anuncios-cache.rsscreen/' + c));
+          if (path === '/api/admin/midia' && request.method === 'POST') {
+            const cliente = (url.searchParams.get('cliente') || '').toLowerCase();
+            return json(await saveMedia(env, cliente, (request.headers.get('Content-Type') || '').split(';')[0], await request.arrayBuffer()));
+          }
+          if (path === '/api/admin/anuncios/ordem' && request.method === 'POST') {
+            const b = await readJson(request);
+            await setAdsOrder(env, b.cliente, b.ids);
+            await purge(b.cliente);
+            return json({ ok: true });
+          }
+          if (request.method === 'GET') return json({ anuncios: await listAds(env, (url.searchParams.get('cliente') || '').toLowerCase()) });
+          if (request.method === 'POST') {
+            const b = await readJson(request);
+            const r = await saveAd(env, b);
+            await purge(String(b.cliente || '').toLowerCase());
+            return json({ ok: true, id: r.id });
+          }
+          if (request.method === 'DELETE') {
+            await deleteAd(env, url.searchParams.get('id') || '');
+            await purge((url.searchParams.get('cliente') || '').toLowerCase());
+            return json({ ok: true });
+          }
+        }
         if (path === '/api/admin/loterias') {
           const stub = statsStub(env);
           if (!stub) return json({ erro: 'Durable Object indisponível' }, 503);
           let resultado = null;
           if (request.method === 'POST') {
             resultado = await updateAll(env, stub, true);
-            await caches.default.delete(new Request('https://loterias-cache.rsscreen/v1'));
+            if (url.searchParams.get('estatisticas')) resultado = resultado.concat(await updateStats(env, stub, true));
+            await caches.default.delete(new Request('https://loterias-cache.rsscreen/v2'));
           }
           const rows = await stub.lotGetAll();
           const mes = new Date(Date.now() - 3 * 3600 * 1000).toISOString().slice(0, 7);
@@ -185,6 +247,7 @@ export default {
             fonte: env.LOTERIAS_FONTE === 'apiloterias' ? 'apiloterias' : 'caixa',
             usoMes: await stub.lotUsage(mes, 0),
             limite: Number(env.APILOTERIAS_LIMITE) || 450,
+            estatisticas: STATS_JOGOS.map(j => { const r = rows['stats:' + j]; return { id: j, obtido: r ? r.obtido : 0, sorteios: r ? r.sorteios : 0 }; }),
             jogos: JOGOS.map(j => { const r = rows[j.id] || {}; return { id: j.id, nome: j.nome, concurso: r.concurso || 0, data: r.data || '', fonte: r.fonte || '', obtido: r.obtido || 0, proximo: r.proximo || null, erro: r.erro || '', erroEm: r.erroEm || 0 }; })
           });
         }

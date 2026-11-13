@@ -58,13 +58,14 @@
       </div>
       <nav class="side-nav" id="sideNav">
         <a href="#gerar" data-view="gerar"><i data-icon="link"></i> Gerar links</a>
+        <a href="#anuncios" data-view="anuncios"><i data-icon="tag"></i> Anúncios</a>
         <a href="#pacotes" data-view="pacotes"><i data-icon="package"></i> Pacotes prontos</a>
         <a href="#links" data-view="links"><i data-icon="layers"></i> Meus links <em id="navLinksCount"></em></a>
         <a href="#clientes" data-view="clientes"><i data-icon="users"></i> Clientes</a>
         <a href="#modelos" data-view="modelos"><i data-icon="monitor"></i> Modelos de tela</a>
         <a href="#modulos" data-view="modulos"><i data-icon="grid"></i> Módulos</a>
         <a href="#monitor" data-view="monitor"><i data-icon="chart"></i> Monitoramento</a>
-        <a href="#guia" data-view="guia"><i data-icon="tag"></i> Guia de vendas</a>
+        <a href="#guia" data-view="guia"><i data-icon="sparkles"></i> Guia de vendas</a>
       </nav>
       <div class="side-foot">
         <button class="side-install" id="installBtn" hidden><i data-icon="download"></i> Instalar app</button>
@@ -304,6 +305,74 @@
         <div class="model-grid" id="modelGrid"></div>
       </section>
 
+      <!-- ===== ANÚNCIOS ===== -->
+      <section class="view" id="view-anuncios" hidden>
+        <div class="page-head">
+          <div>
+            <h1>Anúncios</h1>
+            <p>Crie os anúncios dos anunciantes de cada cliente. O link de anúncios do cliente mostra todos em sequência e atualiza sozinho: o que você salvar aqui aparece na TV em até 2 minutos.</p>
+          </div>
+        </div>
+        <div class="db-banner muted" id="adNoDb" hidden><div><b>Anúncios precisam do banco de dados.</b> Eles funcionam no site publicado na Cloudflare (o banco D1 é criado no deploy).</div></div>
+
+        <div class="ads-grid" id="adsGrid">
+          <div class="ads-col">
+            <div class="card">
+              <div class="card-head">
+                <div><h3>Cliente</h3><p id="adCount"></p></div>
+                <button class="btn btn-primary btn-sm" id="adNew" type="button"><i data-icon="plus"></i> Novo anúncio</button>
+              </div>
+              <select class="select" id="adCliente"></select>
+              <div class="ad-list" id="adList"></div>
+              <div class="ad-link" id="adLink"></div>
+            </div>
+            <div class="card">
+              <div class="card-head">
+                <div><h3>Prévia ao vivo</h3><p>Mostra o anúncio em edição antes de salvar.</p></div>
+                <div class="chips" id="adOrient">
+                  <button class="chip on" data-v="horizontal" type="button"><i data-icon="monitor"></i> Horizontal</button>
+                  <button class="chip" data-v="vertical" type="button"><i data-icon="phone"></i> Vertical</button>
+                </div>
+              </div>
+              <div class="pv-stage"><div class="device-tv" id="adDevice"><div class="screen"><iframe id="adPreview" title="Prévia do anúncio"></iframe></div></div></div>
+            </div>
+          </div>
+
+          <form class="card ad-form" id="adForm" autocomplete="off">
+            <div class="card-head"><div><h3 id="adFormTitle">Novo anúncio</h3><p>Escolha o modelo e preencha. Campos vazios não aparecem na tela.</p></div></div>
+            <div class="field"><span>Modelo</span><div class="ad-models" id="adModelos"></div></div>
+            <label class="field"><span>Anunciante (quem paga o anúncio)</span><input class="input" id="adAnunciante" maxlength="80" placeholder="Ex.: Açougue do Zé" /></label>
+            <div id="adFields"></div>
+            <div class="field" id="adFotoWrap">
+              <span id="adFotoLabel">Foto</span>
+              <div class="ad-photo-pick">
+                <div class="ad-thumb" id="adThumb"></div>
+                <div>
+                  <label class="btn btn-ghost btn-sm"><i data-icon="upload"></i> Escolher imagem<input type="file" id="adFoto" accept="image/*" hidden /></label>
+                  <button class="btn btn-ghost btn-sm" type="button" id="adFotoDel" hidden>Remover</button>
+                  <p class="hint" id="adFotoHint">JPG, PNG ou WebP. A imagem é reduzida e otimizada automaticamente.</p>
+                </div>
+              </div>
+            </div>
+            <div class="field" id="adCorWrap"><span>Cor de destaque</span><div class="ad-colors" id="adCores"></div></div>
+            <div class="row-2">
+              <label class="field"><span>Tempo na tela (segundos)</span><input class="input" id="adDuracao" type="number" min="4" max="120" value="10" /></label>
+              <label class="field" id="adAjusteWrap"><span>Encaixe</span><select class="select" id="adAjuste"><option value="cobrir">Preencher a tela (corta as bordas)</option><option value="conter">Mostrar inteira (com fundo)</option></select></label>
+            </div>
+            <div class="row-2">
+              <label class="field"><span>Começa em (opcional)</span><input class="input" id="adInicio" type="date" /></label>
+              <label class="field"><span>Termina em (opcional)</span><input class="input" id="adFim" type="date" /></label>
+            </div>
+            <label class="check"><input type="checkbox" id="adAtivo" checked /> Anúncio ativo</label>
+            <div class="db-acts">
+              <button class="btn btn-primary" type="submit" id="adSave"><i data-icon="check"></i> Salvar anúncio</button>
+              <button class="btn btn-ghost" type="button" id="adCancel">Cancelar</button>
+              <button class="btn btn-ghost" type="button" id="adDelete" hidden><i data-icon="trash"></i> Excluir</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
       <!-- ===== GUIA DE VENDAS ===== -->
       <section class="view" id="view-guia" hidden>
         <div class="page-head">
@@ -357,6 +426,7 @@
                 <li>Abre em qualquer TV, TV Box, PC, navegador ou sistema de mídia indoor</li>
                 <li>Horizontal e vertical, inclusive TV de pé (totem)</li>
                 <li>Atualização automática: notícias a cada 10 min, cotações a cada 5 min, loterias logo após o sorteio</li>
+                <li>Tela de anúncios com os anunciantes dele (você cria e atualiza pelo painel)</li>
                 <li>Continua rodando se a internet cair (mostra o último conteúdo salvo)</li>
                 <li>Troca de assunto, modelo ou tema pelo WhatsApp (você gera o link novo em segundos)</li>
                 <li>Suporte pelo seu WhatsApp</li>
@@ -366,9 +436,9 @@
               <h3>O que o cliente não tem</h3>
               <ul class="guide-list no">
                 <li>Acesso ao painel: só você administra</li>
-                <li>Upload de anúncios próprios (próxima etapa do sistema)</li>
+                <li>Criar anúncios sozinho: você cria pelo painel e cobra por isso (ex.: R$ 20 a R$ 50 por arte)</li>
                 <li>Player ou equipamento incluído: ele usa o que já tem</li>
-                <li>Conteúdos fora do plano (ex.: loterias no Essencial)</li>
+                <li>Conteúdos fora do plano (ex.: loterias e anúncios no Essencial)</li>
               </ul>
               <p class="hint">Dica: cada link carrega a chave do cliente. Se ele parar de pagar, suspenda o cadastro e todas as telas dele param juntas, sem precisar mexer nos aparelhos.</p>
             </div>

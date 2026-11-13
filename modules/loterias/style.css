@@ -117,3 +117,27 @@
 .o-v .m-loterias .lt-grid { grid-template-columns: 1fr; }
 .o-v .m-loterias .lt-loteca { grid-template-columns: 1fr; }
 .o-v .m-loterias .lt-jogo { font-size: 1.5rem; }
+
+/* ---- estatísticas ---- */
+.m-loterias .lt-stats2 { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; min-height: 0; }
+.m-loterias .lt-stat-col { background: var(--surface-a90); border-radius: 1.6rem; padding: 1.6rem 2.2rem; display: flex; flex-direction: column; gap: .4rem; min-height: 0; overflow: hidden; }
+.m-loterias .lt-stat-col.hot { box-shadow: inset 0 .45rem 0 #f97316; }
+.m-loterias .lt-stat-col.cold { box-shadow: inset 0 .45rem 0 #38bdf8; }
+.m-loterias .lt-stat-list { flex: 1; display: flex; flex-direction: column; justify-content: space-around; gap: .6rem; }
+.m-loterias .lt-stat-row, .m-loterias .lt-pi { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1.2rem; }
+.m-loterias .lt-stat-row .lt-ball { width: 5rem; height: 5rem; font-size: 2.1rem; }
+.m-loterias .lt-stat-row b, .m-loterias .lt-pi b { font-size: 1.7rem; font-weight: 800; font-variant-numeric: tabular-nums; min-width: 6rem; text-align: right; }
+.m-loterias .lt-stat-bar { height: 1rem; border-radius: 1rem; background: var(--text-a12); overflow: hidden; }
+.m-loterias .lt-stat-bar i { display: block; height: 100%; border-radius: 1rem; background: var(--lc); }
+.m-loterias .hot .lt-stat-bar i { background: #f97316; }
+.m-loterias .cold .lt-stat-bar i { background: #38bdf8; }
+.m-loterias .lt-atraso { flex: 1; display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.4rem 1rem; align-content: center; justify-items: center; }
+.m-loterias .lt-atr { display: flex; flex-direction: column; align-items: center; gap: .5rem; }
+.m-loterias .lt-atr .lt-ball { width: 6.6rem; height: 6.6rem; font-size: 2.8rem; }
+.m-loterias .lt-atr small { font-size: 1.25rem; font-weight: 700; color: var(--muted); white-space: nowrap; }
+.m-loterias .lt-pi { padding: 1rem 0; }
+.m-loterias .lt-pi span { font-size: 1.6rem; font-weight: 700; white-space: nowrap; }
+.m-loterias .lt-stat-foot { font-size: 1.15rem; color: var(--muted); font-weight: 600; text-align: center; }
+.o-v .m-loterias .lt-stats2 { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+.o-v .m-loterias .lt-atraso { grid-template-columns: repeat(4, 1fr); }
+.o-v .m-loterias .lt-stat-row .lt-ball { width: 5.4rem; height: 5.4rem; font-size: 2.3rem; }

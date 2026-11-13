@@ -98,7 +98,7 @@
   });
 
   /* =================== navegação =================== */
-  const VIEWS = ['gerar', 'pacotes', 'links', 'clientes', 'modelos', 'modulos', 'monitor', 'guia'];
+  const VIEWS = ['gerar', 'anuncios', 'pacotes', 'links', 'clientes', 'modelos', 'modulos', 'monitor', 'guia'];
 
   function route() {
     const v = (location.hash || '#gerar').slice(1);
@@ -110,6 +110,7 @@
     if (view === 'modelos') renderModels();
     if (view === 'monitor') loadMonitor();
     if (view === 'guia') renderGuia();
+    if (view === 'anuncios') initAds();
     window.scrollTo(0, 0);
   }
   window.addEventListener('hashchange', route);
@@ -841,12 +842,348 @@
     $('#installBtn').hidden = true;
   });
 
+  /* =================== ANÚNCIOS =================== */
+  const AD_MODELOS = [
+    { id: 'oferta', nome: 'Oferta / produto', icon: 'tag', foto: true },
+    { id: 'servico', nome: 'Empresa / serviço', icon: 'sparkles', foto: true },
+    { id: 'aviso', nome: 'Aviso / chamada', icon: 'zap', foto: false },
+    { id: 'evento', nome: 'Evento / data', icon: 'clock', foto: true },
+    { id: 'imagem', nome: 'Arte pronta', icon: 'eye', foto: true },
+    { id: 'video', nome: 'Vídeo (link)', icon: 'play', foto: false }
+  ];
+  const F = {
+    titulo: ['Título', 'text'], subtitulo: ['Descrição curta', 'text'], texto: ['Texto', 'textarea'],
+    preco: ['Preço (por)', 'text', 'Ex.: 39,90'], precoDe: ['Preço antigo (de), opcional', 'text', 'Ex.: 49,90'],
+    selo: ['Selo / etiqueta', 'text', 'Ex.: OFERTA'], cta: ['Chamada', 'text', 'Ex.: Só esta semana!'],
+    itens: ['Itens (um por linha)', 'textarea', 'Ex.:\nCorte masculino\nBarba\nSobrancelha'],
+    whatsapp: ['WhatsApp', 'text', 'Ex.: (22) 99999-0000'], instagram: ['Instagram', 'text', '@perfil'], endereco: ['Endereço', 'text', 'Ex.: Rua das Flores, 120'],
+    data: ['Data', 'date'], hora: ['Horário', 'text', 'Ex.: 20h'], local: ['Local', 'text'],
+    video: ['Link do vídeo MP4 (https)', 'text', 'https://…/video.mp4']
+  };
+  const AD_CAMPOS = {
+    oferta: [['titulo', 'Produto', 'Ex.: Picanha Bovina kg'], 'subtitulo', 'preco', 'precoDe', 'selo', 'cta', ['texto', 'Observação pequena', 'Ex.: Enquanto durar o estoque'], 'whatsapp', 'instagram', 'endereco'],
+    servico: [['titulo', 'Nome da empresa', 'Ex.: Barbearia Estilo'], ['subtitulo', 'Slogan'], 'itens', 'cta', 'selo', 'whatsapp', 'instagram', 'endereco'],
+    aviso: [['selo', 'Etiqueta', 'Ex.: AVISO'], ['titulo', 'Título', 'Ex.: Novo horário de funcionamento'], 'texto', 'cta', 'whatsapp', 'instagram', 'endereco'],
+    evento: [['titulo', 'Nome do evento'], 'data', 'hora', 'local', ['texto', 'Descrição'], 'selo', 'cta', 'whatsapp', 'instagram'],
+    imagem: [],
+    video: ['video']
+  };
+  const AD_CORES = ['#E11D48', '#F97316', '#EAB308', '#16A34A', '#0EA5E9', '#2563EB', '#7C3AED', '#DB2777', '#111827'];
+  const AD = { cliente: '', list: [], editing: null, modelo: 'oferta', cor: '', midia: '', img: null, imgUrl: '', orient: 'horizontal', ready: false };
+  let adTimer;
+
+  const adModelo = id => AD_MODELOS.find(m => m.id === id) || AD_MODELOS[0];
+  const hojeBR = () => new Date(Date.now() - 3 * 3600 * 1000).toISOString().slice(0, 10);
+
+  function adStatus(a) {
+    const h = hojeBR();
+    if (!a.ativo) return ['Pausado', ''];
+    if (a.inicio && a.inicio > h) return ['Agendado', 'badge-brand'];
+    if (a.fim && a.fim < h) return ['Encerrado', ''];
+    return ['No ar', 'badge-ok'];
+  }
+
+  function adScreenUrl(orient) {
+    return RS.buildScreenUrl({ cliente: AD.cliente, modulo: 'anuncios', assunto: 'todos', layout: 'padrao', orientacao: orient });
+  }
+
+  async function initAds() {
+    $('#adNoDb').hidden = dbMode;
+    $('#adsGrid').hidden = !dbMode;
+    if (!dbMode) return;
+    if (!AD.cliente || !activeClients.some(c => c.chave === AD.cliente)) {
+      const first = activeClients.find(c => !c.demo) || activeClients[0];
+      AD.cliente = first ? first.chave : '';
+    }
+    $('#adCliente').innerHTML = clientOptions(AD.cliente);
+    $('#adModelos').innerHTML = AD_MODELOS.map(m => '<button type="button" class="ad-model" data-m="' + m.id + '">' + ICON(m.icon) + '<span>' + esc(m.nome) + '</span></button>').join('');
+    $('#adCores').innerHTML = '<button type="button" class="ad-color auto" data-c="" title="Automática (cor do tema)">A</button>' +
+      AD_CORES.map(c => '<button type="button" class="ad-color" data-c="' + c + '" style="background:' + c + '" title="' + c + '"></button>').join('');
+    if (!AD.ready) { adReset(); AD.ready = true; }
+    await loadAds();
+    setPreviewSrc();
+  }
+
+  async function loadAds() {
+    if (!AD.cliente) { AD.list = []; renderAdList(); return; }
+    try { AD.list = (await api('api/admin/anuncios?cliente=' + encodeURIComponent(AD.cliente))).anuncios || []; }
+    catch (e) { AD.list = []; toast(e.message, 'x'); }
+    renderAdList();
+  }
+
+  function renderAdList() {
+    const n = AD.list.length, noAr = AD.list.filter(a => adStatus(a)[0] === 'No ar').length;
+    $('#adCount').textContent = n ? n + ' anúncio' + (n > 1 ? 's' : '') + ' · ' + noAr + ' no ar' : 'Nenhum anúncio ainda';
+    $('#adList').innerHTML = n ? AD.list.map((a, k) => {
+      const st = adStatus(a);
+      const m = adModelo(a.modelo);
+      const title = (a.dados && a.dados.titulo) || a.anunciante || m.nome;
+      return '<div class="ad-item' + (AD.editing === a.id ? ' on' : '') + '">' +
+        '<div class="ad-item-thumb">' + (a.midia ? '<img src="' + RS.ROOT_URL + 'api/midia/' + esc(a.midia) + '" alt="">' : ICON(m.icon)) + '</div>' +
+        '<div class="ad-item-txt"><b>' + esc(title) + '</b><small>' + esc(m.nome) + (a.anunciante && a.anunciante !== title ? ' · ' + esc(a.anunciante) : '') + ' · ' + a.duracao + 's' +
+          (a.fim ? ' · até ' + esc(a.fim.split('-').reverse().slice(0, 2).join('/')) : '') + '</small></div>' +
+        '<span class="badge ' + st[1] + '">' + st[0] + '</span>' +
+        '<div class="acts">' +
+          '<button class="btn btn-ghost btn-sm btn-icon" data-up="' + k + '" title="Subir"' + (k === 0 ? ' disabled' : '') + '>↑</button>' +
+          '<button class="btn btn-ghost btn-sm btn-icon" data-down="' + k + '" title="Descer"' + (k === n - 1 ? ' disabled' : '') + '>↓</button>' +
+          '<button class="btn btn-ghost btn-sm" data-ed="' + esc(a.id) + '">Editar</button>' +
+          '<button class="btn btn-ghost btn-sm" data-dup="' + esc(a.id) + '" title="Duplicar">' + ICON('copy') + '</button>' +
+        '</div></div>';
+    }).join('') : '<div class="empty">Crie o primeiro anúncio deste cliente no formulário ao lado.</div>';
+    const c = clients.find(x => x.chave === AD.cliente);
+    $('#adLink').innerHTML = AD.cliente ?
+      '<div class="lbl">Link da tela de anúncios deste cliente</div>' +
+      '<div class="ad-link-row"><code>' + esc(adScreenUrl('horizontal')) + '</code></div>' +
+      '<div class="acts"><button class="btn btn-dark btn-sm" data-cplink="horizontal">' + ICON('copy') + ' Copiar horizontal</button>' +
+      '<button class="btn btn-ghost btn-sm" data-cplink="vertical">' + ICON('copy') + ' Copiar vertical</button>' +
+      (c && c.whatsapp ? '<a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="' + esc(RS.whatsappLink(c.whatsapp, 'Olá, ' + c.nome + '! Este é o link da tela de anúncios:\n\nHorizontal: ' + adScreenUrl('horizontal') + '\nVertical: ' + adScreenUrl('vertical'))) + '">' + ICON('whatsapp') + ' Enviar</a>' : '') +
+      '</div>' : '';
+  }
+
+  function renderAdForm() {
+    const m = adModelo(AD.modelo);
+    $$('#adModelos .ad-model').forEach(b => b.classList.toggle('on', b.dataset.m === m.id));
+    const cur = adDados;
+    $('#adFields').innerHTML = (AD_CAMPOS[m.id] || []).map(spec => {
+      const key = Array.isArray(spec) ? spec[0] : spec;
+      const f = F[key];
+      const label = Array.isArray(spec) && spec[1] ? spec[1] : f[0];
+      const ph = Array.isArray(spec) && spec[2] ? spec[2] : (f[2] || '');
+      const v = cur[key] || '';
+      if (f[1] === 'textarea') return '<label class="field"><span>' + esc(label) + '</span><textarea class="input" rows="3" data-f="' + key + '" placeholder="' + esc(ph) + '">' + esc(v) + '</textarea></label>';
+      return '<label class="field"><span>' + esc(label) + '</span><input class="input" type="' + (f[1] === 'date' ? 'date' : 'text') + '" data-f="' + key + '" value="' + esc(v) + '" placeholder="' + esc(ph) + '" /></label>';
+    }).join('');
+    $('#adFotoWrap').hidden = !m.foto;
+    $('#adFotoLabel').textContent = m.id === 'imagem' ? 'Arte (imagem pronta, ex.: feita no Canva)' : m.id === 'evento' ? 'Foto de fundo' : 'Foto';
+    $('#adFotoHint').textContent = m.id === 'imagem' ? 'Ideal: 1920×1080 (horizontal) ou 1080×1920 (vertical). A imagem é otimizada automaticamente.' : 'JPG, PNG ou WebP. A imagem é reduzida e otimizada automaticamente.';
+    $('#adAjusteWrap').hidden = !(m.id === 'imagem' || m.id === 'video');
+    $('#adCorWrap').hidden = m.id === 'imagem' || m.id === 'video';
+    $$('#adCores .ad-color').forEach(b => b.classList.toggle('on', b.dataset.c === AD.cor));
+    renderThumb();
+  }
+
+  // valores digitados (mantidos ao trocar de modelo)
+  let adDados = {};
+  function adCurrentDados() {
+    $$('#adFields [data-f]').forEach(el => { adDados[el.dataset.f] = el.value; });
+    return adDados;
+  }
+
+  function renderThumb() {
+    const u = AD.imgUrl || (AD.midia ? RS.ROOT_URL + 'api/midia/' + AD.midia : '');
+    $('#adThumb').innerHTML = u ? '<img src="' + esc(u) + '" alt="">' : ICON('upload');
+    $('#adFotoDel').hidden = !u;
+  }
+
+  function adPayload(forPreview) {
+    const dados = {};
+    const keys = AD_CAMPOS[AD.modelo] || [];
+    const cur = adCurrentDados();
+    keys.forEach(spec => { const k = Array.isArray(spec) ? spec[0] : spec; if (cur[k]) dados[k] = cur[k]; });
+    if (AD.cor) dados.cor = AD.cor;
+    if (AD.modelo === 'imagem' || AD.modelo === 'video') dados.ajuste = $('#adAjuste').value;
+    if (forPreview && AD.imgUrl) dados.imagemUrl = AD.imgUrl;
+    return {
+      id: AD.editing || undefined, cliente: AD.cliente, modelo: AD.modelo, anunciante: $('#adAnunciante').value.trim(),
+      dados, midia: adModelo(AD.modelo).foto ? AD.midia : '', duracao: Number($('#adDuracao').value) || 10,
+      inicio: $('#adInicio').value, fim: $('#adFim').value, ativo: $('#adAtivo').checked
+    };
+  }
+
+  function adReset() {
+    AD.editing = null; AD.modelo = 'oferta'; AD.cor = ''; AD.midia = ''; AD.img = null;
+    if (AD.imgUrl) URL.revokeObjectURL(AD.imgUrl);
+    AD.imgUrl = ''; adDados = {};
+    $('#adForm').reset();
+    $('#adDuracao').value = 10;
+    $('#adAtivo').checked = true;
+    $('#adFormTitle').textContent = 'Novo anúncio';
+    $('#adDelete').hidden = true;
+    renderAdForm();
+    schedulePreviewAd();
+  }
+
+  function adEdit(id, dup) {
+    const a = AD.list.find(x => x.id === id);
+    if (!a) return;
+    AD.editing = dup ? null : a.id;
+    AD.modelo = a.modelo; AD.cor = (a.dados && a.dados.cor) || ''; AD.midia = a.midia || '';
+    AD.img = null; if (AD.imgUrl) URL.revokeObjectURL(AD.imgUrl); AD.imgUrl = '';
+    adDados = Object.assign({}, a.dados || {});
+    $('#adAnunciante').value = a.anunciante || '';
+    $('#adDuracao').value = a.duracao || 10;
+    $('#adInicio').value = dup ? '' : (a.inicio || '');
+    $('#adFim').value = dup ? '' : (a.fim || '');
+    $('#adAtivo').checked = dup ? true : a.ativo;
+    $('#adAjuste').value = (a.dados && a.dados.ajuste) || 'cobrir';
+    $('#adFormTitle').textContent = dup ? 'Novo anúncio (cópia)' : 'Editar anúncio';
+    $('#adDelete').hidden = !!dup;
+    renderAdForm();
+    renderAdList();
+    schedulePreviewAd();
+    if (window.innerWidth < 1000) $('#adForm').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // reduz a imagem no navegador (máx. 1920 px, WebP ou JPEG) antes de enviar
+  function shrinkImage(file) {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        const max = 1920;
+        const k = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+        const w = Math.round(img.naturalWidth * k), h = Math.round(img.naturalHeight * k);
+        const cv = document.createElement('canvas');
+        cv.width = w; cv.height = h;
+        cv.getContext('2d').drawImage(img, 0, 0, w, h);
+        URL.revokeObjectURL(url);
+        const tryType = (type, q) => new Promise(r => cv.toBlob(b => r(b), type, q));
+        (async () => {
+          let b = await tryType('image/webp', 0.82);
+          if (!b || b.type !== 'image/webp') b = await tryType('image/jpeg', 0.84);
+          if (b && b.size > 1400000) b = await tryType('image/jpeg', 0.68);
+          if (!b) return reject(new Error('Não foi possível processar a imagem'));
+          resolve(b);
+        })();
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Arquivo de imagem inválido')); };
+      img.src = url;
+    });
+  }
+
+  /* ----- prévia ----- */
+  function setPreviewSrc() {
+    const fr = $('#adPreview');
+    $('#adDevice').className = AD.orient === 'vertical' ? 'device-totem' : 'device-tv';
+    if (!AD.cliente) { fr.removeAttribute('src'); return; }
+    const url = adScreenUrl(AD.orient) + '&previa=1';
+    if (fr.dataset.url !== url) { fr.dataset.url = url; fr.src = url; }
+  }
+  function sendPreview() {
+    const fr = $('#adPreview');
+    if (!fr.contentWindow) return;
+    try { fr.contentWindow.postMessage({ rs: 'previa', anuncios: [adPayload(true)] }, location.origin); } catch (_) {}
+  }
+  function schedulePreviewAd() { clearTimeout(adTimer); adTimer = setTimeout(sendPreview, 250); }
+  window.addEventListener('message', e => {
+    if (e.origin === location.origin && e.data && e.data.rs === 'previa-pronta') sendPreview();
+  });
+
+  /* ----- eventos ----- */
+  $('#adCliente').addEventListener('change', async e => { AD.cliente = e.target.value; adReset(); await loadAds(); setPreviewSrc(); });
+  $('#adNew').addEventListener('click', () => { adReset(); renderAdList(); });
+  $('#adCancel').addEventListener('click', () => { adReset(); renderAdList(); });
+  $('#adModelos').addEventListener('click', e => {
+    const b = e.target.closest('[data-m]');
+    if (!b) return;
+    adCurrentDados();
+    AD.modelo = b.dataset.m;
+    renderAdForm();
+    schedulePreviewAd();
+  });
+  $('#adCores').addEventListener('click', e => {
+    const b = e.target.closest('[data-c]');
+    if (!b) return;
+    AD.cor = b.dataset.c;
+    $$('#adCores .ad-color').forEach(x => x.classList.toggle('on', x === b));
+    schedulePreviewAd();
+  });
+  $('#adForm').addEventListener('input', schedulePreviewAd);
+  $('#adForm').addEventListener('change', schedulePreviewAd);
+  $('#adOrient').addEventListener('click', e => {
+    const b = e.target.closest('[data-v]');
+    if (!b) return;
+    AD.orient = b.dataset.v;
+    $$('#adOrient .chip').forEach(x => x.classList.toggle('on', x === b));
+    setPreviewSrc();
+  });
+  $('#adFoto').addEventListener('change', async e => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    try {
+      const blob = await shrinkImage(file);
+      AD.img = blob;
+      if (AD.imgUrl) URL.revokeObjectURL(AD.imgUrl);
+      AD.imgUrl = URL.createObjectURL(blob);
+      renderThumb();
+      schedulePreviewAd();
+      toast('Imagem pronta (' + Math.round(blob.size / 1024) + ' KB)');
+    } catch (err) { toast(err.message, 'x'); }
+  });
+  $('#adFotoDel').addEventListener('click', () => {
+    AD.img = null; AD.midia = '';
+    if (AD.imgUrl) URL.revokeObjectURL(AD.imgUrl);
+    AD.imgUrl = '';
+    renderThumb();
+    schedulePreviewAd();
+  });
+
+  $('#adForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    if (!AD.cliente) return toast('Escolha um cliente', 'x');
+    const m = adModelo(AD.modelo);
+    if (m.id === 'imagem' && !AD.img && !AD.midia) return toast('Escolha a imagem da arte', 'x');
+    if (m.id === 'video' && !/^https:\/\//i.test(adCurrentDados().video || '')) return toast('Informe o link https do vídeo MP4', 'x');
+    if (m.id !== 'imagem' && m.id !== 'video' && !(adCurrentDados().titulo || '').trim()) return toast('Preencha o título do anúncio', 'x');
+    $('#adSave').disabled = true;
+    try {
+      if (m.foto && AD.img) {
+        const res = await fetch(RS.ROOT_URL + 'api/admin/midia?cliente=' + encodeURIComponent(AD.cliente), {
+          method: 'POST', headers: { 'X-Admin-Senha': adminSenha(), 'Content-Type': AD.img.type }, body: AD.img
+        });
+        const r = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(r.erro || 'Falha ao enviar a imagem');
+        AD.midia = r.id; AD.img = null;
+        if (AD.imgUrl) URL.revokeObjectURL(AD.imgUrl);
+        AD.imgUrl = '';
+      }
+      const body = adPayload(false);
+      const r = await api('api/admin/anuncios', { method: 'POST', headers: { 'X-Admin-Senha': adminSenha(), 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      toast(AD.editing ? 'Anúncio atualizado' : 'Anúncio criado');
+      AD.editing = r.id;
+      await loadAds();
+      adEdit(r.id);
+    } catch (err) { toast(err.message, 'x'); }
+    $('#adSave').disabled = false;
+  });
+
+  $('#adDelete').addEventListener('click', async () => {
+    if (!AD.editing || !confirm('Excluir este anúncio?')) return;
+    try {
+      await api('api/admin/anuncios?id=' + encodeURIComponent(AD.editing) + '&cliente=' + encodeURIComponent(AD.cliente), { method: 'DELETE' });
+      toast('Anúncio excluído');
+      adReset();
+      await loadAds();
+    } catch (err) { toast(err.message, 'x'); }
+  });
+
+  $('#adList').addEventListener('click', async e => {
+    const ed = e.target.closest('[data-ed]'); if (ed) return adEdit(ed.dataset.ed);
+    const dp = e.target.closest('[data-dup]'); if (dp) return adEdit(dp.dataset.dup, true);
+    const up = e.target.closest('[data-up]'), dn = e.target.closest('[data-down]');
+    if (up || dn) {
+      const k = Number((up || dn).dataset[up ? 'up' : 'down']);
+      const j = up ? k - 1 : k + 1;
+      const l = AD.list.slice();
+      [l[k], l[j]] = [l[j], l[k]];
+      AD.list = l;
+      renderAdList();
+      try { await api('api/admin/anuncios/ordem', { method: 'POST', headers: { 'X-Admin-Senha': adminSenha(), 'Content-Type': 'application/json' }, body: JSON.stringify({ cliente: AD.cliente, ids: l.map(a => a.id) }) }); }
+      catch (err) { toast(err.message, 'x'); }
+    }
+  });
+  $('#adLink').addEventListener('click', e => {
+    const b = e.target.closest('[data-cplink]');
+    if (b) copy(adScreenUrl(b.dataset.cplink), 'Link copiado');
+  });
+
   /* =================== GUIA DE VENDAS =================== */
   const PLANO_INCLUI = {
     essencial: ['Notícias: 25 assuntos e mais de 90 sites', 'Previsão do tempo', 'Cotações (dólar, euro, cripto)', 'Todos os modelos, horizontal e vertical', 'Até 3 links por tela'],
-    completo: ['Tudo do Essencial', 'Resultados de loterias', 'Módulos novos sem custo extra', 'Links e trocas ilimitadas', 'Suporte prioritário no WhatsApp'],
+    completo: ['Tudo do Essencial', 'Resultados e estatísticas de loterias', 'Tela de anúncios dos anunciantes', 'Módulos novos sem custo extra', 'Links e trocas ilimitadas', 'Suporte prioritário no WhatsApp'],
     rede: ['Tudo do Completo', 'Preço por tela a partir de 10 telas', 'Pacotes prontos por segmento', 'Ideal para operadores de mídia indoor'],
-    gerenciado: ['Tudo do Completo', 'Você configura o player do cliente', 'Você monta a programação da TV', 'Ajustes mensais inclusos'],
+    gerenciado: ['Tudo do Completo', 'Você cria os anúncios do estabelecimento', 'Você configura o player do cliente', 'Você monta a programação da TV', 'Ajustes mensais inclusos'],
     cortesia: ['Acesso completo temporário', 'Para teste de 7 dias, permuta ou demonstração']
   };
   const DESTAQUE = 'completo';

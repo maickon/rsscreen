@@ -126,7 +126,9 @@
   window.RSScreen = {
     register(id, def) { modules[id] = def; },
     esc: RS.esc,
-    fetchText, fetchJson, timeAgo, settle, media, placeholder, imgFail, clockHtml, pad,
+    fetchText, fetchJson, timeAgo, settle,
+    reload() { if (mod) refresh(true); },
+    previa: P.get('previa') === '1', media, placeholder, imgFail, clockHtml, pad,
     WEEKDAYS, MONTHS
   };
 
@@ -450,7 +452,7 @@
     } catch (_) { return ''; }
   }
   function ping(first) {
-    if (location.protocol === 'file:' || state.teste) return;
+    if (location.protocol === 'file:' || state.teste || P.get('previa') === '1') return;
     const q = ['cliente', 'modulo', 'assunto', 'fonte', 'layout', 'orientacao']
       .map(k => k + '=' + encodeURIComponent(state[k] || '')).join('&');
     const img = new Image();

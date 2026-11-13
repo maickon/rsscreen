@@ -3,6 +3,8 @@
   'use strict';
   const S = window.RSScreen;
   const esc = S.esc;
+  const NOMES = { megasena: 'Mega-Sena', lotofacil: 'Lotofácil', quina: 'Quina', maismilionaria: '+Milionária', lotomania: 'Lotomania', duplasena: 'Dupla Sena', timemania: 'Timemania', diadesorte: 'Dia de Sorte' };
+  const CORES = { megasena: '#209869', lotofacil: '#930089', quina: '#260085', maismilionaria: '#2E3078', lotomania: '#F78100', duplasena: '#A61324', timemania: '#00A650', diadesorte: '#CB852B' };
   const DIAS = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'];
 
   /* ---------- formatação ---------- */
@@ -48,12 +50,24 @@
   async function load(ctx) {
     const d = await S.fetchJson(RS.ROOT_URL + 'api/loterias?_=' + Math.floor(Date.now() / 120000));
     const ids = ctx.assunto.jogos || [];
+    const est = d.estatisticas || {};
     const out = ids.map(id => d.jogos && d.jogos[id]).filter(j => j && j.concurso);
+    out.forEach(j => { j.stats = est[j.jogo] || null; });
+    if (ctx.layout === 'quentes' || ctx.layout === 'atrasados') {
+      // jogo sem estatística (ex.: Federal) não entra nesses modelos
+      const comStats = ids.map(id => (d.jogos && d.jogos[id]) || (est[id] ? { jogo: id, nome: NOMES[id] || id, cor: CORES[id] || '', concurso: 0, data: '', stats: est[id] } : null)).filter(j => j && j.stats);
+      comStats.forEach(j => { if (!j.stats) j.stats = est[j.jogo]; });
+      if (comStats.length) return comStats;
+    }
     if (!out.length) throw new Error('Resultados ainda não disponíveis');
     return out;
   }
 
   function slides(data, ctx) {
+    if (ctx.layout === 'quentes' || ctx.layout === 'atrasados') {
+      const com = data.filter(j => j.stats && j.stats.quentes);
+      if (com.length) return com;
+    }
     if (ctx.layout === 'painel') {
       const per = ctx.orient === 'v' ? 4 : 4;
       const pages = [];
@@ -171,19 +185,63 @@
           (j.proximo && j.proximo.estimativa ? '<b>' + esc(brlCurto(j.proximo.estimativa)) + '</b>' : '') + '</div>' +
       '</div>').join('') + '</div>';
 
+  /* ---------- estatísticas ---------- */
+  function statFoot(st) {
+    return '<div class="lt-stat-foot">Base: ' + (st.sorteios ? st.sorteios.toLocaleString('pt-BR') + ' concursos' : 'todos os concursos') +
+      (st.obtido ? ' · atualizado em ' + dia(new Date(st.obtido).toISOString().slice(0, 10), false) : '') + ' · estatística não garante prêmio</div>';
+  }
+
+  function statBalls(list, key, suf, max) {
+    const top = list.slice(0, max);
+    const big = top.length ? top[0][key] : 1;
+    return '<div class="lt-stat-list">' + top.map((x, k) =>
+      '<div class="lt-stat-row rise d' + Math.min(3, Math.floor(k / 3)) + '"><span class="lt-ball">' + esc(x.n) + '</span>' +
+        '<div class="lt-stat-bar"><i style="width:' + Math.max(8, Math.round(x[key] / big * 100)) + '%"></i></div>' +
+        '<b>' + Number(x[key]).toLocaleString('pt-BR') + suf + '</b></div>').join('') + '</div>';
+  }
+
+  L.quentes = (j, i, all, ctx) => {
+    const st = j.stats;
+    const max = ctx.orient === 'v' ? 6 : 6;
+    return '<div class="lt-bg"></div>' +
+      head(j, ctx, 'Números quentes e frios') +
+      '<div class="lt-stats2">' +
+        '<div class="lt-stat-col hot"><div class="lt-lbl">🔥 Mais sorteados</div>' + statBalls(st.quentes, 'f', 'x', max) + '</div>' +
+        '<div class="lt-stat-col cold"><div class="lt-lbl">❄ Menos sorteados</div>' + statBalls(st.frios, 'f', 'x', max) + '</div>' +
+      '</div>' + statFoot(st);
+  };
+
+  L.atrasados = (j, i, all, ctx) => {
+    const st = j.stats;
+    const pi = (st.paresImpares || []).slice(0, 4);
+    const big = pi.length ? pi[0].pct : 1;
+    return '<div class="lt-bg"></div>' +
+      head(j, ctx, 'Números mais atrasados') +
+      '<div class="lt-stats2">' +
+        '<div class="lt-stat-col"><div class="lt-lbl">Sem sair há mais tempo</div>' +
+          '<div class="lt-atraso">' + st.atrasados.slice(0, ctx.orient === 'v' ? 8 : 10).map((x, k) =>
+            '<div class="lt-atr rise d' + Math.min(3, Math.floor(k / 3)) + '"><span class="lt-ball">' + esc(x.n) + '</span><small>' + x.a + ' concurso' + (x.a === 1 ? '' : 's') + '</small></div>').join('') +
+          '</div></div>' +
+        (pi.length ? '<div class="lt-stat-col"><div class="lt-lbl">Pares × ímpares mais comuns</div>' +
+          pi.map(x => '<div class="lt-pi rise"><span>' + x.p + ' pares · ' + x.i + ' ímpares</span><div class="lt-stat-bar"><i style="width:' + Math.round(x.pct / big * 100) + '%"></i></div><b>' + String(x.pct).replace('.', ',') + '%</b></div>').join('') +
+        '</div>' : '') +
+      '</div>' + statFoot(st);
+  };
+
   S.register('loterias', {
     refreshMinutes: 10,
     rerenderOnRefresh: false,
     load,
     slides,
     render(it, i, all, ctx) {
-      const html = (L[ctx.layout] || L.resultado)(it, i, all, ctx);
+      const fn = (ctx.layout === 'quentes' || ctx.layout === 'atrasados') && !(it.stats && it.stats.quentes) ? L.resultado : (L[ctx.layout] || L.resultado);
+      const html = fn(it, i, all, ctx);
       // a cor oficial de cada loteria vira a cor de destaque do slide
       const cor = it.cor || (it.grupo && it.grupo[0] && it.grupo[0].cor) || '';
       return '<div class="lt-wrap" style="--lc:' + esc(ctx.layout === 'painel' ? 'var(--accent)' : cor) + '">' + html + '</div>';
     },
     duration(it, ctx) {
-      if (ctx.layout === 'painel' || ctx.layout === 'ganhadores') return ctx.tempo + 4;
+      if (ctx.layout === 'painel' || ctx.layout === 'ganhadores' || ctx.layout === 'quentes' || ctx.layout === 'atrasados') return ctx.tempo + 4;
       return ctx.tempo;
     }
   });

@@ -9,3 +9,5 @@ node_modules
 README.md
 Descricao
 docs
+.dev.vars
+.env

@@ -69,7 +69,7 @@ function fromApiLoterias(jogo, d) {
     jogo, nome: BY_ID[jogo].nome, cor: BY_ID[jogo].cor,
     concurso: Number(d.numero_concurso || d.concurso),
     data: isoFromBr(d.data_concurso || d.data),
-    dezenas: (d.dezenas || []).map(str),
+    dezenas: jogo === 'supersete' ? (d.dezenas || []).map(str) : (d.dezenas || []).map(str).sort((a, b) => Number(a) - Number(b)),
     dezenas2: (d.dezenas_2 || d.dezenas_segundo_sorteio || []).map(str),
     trevos: (d.trevos || []).map(str),
     extra: str(d.mes_sorte || d.time_coracao || d.timeCoracao || ''),
@@ -148,16 +148,71 @@ export async function updateAll(env, stub, force) {
   return out;
 }
 
+
+/* ---------------- estatísticas (apiloterias) ---------------- */
+// Números quentes, frios, atrasados e pares/ímpares mudam pouco: atualiza 1 vez por semana
+// (4 consultas por jogo). Sem chave, as telas usam modules/loterias/estatisticas.json.
+export const STATS_JOGOS = ['megasena', 'lotofacil', 'quina', 'maismilionaria', 'lotomania', 'duplasena', 'timemania', 'diadesorte'];
+const pad2 = v => String(v).padStart(2, '0');
+
+async function fetchStats(env, stub, jogo) {
+  const key = env.APILOTERIAS_KEY;
+  const b = 'https://apiloterias.com/v1/' + jogo + '/' + encodeURIComponent(key);
+  const mes = brToday().slice(0, 7);
+  await stub.lotUsage(mes, 4);
+  const [q, f, a, p] = await Promise.all([
+    getJson(b + '/frequencia/quente/15'), getJson(b + '/frequencia/frio/15'),
+    getJson(b + '/frequencia/mais-atrasados/15'), getJson(b + '/pares-impares')
+  ]);
+  if (!q.numeros_mais_frequentes) throw new Error('Resposta sem estatísticas');
+  return {
+    quentes: q.numeros_mais_frequentes.map(x => ({ n: pad2(x.numero), f: x.frequencia })),
+    frios: (f.numeros_menos_frequentes || []).map(x => ({ n: pad2(x.numero), f: x.frequencia })),
+    atrasados: (a.numeros_mais_atrasados || []).map(x => ({ n: pad2(x.numero), a: x.atraso })),
+    paresImpares: (p.distribuicoes || []).slice(0, 6).map(x => ({ p: x.pares, i: x.impares, pct: Math.round(x.percentual * 10) / 10 })),
+    sorteios: p.total_sorteios || 0,
+    obtido: Date.now()
+  };
+}
+
+export async function updateStats(env, stub, force) {
+  if (!env.APILOTERIAS_KEY) return [{ status: 'sem chave' }];
+  const limite = Number(env.APILOTERIAS_LIMITE) || 450;
+  const out = [];
+  for (const jogo of STATS_JOGOS) {
+    const cur = await stub.lotGetOne('stats:' + jogo);
+    if (!force && cur && Date.now() - cur.obtido < 7 * 86400 * 1000) { out.push({ jogo, status: 'em dia' }); continue; }
+    // guarda uma folga de 60 consultas para os resultados
+    if ((await stub.lotUsage(brToday().slice(0, 7), 0)) + 4 > limite - 60) { out.push({ jogo, status: 'cota reservada' }); continue; }
+    try { await stub.lotPut('stats:' + jogo, await fetchStats(env, stub, jogo)); out.push({ jogo, status: 'novo' }); }
+    catch (e) { out.push({ jogo, status: 'falha', erro: e.message }); }
+  }
+  return out;
+}
+
+async function readStats(env, request, rows) {
+  const out = {};
+  STATS_JOGOS.forEach(j => { if (rows['stats:' + j]) out[j] = rows['stats:' + j]; });
+  if (Object.keys(out).length < STATS_JOGOS.length && env.ASSETS && request) {
+    try {
+      const seed = await (await env.ASSETS.fetch(new URL('/modules/loterias/estatisticas.json', request.url))).json();
+      STATS_JOGOS.forEach(j => { if (!out[j] && seed.jogos && seed.jogos[j]) out[j] = seed.jogos[j]; });
+    } catch (_) {}
+  }
+  return out;
+}
+
 /* ---------------- leitura para as telas ---------------- */
 const lastKick = {};
 
-export async function loteriasResponse(env, stub, waitUntil) {
+export async function loteriasResponse(env, stub, waitUntil, request) {
   const cache = caches.default;
-  const key = new Request('https://loterias-cache.rsscreen/v1');
+  const key = new Request('https://loterias-cache.rsscreen/v2');
   const hit = await cache.match(key);
   if (hit) return hit;
   const rows = await stub.lotGetAll();
   const jogos = {};
+  const estatisticas = await readStats(env, request, rows);
   JOGOS.forEach(j => { if (rows[j.id]) { const r = Object.assign({}, rows[j.id]); delete r.erro; delete r.erroEm; jogos[j.id] = r; } });
   // primeiro acesso ou resultado atrasado: busca em segundo plano (no máximo a cada 10 min por jogo)
   JOGOS.forEach(j => {
@@ -167,7 +222,7 @@ export async function loteriasResponse(env, stub, waitUntil) {
       waitUntil(updateJogo(env, stub, j.id, false).catch(() => {}));
     }
   });
-  const res = new Response(JSON.stringify({ jogos, ordem: JOGOS.map(j => j.id), gerado: Date.now() }), {
+  const res = new Response(JSON.stringify({ jogos, estatisticas, ordem: JOGOS.map(j => j.id), gerado: Date.now() }), {
     headers: { 'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Origin': '*', 'Cache-Control': 'public, max-age=120' }
   });
   if (Object.keys(jogos).length) waitUntil(cache.put(key, res.clone()));

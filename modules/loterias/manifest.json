@@ -10,33 +10,162 @@
   "beneficios": [
     "Mega-Sena, Lotofácil, Quina, +Milionária, Lotomania, Dupla Sena, Timemania, Dia de Sorte, Super Sete, Federal e Loteca",
     "Destaque para prêmio acumulado e valor do próximo concurso",
+    "Números quentes, frios e atrasados: o apostador para para anotar",
     "Resultado na tela minutos depois da divulgação",
     "Modelos em horizontal e vertical"
   ],
-  "indicado": ["Lotéricas", "Bancas", "Bares", "Padarias", "Mercados de bairro"],
+  "indicado": [
+    "Lotéricas",
+    "Bancas",
+    "Bares",
+    "Padarias",
+    "Mercados de bairro"
+  ],
   "script": "screen.js",
   "estilo": "style.css",
   "rotuloAssunto": "Loterias",
-  "padrao": { "assunto": "principais", "layout": "resultado", "tema": "noite", "tempo": 12 },
+  "padrao": {
+    "assunto": "principais",
+    "layout": "resultado",
+    "tema": "noite",
+    "tempo": 12
+  },
   "layouts": [
-    { "id": "resultado", "nome": "Resultado", "descricao": "Dezenas sorteadas em destaque, situação do prêmio e o próximo concurso." },
-    { "id": "premio", "nome": "Próximo prêmio", "descricao": "O valor estimado do próximo concurso bem grande, para chamar o apostador." },
-    { "id": "painel", "nome": "Painel de loterias", "descricao": "Várias loterias ao mesmo tempo, em grade." },
-    { "id": "ganhadores", "nome": "Premiação e ganhadores", "descricao": "Quanto pagou cada faixa e as cidades dos ganhadores." }
+    {
+      "id": "resultado",
+      "nome": "Resultado",
+      "descricao": "Dezenas sorteadas em destaque, situação do prêmio e o próximo concurso."
+    },
+    {
+      "id": "premio",
+      "nome": "Próximo prêmio",
+      "descricao": "O valor estimado do próximo concurso bem grande, para chamar o apostador."
+    },
+    {
+      "id": "painel",
+      "nome": "Painel de loterias",
+      "descricao": "Várias loterias ao mesmo tempo, em grade."
+    },
+    {
+      "id": "ganhadores",
+      "nome": "Premiação e ganhadores",
+      "descricao": "Quanto pagou cada faixa e as cidades dos ganhadores."
+    },
+    {
+      "id": "quentes",
+      "nome": "Números quentes e frios",
+      "descricao": "Os números que mais saem e os que menos saem em toda a história do jogo."
+    },
+    {
+      "id": "atrasados",
+      "nome": "Atrasados e pares × ímpares",
+      "descricao": "Números que não saem há mais tempo e as combinações de pares e ímpares mais comuns."
+    }
   ],
   "assuntos": [
-    { "id": "principais", "nome": "Principais (Mega, Lotofácil, Quina, +Milionária)", "jogos": ["megasena", "lotofacil", "quina", "maismilionaria"] },
-    { "id": "todas", "nome": "Todas as loterias", "jogos": ["megasena", "lotofacil", "quina", "maismilionaria", "lotomania", "duplasena", "timemania", "diadesorte", "supersete", "federal", "loteca"] },
-    { "id": "megasena", "nome": "Mega-Sena", "jogos": ["megasena"] },
-    { "id": "lotofacil", "nome": "Lotofácil", "jogos": ["lotofacil"] },
-    { "id": "quina", "nome": "Quina", "jogos": ["quina"] },
-    { "id": "maismilionaria", "nome": "+Milionária", "jogos": ["maismilionaria"] },
-    { "id": "lotomania", "nome": "Lotomania", "jogos": ["lotomania"] },
-    { "id": "duplasena", "nome": "Dupla Sena", "jogos": ["duplasena"] },
-    { "id": "timemania", "nome": "Timemania", "jogos": ["timemania"] },
-    { "id": "diadesorte", "nome": "Dia de Sorte", "jogos": ["diadesorte"] },
-    { "id": "supersete", "nome": "Super Sete", "jogos": ["supersete"] },
-    { "id": "federal", "nome": "Loteria Federal", "jogos": ["federal"] },
-    { "id": "loteca", "nome": "Loteca", "jogos": ["loteca"] }
+    {
+      "id": "principais",
+      "nome": "Principais (Mega, Lotofácil, Quina, +Milionária)",
+      "jogos": [
+        "megasena",
+        "lotofacil",
+        "quina",
+        "maismilionaria"
+      ]
+    },
+    {
+      "id": "todas",
+      "nome": "Todas as loterias",
+      "jogos": [
+        "megasena",
+        "lotofacil",
+        "quina",
+        "maismilionaria",
+        "lotomania",
+        "duplasena",
+        "timemania",
+        "diadesorte",
+        "supersete",
+        "federal",
+        "loteca"
+      ]
+    },
+    {
+      "id": "megasena",
+      "nome": "Mega-Sena",
+      "jogos": [
+        "megasena"
+      ]
+    },
+    {
+      "id": "lotofacil",
+      "nome": "Lotofácil",
+      "jogos": [
+        "lotofacil"
+      ]
+    },
+    {
+      "id": "quina",
+      "nome": "Quina",
+      "jogos": [
+        "quina"
+      ]
+    },
+    {
+      "id": "maismilionaria",
+      "nome": "+Milionária",
+      "jogos": [
+        "maismilionaria"
+      ]
+    },
+    {
+      "id": "lotomania",
+      "nome": "Lotomania",
+      "jogos": [
+        "lotomania"
+      ]
+    },
+    {
+      "id": "duplasena",
+      "nome": "Dupla Sena",
+      "jogos": [
+        "duplasena"
+      ]
+    },
+    {
+      "id": "timemania",
+      "nome": "Timemania",
+      "jogos": [
+        "timemania"
+      ]
+    },
+    {
+      "id": "diadesorte",
+      "nome": "Dia de Sorte",
+      "jogos": [
+        "diadesorte"
+      ]
+    },
+    {
+      "id": "supersete",
+      "nome": "Super Sete",
+      "jogos": [
+        "supersete"
+      ]
+    },
+    {
+      "id": "federal",
+      "nome": "Loteria Federal",
+      "jogos": [
+        "federal"
+      ]
+    },
+    {
+      "id": "loteca",
+      "nome": "Loteca",
+      "jogos": [
+        "loteca"
+      ]
+    }
   ]
 }

@@ -46,8 +46,13 @@ Os clientes ficam no **Cloudflare D1**. O banco é criado sozinho no primeiro de
 
 ## Loterias
 
-Módulo `modules/loterias` com 11 loterias e 4 modelos (resultado, próximo prêmio, painel e
-premiação/ganhadores).
+Módulo `modules/loterias` com 11 loterias e 6 modelos: resultado, próximo prêmio, painel,
+premiação e ganhadores, números quentes e frios, e atrasados com pares × ímpares.
+
+- **Estatísticas** (quentes, frios, atrasados, pares/ímpares) vêm da apiloterias e são atualizadas
+  1 vez por semana (4 consultas por jogo, cerca de 140 por mês para 8 jogos), sempre guardando 60
+  consultas de folga para os resultados. Sem chave, as telas usam `modules/loterias/estatisticas.json`
+  (gerado em 13/11/2026). O botão **Atualizar agora** do Monitoramento atualiza só os resultados.
 
 - O Worker busca os resultados pelo **Cron** (21:30, 22:30, 23:30, 00:30 e 08:00, horário de
   Brasília) e guarda no Durable Object. As telas leem só essa cópia, então o número de telas
@@ -59,6 +64,19 @@ premiação/ganhadores).
   apiloterias como principal, mude `LOTERIAS_FONTE` para `apiloterias` no `wrangler.jsonc`.
 - **Painel > Monitoramento > Loterias** mostra o último concurso de cada jogo, a fonte, as falhas e
   o botão **Atualizar agora**.
+
+## Anúncios
+
+**Painel > Anúncios**: escolha o cliente, crie os anúncios dos anunciantes dele e copie o link da
+tela de anúncios (`modulo=anuncios`). A tela mostra todos os anúncios ativos em sequência e se
+atualiza a cada 2 minutos.
+
+- 6 modelos: oferta (preço de/por), empresa/serviço, aviso, evento (com data), arte pronta
+  (imagem inteira, ex.: feita no Canva) e vídeo (link MP4 https).
+- Cada anúncio tem anunciante, cor de destaque, tempo na tela, período (começa/termina) e ordem.
+- As fotos são reduzidas no navegador (máx. 1920 px, WebP/JPEG) e guardadas no próprio D1.
+  Vídeos ficam hospedados fora (link); o envio de vídeo pelo painel exige ativar o R2.
+- Prévia ao vivo no painel antes de salvar. Sem anúncios ativos, a tela mostra "Anuncie aqui".
 
 ## Senha do painel
 
