@@ -339,7 +339,7 @@
     ctx.assunto = assuntos.find(a => a.id === state.assunto) || assuntos.find(a => a.id === pad_.assunto) || assuntos[0] || null;
     state.assunto = ctx.assunto ? ctx.assunto.id : '';
     const fontes = (ctx.assunto && ctx.assunto.fontes) || [];
-    ctx.fonte = fontes.find(f => f.id === state.fonte) || null;
+    ctx.fonte = fontes.find(f => f.id === state.fonte) || fontes.find(f => state.fonte && f.site === state.fonte) || null;
     if (!ctx.fonte && ctx.assunto && ctx.assunto.fonteObrigatoria && fontes.length) ctx.fonte = fontes[0];
     state.fonte = ctx.fonte ? ctx.fonte.id : '';
     const layouts = manifest.layouts || [];

@@ -74,11 +74,44 @@
     return isNaN(t) ? 0 : t;
   }
 
+  // Melhora a resolução de imagens de sites conhecidos (TV precisa de foto grande)
+  function upgradeImage(url) {
+    if (!url) return '';
+    if (url.indexOf('//') === 0) url = 'https:' + url;
+    if (url.indexOf('http://') === 0) url = 'https://' + url.slice(7);
+    return url
+      .replace(/(media-manager\.noticiasaominuto\.com\.br)\/\d{3,4}\//, '$1/1280/')
+      .replace(/([?&])w=\d{2,3}(&|$)/, '$1w=1280$2');
+  }
+
+  function itemLink(node) {
+    const l = node.getElementsByTagName('link')[0];
+    if (l) {
+      let href = l.getAttribute('href') || (l.textContent || '').trim();
+      // links de redirecionamento (ex.: Folha "redir...*https://...") → endereço real da notícia
+      const star = href.indexOf('*http');
+      if (star > 0) href = href.slice(star + 1);
+      if (/^https?:\/\//.test(href)) return href;
+    }
+    const g = firstText(node, ['guid']);
+    return /^https?:\/\//.test(g) ? g : '';
+  }
+
+  function itemCategories(node) {
+    return Array.from(node.getElementsByTagName('category')).map(c => RS.normalize(c.textContent || c.getAttribute('term') || ''));
+  }
+
   function parseFeed(xml, fonte) {
     const doc = new DOMParser().parseFromString(xml, 'text/xml');
     const nodes = Array.from(doc.querySelectorAll('item, entry'));
+    const wanted = (fonte.categorias || []).map(RS.normalize);
     const items = [];
     nodes.forEach(node => {
+      // feeds gerais podem ser filtrados pela categoria (ex.: Notícias ao Minuto → "Esporte")
+      if (wanted.length) {
+        const cats = itemCategories(node);
+        if (!cats.some(c => wanted.indexOf(c) >= 0)) return;
+      }
       const titulo = htmlToText(firstText(node, ['title']));
       if (!titulo || titulo.length < 12) return;
       const encoded = firstText(node, ['content:encoded']);
@@ -87,15 +120,63 @@
       let resumo = htmlToText(desc || encoded);
       if (resumo.toLowerCase().indexOf(titulo.toLowerCase().slice(0, 40)) === 0) resumo = resumo.slice(titulo.length).trim();
       if (resumo.length > 240) resumo = resumo.slice(0, 236).replace(/\s+\S*$/, '') + '…';
-      let imagem = pickImage(node, rawHtml);
-      if (imagem && imagem.indexOf('//') === 0) imagem = 'https:' + imagem;
-      if (imagem && imagem.indexOf('http://') === 0) imagem = 'https://' + imagem.slice(7);
-      const dateStr = firstText(node, ['pubDate', 'published', 'updated', 'dc:date']);
-      const ts = parseDate(dateStr);
-      items.push({ titulo, resumo, imagem, fonte: fonte.nome, data: ts });
+      const imagem = upgradeImage(pickImage(node, rawHtml));
+      const ts = parseDate(firstText(node, ['pubDate', 'published', 'updated', 'dc:date']));
+      items.push({ titulo, resumo, imagem, link: itemLink(node), fonte: fonte.nome, data: ts });
     });
     items.sort((a, b) => b.data - a.data);
-    return items.slice(0, 10);
+    return items.slice(0, 12);
+  }
+
+  /* ---------- imagem da página da notícia (quando o feed não traz foto) ---------- */
+  const OG_CACHE = 'rs_og_v1';
+  function ogCache() { try { return JSON.parse(localStorage.getItem(OG_CACHE) || '{}'); } catch (_) { return {}; } }
+  function ogSave(map) {
+    const keys = Object.keys(map);
+    if (keys.length > 400) keys.slice(0, keys.length - 400).forEach(k => delete map[k]);
+    try { localStorage.setItem(OG_CACHE, JSON.stringify(map)); } catch (_) {}
+  }
+
+  function ogFromHtml(html, base) {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const sel = ['meta[property="og:image:secure_url"]', 'meta[property="og:image"]', 'meta[name="og:image"]', 'meta[name="twitter:image"]', 'meta[property="twitter:image"]'];
+    for (const q of sel) {
+      const m = doc.querySelector(q);
+      if (m && m.getAttribute('content')) { try { return new URL(m.getAttribute('content'), base).toString(); } catch (_) {} }
+    }
+    return '';
+  }
+
+  async function fetchOg(link) {
+    if (location.protocol !== 'file:') {
+      try {
+        const d = await S.fetchJson(RS.ROOT_URL + 'api/rss?og=1&url=' + encodeURIComponent(link));
+        if (d && typeof d.image === 'string') return d.image;
+      } catch (_) {}
+    }
+    // sem a função do Cloudflare (ex.: teste local): lê a página por um proxy público
+    try {
+      const html = await S.fetchText(link);
+      return ogFromHtml(html, link);
+    } catch (_) { return ''; }
+  }
+
+  async function fillImages(items) {
+    const cache = ogCache();
+    const missing = items.filter(it => !it.imagem && it.link);
+    missing.forEach(it => { if (cache[it.link]) it.imagem = cache[it.link]; });
+    const todo = missing.filter(it => !it.imagem && cache[it.link] !== '').slice(0, 14);
+    let i = 0;
+    async function worker() {
+      while (i < todo.length) {
+        const it = todo[i++];
+        const img = upgradeImage(await fetchOg(it.link));
+        it.imagem = img && !BAD_IMG.test(img) ? img : '';
+        cache[it.link] = it.imagem;
+      }
+    }
+    await Promise.all([worker(), worker(), worker(), worker()]);
+    ogSave(cache);
   }
 
   async function load(ctx) {
@@ -104,7 +185,8 @@
     const lists = results.filter(r => r.status === 'fulfilled' && r.value.length).map(r => r.value);
     if (!lists.length) throw new Error('Nenhuma fonte respondeu');
     // intercala as fontes e remove manchetes repetidas
-    const out = [], seen = new Set();
+    let out = [];
+    const seen = new Set();
     const max = Math.max.apply(null, lists.map(l => l.length));
     for (let i = 0; i < max; i++) {
       lists.forEach(l => {
@@ -119,7 +201,14 @@
     // prioriza notícias dos últimos 4 dias quando houver volume suficiente
     const limit = Date.now() - 4 * 86400000;
     const fresh = out.filter(it => !it.data || it.data >= limit);
-    return (fresh.length >= 6 ? fresh : out).slice(0, 20);
+    out = (fresh.length >= 6 ? fresh : out).slice(0, 24);
+
+    // toda notícia precisa de imagem: busca na página e descarta as que continuarem sem foto
+    await fillImages(out);
+    const withImg = out.filter(it => it.imagem);
+    if (withImg.length) return withImg.slice(0, 20);
+    if (ctx.layout === 'texto') return out.slice(0, 20);
+    throw new Error('Nenhuma notícia com imagem nesta fonte');
   }
 
   /* ---------- peças ---------- */

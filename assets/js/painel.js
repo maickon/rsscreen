@@ -166,7 +166,7 @@
   }
 
   /* =================== GERAR LINKS =================== */
-  const G = { cliente: '', modulo: 'rss', assuntos: [], fonte: '', layouts: [], orient: ['horizontal'], tema: '', tempo: '', girar: '', busca: '' };
+  const G = { cliente: '', modulo: 'rss', site: '', assuntos: [], fonte: '', layouts: [], orient: ['horizontal'], tema: '', tempo: '', girar: '', busca: '' };
   let results = [];
 
   function gModule() { return modById(G.modulo) || active[0]; }
@@ -178,15 +178,30 @@
     G.layouts = p.layout ? [p.layout] : [m.layouts[0].id];
     G.tema = p.tema || 'noite';
     G.fonte = '';
+    G.site = '';
     G.busca = '';
     $('#gAssuntoBusca').value = '';
+  }
+
+  // fontes de um assunto, respeitando o site escolhido
+  function fontesOf(a) {
+    const list = (a && a.fontes) || [];
+    return G.site ? list.filter(f => f.site === G.site) : list;
+  }
+
+  function assuntosVisiveis() {
+    const m = gModule();
+    if (!m) return [];
+    return G.site ? m.assuntos.filter(a => fontesOf(a).length) : m.assuntos;
   }
 
   function fonteFor(assuntoId) {
     const m = gModule();
     const a = m.assuntos.find(x => x.id === assuntoId);
     if (!a || !a.fontes) return '';
-    if (G.assuntos.length === 1 && G.fonte) return G.fonte;
+    const fs = fontesOf(a);
+    if (G.assuntos.length === 1 && G.fonte && fs.some(f => f.id === G.fonte)) return G.fonte;
+    if (G.site) return fs[0] ? fs[0].id : '';
     return a.fonteObrigatoria ? a.fontes[0].id : '';
   }
 
@@ -207,21 +222,31 @@
     $('#gModulo').innerHTML = active.map(x => '<button data-v="' + x.id + '" class="' + (x.id === m.id ? 'on' : '') + '">' + ICON(MOD_ICON(x)) + esc(x.nome) + '</button>').join('');
 
     $('#gAssuntoLabel').textContent = (m.rotuloAssunto || 'Assunto') + 's';
-    $('#gAssuntoBusca').hidden = m.assuntos.length < 12;
+    if (m.sites && m.sites.length) {
+      $('#gSiteWrap').hidden = false;
+      $('#gSite').innerHTML = '<option value="">Todos os sites (mistura as fontes do assunto)</option>' +
+        m.sites.map(x => '<option value="' + x.id + '"' + (x.id === G.site ? ' selected' : '') + '>' + esc(x.nome) + '</option>').join('');
+    } else {
+      $('#gSiteWrap').hidden = true;
+    }
+    const visiveis = assuntosVisiveis();
+    $('#gAssuntoBusca').hidden = visiveis.length < 12;
     const q = RS.normalize(G.busca);
-    $('#gAssuntos').innerHTML = m.assuntos
+    $('#gAssuntos').innerHTML = visiveis
       .filter(a => !q || RS.normalize(a.nome).indexOf(q) >= 0 || G.assuntos.indexOf(a.id) >= 0)
       .map(a => '<button class="chip' + (G.assuntos.indexOf(a.id) >= 0 ? ' on' : '') + '" data-v="' + a.id + '">' + esc(a.nome) + '</button>').join('');
-    $('#gAssuntoCount').textContent = G.assuntos.length + ' de ' + m.assuntos.length;
+    $('#gAssuntoCount').textContent = G.assuntos.length + ' de ' + visiveis.length;
 
     // fonte: só quando exatamente um assunto com fontes está selecionado
     const one = G.assuntos.length === 1 ? m.assuntos.find(x => x.id === G.assuntos[0]) : null;
-    if (one && one.fontes && one.fontes.length > 1) {
+    const oneFontes = fontesOf(one);
+    if (one && oneFontes.length > 1) {
+      const obrig = one.fonteObrigatoria || !!G.site;
       $('#gFonteWrap').hidden = false;
-      $('#gFonteLabel').textContent = (m.rotuloFonte || 'Fonte') + (one.fonteObrigatoria ? '' : ' (opcional)');
-      if (one.fonteObrigatoria && !G.fonte) G.fonte = one.fontes[0].id;
-      $('#gFonte').innerHTML = (one.fonteObrigatoria ? '' : '<option value="">Todas as fontes (intercaladas)</option>') +
-        one.fontes.map(f => '<option value="' + f.id + '"' + (f.id === G.fonte ? ' selected' : '') + '>' + esc(f.nome) + '</option>').join('');
+      $('#gFonteLabel').textContent = (m.rotuloFonte || 'Fonte') + (obrig ? '' : ' (opcional)');
+      if (obrig && !oneFontes.some(f => f.id === G.fonte)) G.fonte = oneFontes[0].id;
+      $('#gFonte').innerHTML = (obrig ? '' : '<option value="">Todas as fontes (intercaladas)</option>') +
+        oneFontes.map(f => '<option value="' + f.id + '"' + (f.id === G.fonte ? ' selected' : '') + '>' + esc(f.nome) + '</option>').join('');
     } else {
       $('#gFonteWrap').hidden = true;
       G.fonte = '';
@@ -251,6 +276,14 @@
   $('#gModulo').addEventListener('click', e => {
     const b = e.target.closest('button[data-v]'); if (!b || b.dataset.v === G.modulo) return;
     G.modulo = b.dataset.v; resetForModule(); renderGen();
+  });
+  $('#gSite').addEventListener('change', e => {
+    G.site = e.target.value;
+    G.fonte = '';
+    const ok = assuntosVisiveis().map(a => a.id);
+    G.assuntos = G.assuntos.filter(id => ok.indexOf(id) >= 0);
+    if (!G.assuntos.length && ok.length) G.assuntos = [ok[0]];
+    renderGen();
   });
   $('#gAssuntoBusca').addEventListener('input', e => { G.busca = e.target.value; renderGen(); });
   $('#gAssuntos').addEventListener('click', e => {
