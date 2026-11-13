@@ -20,6 +20,10 @@ em layouts horizontais e verticais. Só HTML, CSS e JS, hospedado no Cloudflare 
 
 Cada `git push` publica uma versão nova.
 
+**Criou como Worker em vez de Pages?** Também funciona: o repositório tem `wrangler.jsonc` e
+`worker/index.js`. No projeto Worker, o comando de deploy é `npx wrangler deploy` (padrão).
+O nome em `wrangler.jsonc` (`rsscreen`) deve ser igual ao nome do Worker no Cloudflare.
+
 ## Cadastrar cliente
 
 Edite **`config/clientes.js`** e adicione uma linha na lista `clientes`:

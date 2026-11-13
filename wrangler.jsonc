@@ -1,0 +1,10 @@
+{
+  // Deploy como Cloudflare Worker com arquivos estáticos (npx wrangler deploy)
+  "name": "rsscreen",
+  "main": "worker/index.js",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS"
+  }
+}
