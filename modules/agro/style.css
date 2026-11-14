@@ -1,0 +1,60 @@
+/* Módulo Cotações do Agro */
+.m-agro { padding: 3rem 3.6rem 2.4rem; display: flex; flex-direction: column; gap: 2rem; }
+.m-agro > * { position: relative; }
+.m-agro .ag-bg {
+  position: absolute; inset: 0; z-index: -1;
+  background:
+    repeating-linear-gradient(-12deg, transparent 0 3.2rem, var(--text-a12) 3.2rem 3.26rem),
+    radial-gradient(circle at 85% 0%, var(--accent-a35) 0, transparent 45%), var(--bg);
+}
+.m-agro .ag-head { display: flex; justify-content: space-between; align-items: flex-start; }
+.m-agro .ag-title { font-size: 2.8rem; font-weight: 900; letter-spacing: -.02em; }
+.m-agro .ag-sub { font-size: 1.3rem; color: var(--muted); font-weight: 700; margin-top: .3rem; }
+.m-agro .ag-clock { font-size: 3rem; }
+.m-agro .ag-foot { font-size: 1.1rem; color: var(--muted); font-weight: 600; text-align: center; margin-top: auto; }
+
+.m-agro .ag-var { font-weight: 800; font-size: 1.35rem; padding: .35rem .8rem; border-radius: .5rem; white-space: nowrap; }
+.m-agro .ag-var.up { color: #16a34a; background: rgba(22,163,74,.14); }
+.m-agro .ag-var.down { color: #ef4444; background: rgba(239,68,68,.14); }
+.m-agro .ag-var.flat { color: var(--muted); background: var(--text-a12); }
+[data-tema="claro"] .m-agro .ag-var.up, [data-tema="areia"] .m-agro .ag-var.up { color: #15803d; }
+
+/* painel */
+.m-agro .ag-grid { flex: 1; min-height: 0; display: grid; gap: 1.4rem; grid-template-columns: repeat(2, 1fr); grid-auto-rows: minmax(0, 1fr); }
+.m-agro .ag-grid.n3, .m-agro .ag-grid.n5, .m-agro .ag-grid.n6 { grid-template-columns: repeat(3, 1fr); }
+.m-agro .ag-card { background: var(--surface); border-radius: 1.4rem; padding: 1.8rem 2rem; border-top: .35rem solid var(--accent); display: flex; flex-direction: column; justify-content: center; gap: .3rem; min-height: 0; }
+.m-agro .ag-name { font-size: 2rem; font-weight: 800; letter-spacing: -.01em; }
+.m-agro .ag-un { font-size: 1.2rem; color: var(--muted); font-weight: 600; }
+.m-agro .ag-val { font-size: 3.6rem; font-weight: 900; letter-spacing: -.03em; font-variant-numeric: tabular-nums; margin: .6rem 0 .4rem; }
+.m-agro .ag-grid.n5 .ag-val, .m-agro .ag-grid.n6 .ag-val { font-size: 3rem; }
+.m-agro .ag-row { display: flex; justify-content: space-between; align-items: center; font-size: 1.1rem; color: var(--muted); font-weight: 600; }
+
+/* destaque */
+.m-agro .ag-hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: .6rem; }
+.m-agro .ag-hero-name { font-size: 6rem; font-weight: 900; letter-spacing: -.04em; line-height: 1; }
+.m-agro .ag-hero-un { font-size: 2rem; color: var(--muted); font-weight: 700; }
+.m-agro .ag-hero-val { font-size: 11rem; font-weight: 900; letter-spacing: -.05em; color: var(--accent); font-variant-numeric: tabular-nums; line-height: 1.05; margin: 1rem 0; }
+.m-agro .ag-hero .ag-var { font-size: 2rem; }
+.m-agro .ag-ant { font-size: 1.6rem; color: var(--muted); font-weight: 600; margin-left: 1rem; }
+.m-agro .ag-pager { display: flex; gap: .6rem; justify-content: center; }
+.m-agro .ag-pager i { width: .8rem; height: .8rem; border-radius: 99rem; background: var(--text-a12); }
+.m-agro .ag-pager i.on { width: 2.6rem; background: var(--accent); }
+
+/* tabela */
+.m-agro .ag-table { flex: 1; min-height: 0; display: grid; grid-auto-rows: minmax(0, 1fr); gap: .6rem; }
+.m-agro .ag-tr { display: grid; grid-template-columns: 1.6fr 1fr 1fr .9fr; align-items: center; gap: 1rem; background: var(--surface); border-radius: 1rem; padding: 0 1.8rem; font-size: 2rem; font-weight: 700; }
+.m-agro .ag-tr.th { background: transparent; font-size: 1.15rem; color: var(--muted); font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.m-agro .ag-tr .nm { font-weight: 800; }
+.m-agro .ag-tr span:nth-child(2) { color: var(--muted); font-size: 1.5rem; }
+.m-agro .ag-tr .r { text-align: right; }
+.m-agro .ag-tr .val { font-weight: 900; font-variant-numeric: tabular-nums; }
+
+/* vertical */
+.o-v .m-agro { padding: 3rem 2.6rem 2.2rem; }
+.o-v .m-agro .ag-grid, .o-v .m-agro .ag-grid.n3, .o-v .m-agro .ag-grid.n5, .o-v .m-agro .ag-grid.n6 { grid-template-columns: 1fr 1fr; }
+.o-v .m-agro .ag-grid.n3 { grid-template-columns: 1fr; }
+.o-v .m-agro .ag-val { font-size: 3rem; }
+.o-v .m-agro .ag-hero-name { font-size: 4.6rem; }
+.o-v .m-agro .ag-hero-val { font-size: 7.4rem; }
+.o-v .m-agro .ag-tr { grid-template-columns: 1.5fr 1fr .9fr; font-size: 1.8rem; padding: 0 1.4rem; }
+.o-v .m-agro .ag-tr span:nth-child(2) { display: none; }

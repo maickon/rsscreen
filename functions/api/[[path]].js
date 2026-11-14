@@ -5,6 +5,7 @@
 // Publicado como Worker (recomendado), quem responde é worker/index.js, com tudo completo.
 import { futebolResponse } from '../../worker/futebol.js';
 import { loteriasResponse, memoryStub } from '../../worker/loterias.js';
+import { agroResponse } from '../../worker/agro.js';
 
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -31,6 +32,7 @@ export async function onRequest(context) {
     return futebolResponse((url.searchParams.get('liga') || 'bra.1').toLowerCase().replace(/[^a-z0-9._]/g, ''), waitUntil, CORS);
   }
   if (path === '/api/loterias') return loteriasResponse(env, memoryStub, waitUntil, request);
+  if (path === '/api/agro') return agroResponse(memoryStub, CORS);
   if (path === '/api/hit') {
     return new Response(GIF, { headers: { 'Content-Type': 'image/gif', 'Cache-Control': 'no-store', 'Access-Control-Allow-Origin': '*' } });
   }

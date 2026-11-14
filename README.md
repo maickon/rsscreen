@@ -172,6 +172,9 @@ Módulos ativos: notícias (`rss`), anúncios, clima, cotações, loterias, **fu
   cache de 1 minuto durante os jogos e 10 minutos no resto do tempo; se a ESPN falhar, a última
   resposta boa continua valendo por até 2 dias. Brasileirão A e B, Copa do Brasil, Libertadores,
   Sul-Americana, Champions, Premier League e La Liga.
+- **Cotações do Agro** lê `/api/agro` (Worker): indicadores diários do CEPEA (ESALQ/USP), pelo widget
+  público e gratuito deles, citando "Fonte: Cepea" na tela. Guardado 1 hora; o valor do dia anterior
+  fica salvo para mostrar alta ou baixa. Pecuária, grãos, café, açúcar, etanol e laranja.
 - **Relógio, datas, frases e horóscopo** são calculados no aparelho e funcionam sem internet. As
   datas móveis (Carnaval, Páscoa, Dia das Mães/Pais, Black Friday) são calculadas todo ano. Os
   textos das frases e do horóscopo são próprios do rsscreen (nada copiado de outros sites) e mudam

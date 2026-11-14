@@ -12,6 +12,7 @@
 //   /api/anuncios     anúncios ativos do cliente; /api/midia/<id> fotos dos anúncios
 //   /api/admin/anuncios[/ordem], /api/admin/midia  cadastro de anúncios (exige a senha)
 //   /api/admin/loterias  status e "atualizar agora" (exige a senha)
+//   /api/agro         cotações do agro (CEPEA), guardadas por 1 hora
 //   /api/futebol      jogos, resultados e tabela (?liga=bra.1), dados da ESPN com cache
 //   /api/playlist     playlist do cliente (a tela com &playlist=<id> lê daqui)
 //   /api/admin/playlists  cadastro de playlists (exige a senha)
@@ -25,6 +26,7 @@ import { listClientes, countClientes, getCliente, saveCliente, deleteCliente, im
 import { listAds, publicAds, saveAd, setAdsOrder, deleteAd, saveMedia, mediaResponse } from './anuncios.js';
 import { listPlaylists, getPlaylist, savePlaylist, deletePlaylist, playlistCacheKey } from './playlists.js';
 import { futebolResponse } from './futebol.js';
+import { agroResponse } from './agro.js';
 import { seo } from './seo.js';
 import { loteriasResponse, updateAll, updateStats, JOGOS, STATS_JOGOS, memoryStub } from './loterias.js';
 
@@ -171,6 +173,12 @@ export default {
       } catch (e) {
         return new Response(JSON.stringify({ anuncios: [], erro: 'indisponivel' }), { status: 503, headers });
       }
+    }
+
+    if (path === '/api/agro') {
+      trackRequest(request, 'agro');
+      maybeFlush(env, waitUntil);
+      return agroResponse(statsStub(env) || memoryStub, CORS);
     }
 
     if (path === '/api/futebol') {

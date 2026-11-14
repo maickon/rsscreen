@@ -178,19 +178,34 @@
       "porque": "Produtor rural quer saber de mercado, safra e clima. Conteúdo que ele não acha em outro lugar dentro da loja.",
       "telas": [
         {
+          "modulo": "agro",
+          "assunto": "principais",
+          "layout": "painel"
+        },
+        {
           "modulo": "rss",
           "assunto": "agronegocio",
+          "layout": "destaque"
+        },
+        {
+          "modulo": "agro",
+          "assunto": "pecuaria",
+          "layout": "tabela"
+        },
+        {
+          "modulo": "clima",
+          "assunto": "campos-dos-goytacazes-rj",
+          "layout": "semana"
+        },
+        {
+          "modulo": "agro",
+          "assunto": "graos",
           "layout": "destaque"
         },
         {
           "modulo": "cotacoes",
           "assunto": "principais",
           "layout": "painel"
-        },
-        {
-          "modulo": "clima",
-          "assunto": "campos-dos-goytacazes-rj",
-          "layout": "semana"
         }
       ]
     },

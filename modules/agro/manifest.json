@@ -1,0 +1,33 @@
+{
+  "id": "agro",
+  "ordem": 4,
+  "status": "ativo",
+  "nome": "Cotações do Agro",
+  "tag": "Novo",
+  "icone": "chart",
+  "chamada": "Boi gordo, soja, milho, café e trigo com os indicadores do CEPEA, todo dia na tela.",
+  "descricao": "Os preços que o produtor rural acompanha todos os dias: boi gordo, bezerro, suínos, frango, soja, milho, trigo, arroz, café, açúcar, etanol e laranja. Dados dos indicadores do CEPEA (ESALQ/USP), referência de preço no agronegócio brasileiro, com seta de alta e baixa.",
+  "beneficios": [
+    "Indicadores oficiais do CEPEA (ESALQ/USP)",
+    "Pecuária, grãos, café e cana",
+    "Seta de alta e baixa em relação ao dia anterior",
+    "Horizontal e vertical"
+  ],
+  "indicado": ["Lojas agropecuárias", "Cooperativas", "Revendas de máquinas", "Bancos e cartórios do interior"],
+  "script": "screen.js",
+  "estilo": "style.css",
+  "rotuloAssunto": "Painel",
+  "padrao": { "assunto": "principais", "layout": "painel", "tema": "floresta", "tempo": 10 },
+  "layouts": [
+    { "id": "painel", "nome": "Painel completo", "descricao": "Todos os produtos do painel em uma única tela." },
+    { "id": "destaque", "nome": "Um por vez", "descricao": "Cada produto em destaque, com a variação do dia." },
+    { "id": "tabela", "nome": "Tabela", "descricao": "Lista com produto, unidade, preço e variação." }
+  ],
+  "assuntos": [
+    { "id": "principais", "nome": "Principais (boi, soja, milho, café)", "ids": [2, 12, 77, 23] },
+    { "id": "pecuaria", "nome": "Pecuária (boi, bezerro, suíno, frango)", "ids": [2, 8, 3, 124, 181, 130] },
+    { "id": "graos", "nome": "Grãos (soja, milho, trigo, arroz)", "ids": [12, 92, 77, 178, 179, 91] },
+    { "id": "cafe-cana", "nome": "Café, açúcar, etanol e laranja", "ids": [23, 24, 53, 103, 104, 162] },
+    { "id": "todos", "nome": "Todos os produtos", "ids": [2, 8, 3, 124, 181, 130, 12, 92, 77, 178, 179, 91, 72, 23, 24, 53, 103, 104, 162] }
+  ]
+}
