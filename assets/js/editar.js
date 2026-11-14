@@ -7,7 +7,10 @@
   const C = (P.get('c') || '').toLowerCase(), T = P.get('t') || '';
   const API = RS.ROOT_URL + 'api/editar?c=' + encodeURIComponent(C) + '&t=' + encodeURIComponent(T);
   const TEMAS = [['acougue', 'Açougue'], ['hortifruti', 'Hortifrúti'], ['padaria', 'Padaria'], ['mercado', 'Mercado'], ['bebidas', 'Bebidas'],
-    ['lanchonete', 'Lanchonete (quadro-negro)'], ['pizzaria', 'Pizzaria (quadro-negro)'], ['acai', 'Açaí'], ['cafeteria', 'Cafeteria'], ['geral', 'Neutro']];
+    ['lanchonete', 'Lanchonete (quadro-negro)'], ['pizzaria', 'Pizzaria (quadro-negro)'], ['acai', 'Açaí'], ['cafeteria', 'Cafeteria'],
+    ['clinica', 'Clínica (claro e azul)'], ['festa', 'Festa (colorido)'], ['elegante', 'Elegante (preto e dourado)'], ['geral', 'Neutro']];
+  const NOME_TIPO = { precos: 'Tabela de preços', cardapio: 'Cardápio', boasvindas: 'Boas-vindas e Wi-Fi', mural: 'Aniversariantes e avisos' };
+  const ehLista = tipo => tipo === 'precos' || tipo === 'cardapio';
   const temaNome = id => (TEMAS.find(t => t[0] === id) || [id, id])[1];
 
   let cliente = null, listas = [], limites = { listas: 10, itens: 200 }, segs = [], catalogo = {};
@@ -24,7 +27,9 @@
     if (!r.ok) throw new Error((d && d.erro) || 'Erro ' + r.status);
     return d;
   }
-  function telaUrl(id, orient, layout) {
+  function telaUrl(id, orient, layout, tipo) {
+    tipo = tipo || (atual && atual.tipo) || 'precos';
+    if (!ehLista(tipo)) return RS.buildScreenUrl({ cliente: C, modulo: 'mural', assunto: id, layout: 'padrao', orientacao: orient });
     return RS.buildScreenUrl({ cliente: C, modulo: 'lista', assunto: id, layout: layout || 'lista', orientacao: orient });
   }
 
@@ -57,10 +62,12 @@
   function renderListas() {
     $('edLista').innerHTML = listas.length ? listas.map(l => {
       const n = ((l.dados && l.dados.itens) || []).length;
-      return '<div class="ed-card ed-item-lista"><div><b>' + esc(l.nome) + '</b><small>' + (l.tipo === 'cardapio' ? 'Cardápio' : 'Tabela de preços') + ' · ' + esc(temaNome(l.tema)) + ' · ' + n + (n === 1 ? ' item' : ' itens') + '</small></div>' +
+      const d = l.dados || {};
+      const info = ehLista(l.tipo) ? n + (n === 1 ? ' item' : ' itens') : l.tipo === 'mural' ? ((d.aniversarios || []).length + ' aniversariantes · ' + (d.avisos || []).length + ' avisos') : (d.wifiNome ? 'com Wi-Fi' : 'sem Wi-Fi');
+      return '<div class="ed-card ed-item-lista"><div><b>' + esc(l.nome) + '</b><small>' + esc(NOME_TIPO[l.tipo] || l.tipo) + ' · ' + esc(temaNome(l.tema)) + ' · ' + info + '</small></div>' +
         '<div class="ed-acts"><button class="btn btn-primary btn-sm" data-ed="' + l.id + '">Editar</button>' +
-        '<a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="' + esc(telaUrl(l.id, 'horizontal')) + '">' + ICON('eye') + ' Ver na TV</a></div></div>';
-    }).join('') : '<div class="ed-empty">Você ainda não tem nenhuma tabela ou cardápio. Toque em <b>Nova</b> para começar.</div>';
+        '<a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="' + esc(telaUrl(l.id, 'horizontal', '', l.tipo)) + '">' + ICON('eye') + ' Ver na TV</a></div></div>';
+    }).join('') : '<div class="ed-empty">Você ainda não criou nenhum conteúdo. Toque em <b>Nova</b> para começar.</div>';
     $('edNova').disabled = listas.length >= limites.listas;
   }
 
@@ -71,7 +78,24 @@
     atual.dados = atual.dados || {};
     atual.dados.itens = atual.dados.itens || [];
     $('edTitulo').textContent = atual.nome;
-    $('edResumo').textContent = (atual.tipo === 'cardapio' ? 'Cardápio' : 'Tabela de preços') + ' · toque num produto do catálogo para adicionar e digite o preço.';
+    const lst = ehLista(atual.tipo);
+    $('edResumo').textContent = NOME_TIPO[atual.tipo] + (lst ? ' · toque num produto do catálogo para adicionar e digite o preço.' : ' · as mudanças aparecem na prévia ao lado.');
+    $('edCardProdutos').hidden = !lst;
+    $('edCardBoas').hidden = atual.tipo !== 'boasvindas';
+    $('edCardMural').hidden = atual.tipo !== 'mural';
+    $('edLayoutWrap').hidden = !lst;
+    document.querySelectorAll('[data-so=lista]').forEach(el => { el.hidden = !lst; });
+    $('edTitLbl').textContent = lst ? 'Título na TV' : 'Nome do estabelecimento';
+    $('bvMsg').value = atual.dados.mensagem || '';
+    $('bvHora').value = atual.dados.horario || '';
+    $('bvRede').value = atual.dados.wifiNome || '';
+    $('bvSenha').value = atual.dados.wifiSenha || '';
+    $('bvTipo').value = atual.dados.wifiTipo || 'WPA';
+    $('bvInsta').value = atual.dados.instagram || '';
+    $('bvWhats').value = atual.dados.whatsapp || '';
+    atual.dados.aniversarios = atual.dados.aniversarios || [];
+    atual.dados.avisos = atual.dados.avisos || [];
+    renderMural();
     $('edTit').value = atual.dados.titulo || '';
     $('edSub').value = atual.dados.subtitulo || '';
     $('edRod').value = atual.dados.rodape || '';
@@ -117,8 +141,61 @@
   }
   function mudou() { sujo = true; estado(); agendaPrevia(); }
 
+  /* ---------- aniversariantes e avisos ---------- */
+  function renderMural() {
+    const an = atual.dados.aniversarios || [], av = atual.dados.avisos || [];
+    $('muConta').textContent = an.length + ' de 150';
+    $('muAniv').innerHTML = an.length ? an.map((a, k) =>
+      '<div class="ed-it" data-an="' + k + '"><div class="ed-it-l1 mu-l1"><input class="input" data-fa="n" value="' + esc(a.n) + '" maxlength="50" placeholder="Nome" aria-label="Nome">' +
+        '<input class="input" data-fa="d" value="' + esc(a.d) + '" maxlength="5" placeholder="dd/mm" inputmode="numeric" aria-label="Dia e mês"></div>' +
+        '<div class="ed-it-acts"><input class="input input-sm" data-fa="x" value="' + esc(a.x || '') + '" maxlength="40" placeholder="Turma, setor… (opcional)" style="flex:1">' +
+        '<button type="button" class="ed-ic" data-rman aria-label="Remover">✕</button></div></div>').join('') : '<div class="ed-empty">Nenhum aniversariante ainda.</div>';
+    $('muAvisos').innerHTML = av.length ? av.map((a, k) =>
+      '<div class="ed-it" data-av="' + k + '"><input class="input" data-fv="t" value="' + esc(a.t || '') + '" maxlength="60" placeholder="Título do aviso" aria-label="Título">' +
+        '<textarea class="input" data-fv="x" rows="2" maxlength="300" placeholder="Texto do aviso" aria-label="Texto">' + esc(a.x || '') + '</textarea>' +
+        '<div class="ed-it-acts"><label class="ed-ate">Sai do ar depois de <input class="input input-sm" type="date" data-fv="ate" value="' + esc(a.ate || '') + '"></label><span></span>' +
+        '<button type="button" class="ed-ic" data-rmav aria-label="Remover">✕</button></div></div>').join('') : '<div class="ed-empty">Nenhum aviso ainda.</div>';
+  }
+  $('muAddAniv').addEventListener('click', () => {
+    if (atual.dados.aniversarios.length >= 150) return toast('Limite de 150 aniversariantes');
+    atual.dados.aniversarios.push({ n: '', d: '' }); renderMural(); mudou();
+    const l = document.querySelectorAll('[data-an]'); l[l.length - 1].querySelector('[data-fa=n]').focus();
+  });
+  $('muAddAviso').addEventListener('click', () => {
+    if (atual.dados.avisos.length >= 20) return toast('Limite de 20 avisos');
+    atual.dados.avisos.push({ t: '', x: '' }); renderMural(); mudou();
+    const l = document.querySelectorAll('[data-av]'); l[l.length - 1].querySelector('[data-fv=t]').focus();
+  });
+  $('edCardMural').addEventListener('input', e => {
+    const an = e.target.closest('[data-an]'), av = e.target.closest('[data-av]');
+    if (an && e.target.dataset.fa) {
+      let v = e.target.value;
+      if (e.target.dataset.fa === 'd') { v = v.replace(/[^\d]/g, '').slice(0, 4); if (v.length > 2) v = v.slice(0, 2) + '/' + v.slice(2); e.target.value = v; }
+      atual.dados.aniversarios[Number(an.dataset.an)][e.target.dataset.fa] = v;
+    }
+    if (av && e.target.dataset.fv) atual.dados.avisos[Number(av.dataset.av)][e.target.dataset.fv] = e.target.value;
+    mudou();
+  });
+  $('edCardMural').addEventListener('click', e => {
+    const an = e.target.closest('[data-rman]') && e.target.closest('[data-an]');
+    const av = e.target.closest('[data-rmav]') && e.target.closest('[data-av]');
+    if (an) atual.dados.aniversarios.splice(Number(an.dataset.an), 1);
+    else if (av) atual.dados.avisos.splice(Number(av.dataset.av), 1);
+    else return;
+    renderMural(); mudou();
+  });
+
   function lerCampos() {
     atual.dados.titulo = $('edTit').value.trim();
+    if (atual.tipo === 'boasvindas') {
+      atual.dados.mensagem = $('bvMsg').value.trim();
+      atual.dados.horario = $('bvHora').value.trim();
+      atual.dados.wifiNome = $('bvRede').value.trim();
+      atual.dados.wifiSenha = $('bvSenha').value;
+      atual.dados.wifiTipo = $('bvTipo').value;
+      atual.dados.instagram = $('bvInsta').value.trim();
+      atual.dados.whatsapp = $('bvWhats').value.trim();
+    }
     atual.dados.subtitulo = $('edSub').value.trim();
     atual.dados.rodape = $('edRod').value.trim();
     atual.dados.esgotado = $('edEsg').value;
@@ -142,14 +219,21 @@
   $('edNovaCancel').addEventListener('click', () => { $('edNovaForm').hidden = true; });
   document.querySelectorAll('input[name=tipo]').forEach(r => r.addEventListener('change', () => {
     const tipo = document.querySelector('input[name=tipo]:checked').value;
-    const op = Array.from($('edSeg').options).find(o => o.dataset.tipo === tipo);
-    if (op) $('edSeg').value = op.value;
+    $('edSegWrap').querySelector('span').textContent = ehLista(tipo) ? 'Tipo de comércio (define o visual e o catálogo)' : 'Visual na TV';
+    if (ehLista(tipo)) {
+      $('edSeg').innerHTML = segs.map(s => '<option value="' + s.id + '" data-tipo="' + s.tipo + '">' + esc(s.nome) + '</option>').join('') + '<option value="geral">Outro</option>';
+      const op = Array.from($('edSeg').options).find(o => o.dataset.tipo === tipo);
+      if (op) $('edSeg').value = op.value;
+    } else {
+      $('edSeg').innerHTML = TEMAS.map(t => '<option value="' + t[0] + '">' + esc(t[1]) + '</option>').join('');
+      $('edSeg').value = tipo === 'mural' ? 'festa' : 'clinica';
+    }
   }));
   $('edNovaForm').addEventListener('submit', async e => {
     e.preventDefault();
     const tipo = document.querySelector('input[name=tipo]:checked').value;
     const seg = $('edSeg').value;
-    const nome = $('edNome').value.trim() || (tipo === 'cardapio' ? 'Cardápio' : 'Tabela de preços');
+    const nome = $('edNome').value.trim() || NOME_TIPO[tipo];
     try {
       const r = await api('POST', '', { tipo, tema: seg, nome, dados: { titulo: cliente.nome, subtitulo: tipo === 'cardapio' ? 'Cardápio' : 'Preços de hoje', itens: [] } });
       await recarregar();
@@ -208,14 +292,20 @@
     else return;
     renderItens(); mudou();
   });
-  ['edTit', 'edSub', 'edRod'].forEach(id => $(id).addEventListener('input', mudou));
-  ['edEsg', 'edTema'].forEach(id => $(id).addEventListener('change', mudou));
+  ['edTit', 'edSub', 'edRod', 'bvMsg', 'bvHora', 'bvRede', 'bvSenha', 'bvInsta', 'bvWhats'].forEach(id => $(id).addEventListener('input', mudou));
+  ['edEsg', 'edTema', 'bvTipo'].forEach(id => $(id).addEventListener('change', mudou));
   $('edLayout').addEventListener('change', () => { estado(); preparaPrevia(); });
 
   $('edSalvar').addEventListener('click', async () => {
     lerCampos();
     const vazios = atual.dados.itens.filter(i => !String(i.n || '').trim()).length;
     atual.dados.itens = atual.dados.itens.filter(i => String(i.n || '').trim());
+    if (atual.tipo === 'mural') {
+      const ruins = atual.dados.aniversarios.filter(a => a.n && !/^(0[1-9]|[12]\d|3[01])\/(0[1-9]|1[0-2])$/.test(a.d || ''));
+      if (ruins.length) return toast('Confira a data de "' + ruins[0].n + '": use dia/mês, ex.: 05/03');
+      atual.dados.aniversarios = atual.dados.aniversarios.filter(a => a.n);
+      atual.dados.avisos = atual.dados.avisos.filter(a => a.t || a.x);
+    }
     $('edSalvar').disabled = true;
     try {
       await api('POST', '', { id: atual.id, tipo: atual.tipo, tema: atual.tema, nome: atual.nome, dados: atual.dados });
@@ -241,7 +331,7 @@
     const d = await api('GET');
     cliente = d.cliente; listas = d.listas || []; limites = d.limites || limites;
     $('edCli').textContent = cliente.nome;
-    document.title = 'Tabelas e cardápios · ' + cliente.nome;
+    document.title = 'Conteúdo da TV · ' + cliente.nome;
   }
   (async () => {
     if (!C || !T) { $('edMsg').innerHTML = '<b>Link incompleto.</b><br>Peça o link de edição ao seu fornecedor.'; return; }

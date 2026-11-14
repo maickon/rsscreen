@@ -9,7 +9,7 @@
 
   const INCLUI = {
     essencial: ['Notícias: 25 assuntos e mais de 90 sites', 'Previsão do tempo e cotações', 'Relógio, datas comemorativas e frases', 'Todos os modelos, horizontal e vertical'],
-    completo: ['Tudo do Essencial', 'Futebol ao vivo, agenda e tabela', 'Resultados e estatísticas de loterias', 'Horóscopo do dia', 'Criador de anúncios dos seus anunciantes', 'Tabela de preços e cardápio que o cliente edita pelo celular', 'Playlist: a programação inteira num link', 'Conteúdos novos sem custo extra'],
+    completo: ['Tudo do Essencial', 'Futebol ao vivo, agenda e tabela', 'Resultados e estatísticas de loterias', 'Horóscopo do dia', 'Criador de anúncios dos seus anunciantes', 'Tabela de preços e cardápio que o cliente edita pelo celular', 'Boas-vindas com QR Code do Wi-Fi e mural de aniversariantes', 'Playlist: a programação inteira num link', 'Conteúdos novos sem custo extra'],
     rede: ['Tudo do plano Completo', 'Preço especial a partir de 10 telas', 'Pacotes prontos por segmento', 'Atendimento prioritário'],
     gerenciado: ['Tudo do plano Completo', 'Nós montamos a programação da TV', 'Criamos os anúncios do estabelecimento', 'Configuração do player incluída']
   };

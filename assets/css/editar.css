@@ -82,3 +82,9 @@ body { background: var(--bg-soft); padding-bottom: 90px; }
 }
 
 [hidden] { display: none !important; }
+
+/* aniversariantes e avisos */
+.mu-l1 { grid-template-columns: minmax(0, 1fr) 92px; }
+.ed-ate { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); font-weight: 600; }
+.ed-ate input { width: auto; }
+#edCardMural textarea.input, #edCardBoas textarea.input { height: auto; padding-top: 10px; padding-bottom: 10px; resize: vertical; font-family: inherit; }

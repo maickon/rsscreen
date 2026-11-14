@@ -4,8 +4,8 @@
 
 let schemaOk = false;
 export const LIMITES = { listas: 10, itens: 200, bytes: 60000 };
-const TIPOS = ['precos', 'cardapio'];
-const TEMAS = ['acougue', 'hortifruti', 'padaria', 'lanchonete', 'pizzaria', 'acai', 'cafeteria', 'bebidas', 'mercado', 'geral'];
+const TIPOS = ['precos', 'cardapio', 'boasvindas', 'mural'];
+const TEMAS = ['acougue', 'hortifruti', 'padaria', 'lanchonete', 'pizzaria', 'acai', 'cafeteria', 'bebidas', 'mercado', 'clinica', 'festa', 'elegante', 'geral'];
 const slug = v => String(v == null ? '' : v).toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 60);
 const novoId = () => Math.random().toString(36).slice(2, 7) + Date.now().toString(36).slice(-3);
 const novoToken = () => Array.from(crypto.getRandomValues(new Uint8Array(18)), b => ('0' + b.toString(16)).slice(-2)).join('');
@@ -64,6 +64,22 @@ function limparDados(d) {
   const out = { itens };
   ['titulo', 'subtitulo', 'rodape'].forEach(k => { if (d[k]) out[k] = txt(d[k], k === 'rodape' ? 120 : 60); });
   if (d.esgotado === 'riscar' || d.esgotado === 'esconder') out.esgotado = d.esgotado;
+  // boas-vindas e Wi-Fi
+  const multi = (v, n) => String(v == null ? '' : v).replace(/[\u0000-\u0009\u000b-\u001f]/g, ' ').trim().slice(0, n);
+  if (d.mensagem) out.mensagem = multi(d.mensagem, 300);
+  if (d.horario) out.horario = multi(d.horario, 300);
+  if (d.wifiNome) out.wifiNome = txt(d.wifiNome, 40);
+  if (d.wifiSenha) out.wifiSenha = txt(d.wifiSenha, 63);
+  if (['WPA', 'WEP', 'nopass'].indexOf(d.wifiTipo) >= 0) out.wifiTipo = d.wifiTipo;
+  if (d.instagram) out.instagram = txt(d.instagram, 40);
+  if (d.whatsapp) out.whatsapp = txt(d.whatsapp, 25);
+  // aniversariantes e avisos
+  if (Array.isArray(d.aniversarios)) out.aniversarios = d.aniversarios.slice(0, 150).map(a => {
+    const o = { n: txt(a.n, 50), d: /^\d{2}\/\d{2}$/.test(String(a.d || '')) ? a.d : '' };
+    if (a.x) o.x = txt(a.x, 40);
+    return o;
+  }).filter(a => a.n && a.d);
+  if (Array.isArray(d.avisos)) out.avisos = d.avisos.slice(0, 20).map(a => ({ t: txt(a.t, 60), x: multi(a.x, 300), ate: /^\d{4}-\d{2}-\d{2}$/.test(String(a.ate || '')) ? a.ate : '' })).filter(a => a.t || a.x);
   return out;
 }
 function saida(r) {
@@ -90,7 +106,7 @@ export async function salvarLista(env, cliente, b) {
   if (!cliente) throw new Error('Cliente obrigatório');
   const tipo = TIPOS.indexOf(b.tipo) >= 0 ? b.tipo : 'precos';
   const tema = TEMAS.indexOf(b.tema) >= 0 ? b.tema : 'geral';
-  const nome = txt(b.nome, 60) || (tipo === 'cardapio' ? 'Cardápio' : 'Tabela de preços');
+  const nome = txt(b.nome, 60) || ({ cardapio: 'Cardápio', boasvindas: 'Boas-vindas', mural: 'Mural de avisos' })[tipo] || 'Tabela de preços';
   const dados = JSON.stringify(limparDados(b.dados));
   if (dados.length > LIMITES.bytes) throw new Error('Lista grande demais. Divida em duas listas.');
   const agora = Date.now();

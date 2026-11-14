@@ -1,0 +1,28 @@
+{
+  "id": "mural",
+  "ordem": 3,
+  "status": "ativo",
+  "nome": "Boas-vindas, Wi-Fi e Avisos",
+  "tag": "Novo",
+  "icone": "sparkles",
+  "assuntoLivre": true,
+  "chamada": "Boas-vindas com QR Code do Wi-Fi, aniversariantes do mês e avisos, editados pelo próprio cliente.",
+  "descricao": "Uma tela de boas-vindas com o nome do estabelecimento, horário de funcionamento e QR Code para conectar no Wi-Fi sem digitar senha, e um mural com os aniversariantes do mês (com destaque no dia) e avisos para clientes e alunos. O comerciante atualiza pelo celular, com o mesmo link das tabelas e cardápios.",
+  "beneficios": [
+    "QR Code do Wi-Fi: conecta apontando a câmera",
+    "Aniversariantes do mês com destaque no dia",
+    "Avisos com data para sair do ar sozinhos",
+    "O cliente edita pelo celular, sem login"
+  ],
+  "indicado": ["Clínicas e consultórios", "Academias", "Escolas e cursos", "Salões e barbearias"],
+  "script": "screen.js",
+  "estilo": "style.css",
+  "rotuloAssunto": "Mural",
+  "padrao": { "assunto": "exemplo", "layout": "padrao", "tema": "noite", "tempo": 12 },
+  "layouts": [
+    { "id": "padrao", "nome": "Padrão", "descricao": "Boas-vindas, aniversariantes e avisos, cada um na sua tela." }
+  ],
+  "assuntos": [
+    { "id": "exemplo", "nome": "Exemplo" }
+  ]
+}

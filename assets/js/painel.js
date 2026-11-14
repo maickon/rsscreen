@@ -1222,9 +1222,15 @@
 
   /* =================== TABELAS E CARDÁPIOS =================== */
   const LS = { cliente: '', listas: [], token: '' };
-  const LS_TEMA = { acougue: 'Açougue', hortifruti: 'Hortifrúti', padaria: 'Padaria', mercado: 'Mercado', bebidas: 'Bebidas', lanchonete: 'Lanchonete', pizzaria: 'Pizzaria', acai: 'Açaí', cafeteria: 'Cafeteria', geral: 'Neutro' };
+  const LS_TEMA = { acougue: 'Açougue', hortifruti: 'Hortifrúti', padaria: 'Padaria', mercado: 'Mercado', bebidas: 'Bebidas', lanchonete: 'Lanchonete', pizzaria: 'Pizzaria', acai: 'Açaí', cafeteria: 'Cafeteria', clinica: 'Clínica', festa: 'Festa', elegante: 'Elegante', geral: 'Neutro' };
   const lsEditUrl = () => RS.ROOT_URL + 'editar/?c=' + encodeURIComponent(LS.cliente) + '&t=' + encodeURIComponent(LS.token);
-  const lsTelaUrl = (id, orient) => RS.buildScreenUrl({ cliente: LS.cliente, modulo: 'lista', assunto: id, layout: $('#lsLayout').value, orientacao: orient });
+  const LS_TIPO = { precos: 'Tabela de preços', cardapio: 'Cardápio', boasvindas: 'Boas-vindas e Wi-Fi', mural: 'Aniversariantes e avisos' };
+  const lsModulo = tipo => (tipo === 'boasvindas' || tipo === 'mural') ? 'mural' : 'lista';
+  const lsTelaUrl = (id, orient) => {
+    const l = LS.listas.find(x => x.id === id) || {};
+    const mod = lsModulo(l.tipo);
+    return RS.buildScreenUrl({ cliente: LS.cliente, modulo: mod, assunto: id, layout: mod === 'mural' ? 'padrao' : $('#lsLayout').value, orientacao: orient });
+  };
 
   async function initListas() {
     $('#lsNoDb').hidden = dbMode;
@@ -1248,7 +1254,7 @@
     $('#lsLink').innerHTML = LS.token ?
       '<div class="lbl">Link de edição do cliente</div><code>' + esc(lsEditUrl()) + '</code>' +
       '<div class="acts"><button class="btn btn-primary btn-sm" data-ls="copiar">' + ICON('copy') + ' Copiar link</button>' +
-      (c && c.whatsapp ? '<a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="' + esc(RS.whatsappLink(c.whatsapp, 'Olá, ' + c.nome + '! Este é o seu link para montar e atualizar a tabela de preços ou o cardápio da TV, direto pelo celular:\n\n' + lsEditUrl() + '\n\nÉ só pesquisar o produto, tocar para adicionar e digitar o preço. A TV atualiza sozinha em até 10 minutos.')) + '">' + ICON('whatsapp') + ' Enviar</a>' : '') +
+      (c && c.whatsapp ? '<a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="' + esc(RS.whatsappLink(c.whatsapp, 'Olá, ' + c.nome + '! Este é o seu link para atualizar o conteúdo da sua TV pelo celular (tabela de preços, cardápio, boas-vindas com Wi-Fi e avisos):\n\n' + lsEditUrl() + '\n\nA TV atualiza sozinha em até 10 minutos.')) + '">' + ICON('whatsapp') + ' Enviar</a>' : '') +
       '<a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="' + esc(lsEditUrl()) + '">' + ICON('external') + ' Abrir editor</a>' +
       '<button class="btn btn-ghost btn-sm" data-ls="novo">' + ICON('refresh') + ' Trocar link</button></div>' +
       '<p class="hint">Quem tiver este link consegue editar as listas deste cliente. Se ele vazar, use <b>Trocar link</b>: o antigo para de funcionar na hora.</p>'
@@ -1259,7 +1265,7 @@
       LS.listas.map(l => {
         const its = (l.dados && l.dados.itens) || [];
         const of = its.filter(i => i.o).length, x = its.filter(i => i.x).length;
-        return '<tr><td><b>' + esc(l.nome) + '</b><br><small>' + (l.tipo === 'cardapio' ? 'Cardápio' : 'Tabela de preços') + ' · ' + esc(LS_TEMA[l.tema] || l.tema) + '</small></td>' +
+        return '<tr><td><b>' + esc(l.nome) + '</b><br><small>' + esc(LS_TIPO[l.tipo] || l.tipo) + ' · ' + esc(LS_TEMA[l.tema] || l.tema) + '</small></td>' +
           '<td>' + its.length + (of ? '<br><small>' + of + ' em oferta</small>' : '') + (x ? '<br><small>' + x + ' esgotado(s)</small>' : '') + '</td>' +
           '<td><small>' + (l.atualizado ? new Date(l.atualizado).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—') + '</small></td>' +
           '<td><div class="acts"><button class="btn btn-dark btn-sm" data-lstv="' + l.id + '" data-o="horizontal">' + ICON('copy') + ' Deitada</button>' +
@@ -1287,7 +1293,7 @@
 
   const PLANO_INCLUI = {
     essencial: ['Notícias: 25 assuntos e mais de 90 sites', 'Previsão do tempo', 'Cotações (dólar, euro, cripto)', 'Relógio, datas comemorativas e frases', 'Todos os modelos, horizontal e vertical', 'Até 3 links por tela'],
-    completo: ['Tudo do Essencial', 'Futebol ao vivo, agenda e tabela', 'Resultados e estatísticas de loterias', 'Horóscopo do dia', 'Tela de anúncios dos anunciantes', 'Tabela de preços e cardápio que o próprio cliente edita', 'Playlist: a programação inteira da TV num link só', 'Módulos novos sem custo extra', 'Links e trocas ilimitadas', 'Suporte prioritário no WhatsApp'],
+    completo: ['Tudo do Essencial', 'Futebol ao vivo, agenda e tabela', 'Resultados e estatísticas de loterias', 'Horóscopo do dia', 'Tela de anúncios dos anunciantes', 'Tabela de preços e cardápio que o próprio cliente edita', 'Boas-vindas com QR Code do Wi-Fi e mural de aniversariantes', 'Playlist: a programação inteira da TV num link só', 'Módulos novos sem custo extra', 'Links e trocas ilimitadas', 'Suporte prioritário no WhatsApp'],
     rede: ['Tudo do Completo', 'Preço por tela a partir de 10 telas', 'Pacotes prontos por segmento', 'Ideal para operadores de mídia indoor'],
     gerenciado: ['Tudo do Completo', 'Você cria os anúncios do estabelecimento', 'Você configura o player do cliente', 'Você monta a programação da TV', 'Ajustes mensais inclusos'],
     cortesia: ['Acesso completo temporário', 'Para teste de 7 dias, permuta ou demonstração']
@@ -1348,7 +1354,7 @@
     const pad = m.padrao || {};
     return {
       modulo: m.id,
-      assunto: assunto || (m.assuntoLivre && PL.listas && PL.listas[0] ? PL.listas[0].id : '') || pad.assunto || (m.assuntos[0] && m.assuntos[0].id) || '',
+      assunto: assunto || (m.assuntoLivre ? ((PL.listas || []).find(l => (m.id === 'mural') === (l.tipo === 'boasvindas' || l.tipo === 'mural')) || {}).id : '') || pad.assunto || (m.assuntos[0] && m.assuntos[0].id) || '',
       fonte: '',
       layout: layout || pad.layout || (m.layouts[0] && m.layouts[0].id) || '',
       duracao: PL_DUR[m.id] || 30
@@ -1390,7 +1396,7 @@
     if (!PL.cliente) { PL.list = []; renderPlList(); return; }
     try { PL.list = (await api('api/admin/playlists?cliente=' + encodeURIComponent(PL.cliente))).playlists || []; }
     catch (e) { PL.list = []; toast(e.message, 'x'); }
-    try { PL.listas = ((await api('api/admin/listas?cliente=' + encodeURIComponent(PL.cliente))).listas || []).map(l => ({ id: l.id, nome: l.nome })); }
+    try { PL.listas = ((await api('api/admin/listas?cliente=' + encodeURIComponent(PL.cliente))).listas || []).map(l => ({ id: l.id, nome: l.nome, tipo: l.tipo })); }
     catch (_) { PL.listas = []; }
     renderPlItems();
     renderPlList();
@@ -1437,7 +1443,7 @@
         '<div class="pl-num">' + (k + 1) + '</div>' +
         '<div class="pl-fields">' +
           '<label><span>Conteúdo</span><select class="select select-sm" data-p="modulo">' + opts(active, m.id) + '</select></label>' +
-          (m.assuntoLivre ? '<label><span>Lista</span><select class="select select-sm" data-p="assunto">' + opts((PL.listas || []).concat(m.assuntos), it.assunto) + '</select></label>' :
+          (m.assuntoLivre ? '<label><span>Lista</span><select class="select select-sm" data-p="assunto">' + opts((PL.listas || []).filter(l => (m.id === 'mural') === (l.tipo === 'boasvindas' || l.tipo === 'mural')).concat(m.assuntos), it.assunto) + '</select></label>' :
             m.assuntos.length > 1 ? '<label><span>' + esc(m.rotuloAssunto || 'Assunto') + '</span><select class="select select-sm" data-p="assunto">' + opts(m.assuntos, it.assunto) + '</select></label>' : '') +
           (fontes.length ? '<label><span>' + esc(m.rotuloFonte || 'Fonte') + '</span><select class="select select-sm" data-p="fonte">' + opts(fontes, it.fonte, a.fonteObrigatoria ? null : 'Todas') + '</select></label>' : '') +
           (m.layouts.length > 1 ? '<label><span>Modelo</span><select class="select select-sm" data-p="layout">' + opts(m.layouts, it.layout) + '</select></label>' : '') +

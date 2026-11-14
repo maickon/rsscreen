@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="robots" content="noindex, nofollow" />
   <meta name="theme-color" content="#0A0A0A" />
-  <title>Minhas tabelas e cardápios</title>
+  <title>Conteúdo da minha TV</title>
   <link rel="icon" href="../assets/img/icon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,16 +27,18 @@
     <!-- ===== LISTAS ===== -->
     <section id="vListas" hidden>
       <div class="ed-head">
-        <div><h1>Minhas tabelas e cardápios</h1><p>O que você salvar aqui aparece na TV em até 10 minutos.</p></div>
+        <div><h1>Conteúdo da minha TV</h1><p>O que você salvar aqui aparece na TV em até 10 minutos.</p></div>
         <button class="btn btn-primary" id="edNova" type="button"><i data-icon="plus"></i> Nova</button>
       </div>
       <form class="ed-card ed-nova" id="edNovaForm" hidden autocomplete="off">
-        <h2>Nova tabela ou cardápio</h2>
+        <h2>O que você quer mostrar na TV?</h2>
         <div class="ed-tipos">
           <label><input type="radio" name="tipo" value="precos" checked><span><b>Tabela de preços</b><small>Açougue, hortifrúti, padaria, mercado</small></span></label>
           <label><input type="radio" name="tipo" value="cardapio"><span><b>Cardápio</b><small>Lanches, pizzas, açaí, cafeteria</small></span></label>
+          <label><input type="radio" name="tipo" value="boasvindas"><span><b>Boas-vindas e Wi-Fi</b><small>Recepção, horário e QR Code do Wi-Fi</small></span></label>
+          <label><input type="radio" name="tipo" value="mural"><span><b>Aniversariantes e avisos</b><small>Aniversários do mês e recados</small></span></label>
         </div>
-        <label class="field"><span>Tipo de comércio (define o visual e o catálogo)</span><select class="select" id="edSeg"></select></label>
+        <label class="field" id="edSegWrap"><span>Tipo de comércio (define o visual e o catálogo)</span><select class="select" id="edSeg"></select></label>
         <label class="field"><span>Nome (só para você)</span><input class="input" id="edNome" maxlength="60" placeholder="Ex.: Preços do balcão"></label>
         <div class="ed-acts"><button class="btn btn-primary" type="submit"><i data-icon="check"></i> Criar</button><button class="btn btn-ghost" type="button" id="edNovaCancel">Cancelar</button></div>
       </form>
@@ -46,12 +48,38 @@
     <!-- ===== EDITOR ===== -->
     <section id="vEditor" hidden>
       <div class="ed-head">
-        <div><button class="ed-back" id="edVoltar" type="button">← Minhas listas</button><h1 id="edTitulo"></h1><p id="edResumo"></p></div>
+        <div><button class="ed-back" id="edVoltar" type="button">← Voltar</button><h1 id="edTitulo"></h1><p id="edResumo"></p></div>
       </div>
 
       <div class="ed-grid">
         <div class="ed-col">
-          <div class="ed-card">
+          <div class="ed-card" id="edCardBoas" hidden>
+            <h2>Boas-vindas</h2>
+            <label class="field"><span>Mensagem</span><textarea class="input" id="bvMsg" rows="2" maxlength="300" placeholder="Ex.: Seja bem-vindo! Fique à vontade, logo chamaremos você."></textarea></label>
+            <label class="field"><span>Horário de funcionamento (uma linha por dia)</span><textarea class="input" id="bvHora" rows="3" maxlength="300" placeholder="Segunda a sexta: 8h às 19h&#10;Sábado: 8h às 12h"></textarea></label>
+            <h2 style="margin-top:6px">Wi-Fi para os clientes</h2>
+            <p class="ed-hint">A TV mostra um QR Code: o cliente aponta a câmera do celular e conecta sem digitar a senha. Deixe em branco para não mostrar.</p>
+            <div class="ed-row">
+              <label class="field"><span>Nome da rede</span><input class="input" id="bvRede" maxlength="40" autocomplete="off"></label>
+              <label class="field"><span>Senha</span><input class="input" id="bvSenha" maxlength="63" autocomplete="off"></label>
+            </div>
+            <label class="field"><span>Segurança da rede</span><select class="select" id="bvTipo"><option value="WPA">WPA/WPA2 (a mais comum)</option><option value="WEP">WEP (roteador antigo)</option><option value="nopass">Sem senha</option></select></label>
+            <div class="ed-row">
+              <label class="field"><span>Instagram</span><input class="input" id="bvInsta" maxlength="40" placeholder="@perfil"></label>
+              <label class="field"><span>WhatsApp</span><input class="input" id="bvWhats" maxlength="25" placeholder="(22) 99999-0000"></label>
+            </div>
+          </div>
+          <div class="ed-card" id="edCardMural" hidden>
+            <h2>Aniversariantes <small id="muConta"></small></h2>
+            <p class="ed-hint">A TV mostra os aniversariantes do mês e, no dia, uma tela de parabéns só para a pessoa.</p>
+            <div id="muAniv" class="ed-itens"></div>
+            <button class="btn btn-ghost btn-sm" id="muAddAniv" type="button"><i data-icon="plus"></i> Adicionar aniversariante</button>
+            <h2 style="margin-top:8px">Avisos</h2>
+            <p class="ed-hint">Cada aviso aparece numa tela. Coloque a data final para ele sair do ar sozinho.</p>
+            <div id="muAvisos" class="ed-itens"></div>
+            <button class="btn btn-ghost btn-sm" id="muAddAviso" type="button"><i data-icon="plus"></i> Adicionar aviso</button>
+          </div>
+          <div class="ed-card" id="edCardProdutos">
             <h2>Produtos <small id="edConta"></small></h2>
             <div class="ed-busca">
               <input class="input" id="edBusca" placeholder="Buscar no catálogo: picanha, x-salada, banana…" autocomplete="off">
@@ -66,14 +94,14 @@
           <div class="ed-card">
             <h2>Como aparece na TV</h2>
             <div class="ed-pv"><div class="ed-tv"><iframe id="edPv" title="Prévia na TV"></iframe></div></div>
-            <div class="ed-row">
-              <label class="field"><span>Modelo</span><select class="select" id="edLayout"><option value="lista">Lista com preços</option><option value="cardapio">Cardápio em cartões</option><option value="ofertas">Ofertas em destaque</option></select></label>
+            <div class="ed-row" id="edRowModelo">
+              <label class="field" id="edLayoutWrap"><span>Modelo</span><select class="select" id="edLayout"><option value="lista">Lista com preços</option><option value="cardapio">Cardápio em cartões</option><option value="ofertas">Ofertas em destaque</option></select></label>
               <label class="field"><span>Visual</span><select class="select" id="edTema"></select></label>
             </div>
-            <label class="field"><span>Título na TV</span><input class="input" id="edTit" maxlength="60" placeholder="Ex.: Açougue do Zé"></label>
-            <label class="field"><span>Faixa abaixo do título</span><input class="input" id="edSub" maxlength="60" placeholder="Ex.: Preços de hoje"></label>
-            <label class="field"><span>Rodapé</span><input class="input" id="edRod" maxlength="120" placeholder="Ex.: Encomendas pelo WhatsApp (22) 99999-0000"></label>
-            <label class="field"><span>Itens que acabaram</span><select class="select" id="edEsg"><option value="riscar">Mostrar riscados, com "acabou"</option><option value="esconder">Esconder da TV</option></select></label>
+            <label class="field"><span id="edTitLbl">Título na TV</span><input class="input" id="edTit" maxlength="60" placeholder="Ex.: Açougue do Zé"></label>
+            <label class="field" data-so="lista"><span>Faixa abaixo do título</span><input class="input" id="edSub" maxlength="60" placeholder="Ex.: Preços de hoje"></label>
+            <label class="field" data-so="lista"><span>Rodapé</span><input class="input" id="edRod" maxlength="120" placeholder="Ex.: Encomendas pelo WhatsApp (22) 99999-0000"></label>
+            <label class="field" data-so="lista"><span>Itens que acabaram</span><select class="select" id="edEsg"><option value="riscar">Mostrar riscados, com "acabou"</option><option value="esconder">Esconder da TV</option></select></label>
           </div>
           <div class="ed-card">
             <h2>Link para a TV</h2>

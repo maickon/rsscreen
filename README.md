@@ -125,6 +125,17 @@ e o que acabou. A TV atualiza em até 10 minutos.
 - Limites por cliente: 10 listas e 200 itens por lista. Se o link vazar, **Trocar link** no painel
   invalida o antigo na hora.
 
+### Boas-vindas, Wi-Fi e avisos (módulo `mural`)
+
+No mesmo link de edição, o cliente também cria:
+
+- **Boas-vindas e Wi-Fi**: nome do estabelecimento, mensagem, horário de funcionamento e o **QR Code
+  do Wi-Fi** (o cliente aponta a câmera e conecta sem digitar a senha).
+- **Aniversariantes e avisos**: aniversariantes do mês (com uma tela de parabéns no dia) e avisos,
+  cada um numa tela, com data para sair do ar sozinhos.
+
+Link da TV: `/tela/?cliente=…&modulo=mural&assunto=<id>`. Visuais extras: clínica, festa e elegante.
+
 ## Playlists
 
 **Painel > Playlists**: monte a programação inteira da TV num link só
