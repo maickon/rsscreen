@@ -121,6 +121,8 @@
     VIEWS.forEach(n => { $('#view-' + n).hidden = n !== view; });
     $$('#sideNav a').forEach(a => a.classList.toggle('on', a.dataset.view === view));
     $('#app').classList.remove('menu-open');
+    // ainda carregando os módulos: start() chama route() de novo quando terminar
+    if (!modules.length) return;
     if (view === 'links') renderLinks();
     if (view === 'modelos') renderModels();
     if (view === 'monitor') loadMonitor();
