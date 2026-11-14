@@ -14,7 +14,7 @@
   const temaNome = id => (TEMAS.find(t => t[0] === id) || [id, id])[1];
 
   let cliente = null, listas = [], limites = { listas: 10, itens: 200 }, segs = [], catalogo = {}, fundos = {};
-  let atual = null, sujo = false, pvTimer;
+  let atual = null, sujo = false, pvTimer, salvouAgora = false;
 
   hydrateIcons();
   function toast(msg) {
@@ -123,7 +123,7 @@
     $('edEsg').value = atual.dados.esgotado || 'riscar';
     $('edTema').value = atual.tema || 'geral';
     $('edLayout').value = atual.tipo === 'cardapio' ? 'cardapio' : 'lista';
-    sujo = false;
+    sujo = false; salvouAgora = false;
     renderItens();
     estado();
     mostrar('vEditor');
@@ -208,13 +208,15 @@
   });
 
   function estado() {
-    $('edEstado').textContent = sujo ? 'Alterações não salvas' : 'Tudo salvo';
+    $('edEstado').textContent = sujo ? 'Alterações não salvas' : salvouAgora ? 'Salvo! A TV atualiza sozinha em até 10 min.' : 'Tudo salvo';
+    $('edAgora').hidden = sujo || !salvouAgora;
+    $('edAgora').href = abrirUrl('horizontal');
     $('edSaveBar').classList.toggle('sujo', sujo);
     $('edLink').textContent = telaUrl(atual.id, 'horizontal', $('edLayout').value);
     $('edAbrirH').href = abrirUrl('horizontal');
     $('edAbrirV').href = abrirUrl('vertical');
   }
-  function mudou() { sujo = true; estado(); agendaPrevia(); }
+  function mudou() { sujo = true; salvouAgora = false; estado(); agendaPrevia(); }
 
   /* ---------- aniversariantes e avisos ---------- */
   function renderMural() {
@@ -390,8 +392,8 @@
       await api('POST', '', { id: atual.id, tipo: atual.tipo, tema: atual.tema, nome: atual.nome, dados: atual.dados });
       const i = listas.findIndex(x => x.id === atual.id);
       if (i >= 0) listas[i] = JSON.parse(JSON.stringify(atual));
-      sujo = false; estado(); renderItens();
-      toast('Salvo! A TV atualiza em até 5 minutos. Use "Abrir" para ver agora.' + (vazios ? ' (itens sem nome foram removidos)' : ''));
+      sujo = false; salvouAgora = true; estado(); renderItens();
+      toast('Salvo! A TV atualiza sozinha em até 10 minutos.' + (vazios ? ' (itens sem nome foram removidos)' : ''));
     } catch (err) { toast(err.message); }
     $('edSalvar').disabled = false;
   });

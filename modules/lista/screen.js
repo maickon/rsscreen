@@ -198,7 +198,7 @@
   };
 
   S.register('lista', {
-    refreshMinutes: 5,
+    refreshMinutes: 10,
     rerenderOnRefresh: true,
     load,
     slides(data, ctx) {
