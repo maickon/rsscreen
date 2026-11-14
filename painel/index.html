@@ -59,6 +59,7 @@
       <nav class="side-nav" id="sideNav">
         <a href="#gerar" data-view="gerar"><i data-icon="link"></i> Gerar links</a>
         <a href="#anuncios" data-view="anuncios"><i data-icon="tag"></i> Anúncios</a>
+        <a href="#playlists" data-view="playlists"><i data-icon="play"></i> Playlists</a>
         <a href="#pacotes" data-view="pacotes"><i data-icon="package"></i> Pacotes prontos</a>
         <a href="#links" data-view="links"><i data-icon="layers"></i> Meus links <em id="navLinksCount"></em></a>
         <a href="#clientes" data-view="clientes"><i data-icon="users"></i> Clientes</a>
@@ -373,6 +374,77 @@
         </div>
       </section>
 
+      <!-- ===== PLAYLISTS ===== -->
+      <section class="view" id="view-playlists" hidden>
+        <div class="page-head">
+          <div>
+            <h1>Playlists</h1>
+            <p>Monte a programação inteira da TV num link só: notícias, clima, loterias, cotações e os anúncios do cliente em sequência, cada um com o seu tempo. Ao editar, a TV recebe a mudança sozinha em até 3 minutos, sem trocar o link.</p>
+          </div>
+        </div>
+        <div class="db-banner muted" id="plNoDb" hidden><div><b>Playlists precisam do banco de dados.</b> Elas funcionam no site publicado na Cloudflare (o banco D1 é criado no deploy).</div></div>
+
+        <div class="ads-grid pl-grid" id="plGrid">
+          <div class="ads-col">
+            <div class="card">
+              <div class="card-head">
+                <div><h3>Cliente</h3><p id="plCount"></p></div>
+                <button class="btn btn-primary btn-sm" id="plNew" type="button"><i data-icon="plus"></i> Nova playlist</button>
+              </div>
+              <select class="select" id="plCliente"></select>
+              <div class="ad-list" id="plList"></div>
+              <div class="ad-link" id="plLink"></div>
+            </div>
+            <div class="card">
+              <div class="card-head">
+                <div><h3>Prévia ao vivo</h3><p id="plPvInfo">Roda a playlist em edição, antes de salvar.</p></div>
+                <div class="chips" id="plOrient">
+                  <button class="chip on" data-v="horizontal" type="button"><i data-icon="monitor"></i> Horizontal</button>
+                  <button class="chip" data-v="vertical" type="button"><i data-icon="phone"></i> Vertical</button>
+                </div>
+              </div>
+              <div class="pv-stage"><div class="device-tv" id="plDevice"><div class="screen"><iframe id="plPreview" title="Prévia da playlist"></iframe></div></div></div>
+              <div class="pl-pv-acts">
+                <button class="btn btn-ghost btn-sm" type="button" id="plPvRestart"><i data-icon="rotate"></i> Do início</button>
+                <button class="btn btn-ghost btn-sm" type="button" id="plPvNext"><i data-icon="play"></i> Próximo conteúdo</button>
+              </div>
+            </div>
+          </div>
+
+          <form class="card ad-form" id="plForm" autocomplete="off">
+            <div class="card-head"><div><h3 id="plFormTitle">Nova playlist</h3><p>Adicione os conteúdos na ordem em que devem passar. A sequência se repete o dia todo.</p></div></div>
+            <div class="row-2">
+              <label class="field"><span>Nome da playlist</span><input class="input" id="plNome" maxlength="80" placeholder="Ex.: Recepção, TV do balcão" /></label>
+              <label class="field"><span>Tema (cores)</span><select class="select" id="plTema"></select></label>
+            </div>
+            <div class="row-2">
+              <label class="field"><span>Anúncios entre os conteúdos</span>
+                <select class="select" id="plIntercalar">
+                  <option value="0">Não intercalar</option>
+                  <option value="10">Sim, 10 segundos</option>
+                  <option value="15">Sim, 15 segundos</option>
+                  <option value="20">Sim, 20 segundos</option>
+                  <option value="30">Sim, 30 segundos</option>
+                </select>
+              </label>
+              <label class="field"><span>Começar de um pacote pronto</span><select class="select" id="plPacote"></select></label>
+            </div>
+            <p class="hint" id="plIntercalarHint">Com anúncios intercalados, entra 1 anúncio do cliente depois de cada conteúdo (um diferente a cada vez).</p>
+
+            <div class="field"><span>Conteúdos</span></div>
+            <div class="pl-items" id="plItems"></div>
+            <button class="btn btn-ghost btn-sm pl-add" type="button" id="plAdd"><i data-icon="plus"></i> Adicionar conteúdo</button>
+            <div class="pl-total" id="plTotal"></div>
+
+            <div class="db-acts">
+              <button class="btn btn-primary" type="submit" id="plSave"><i data-icon="check"></i> Salvar playlist</button>
+              <button class="btn btn-ghost" type="button" id="plCancel">Cancelar</button>
+              <button class="btn btn-ghost" type="button" id="plDelete" hidden><i data-icon="trash"></i> Excluir</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
       <!-- ===== GUIA DE VENDAS ===== -->
       <section class="view" id="view-guia" hidden>
         <div class="page-head">
@@ -427,6 +499,7 @@
                 <li>Horizontal e vertical, inclusive TV de pé (totem)</li>
                 <li>Atualização automática: notícias a cada 10 min, cotações a cada 5 min, loterias logo após o sorteio</li>
                 <li>Tela de anúncios com os anunciantes dele (você cria e atualiza pelo painel)</li>
+                <li>Playlist: um link só com a programação da TV (notícias, clima, loterias e anúncios intercalados), que você muda pelo painel sem trocar o link</li>
                 <li>Continua rodando se a internet cair (mostra o último conteúdo salvo)</li>
                 <li>Troca de assunto, modelo ou tema pelo WhatsApp (você gera o link novo em segundos)</li>
                 <li>Suporte pelo seu WhatsApp</li>

@@ -78,6 +78,21 @@ atualiza a cada 2 minutos.
   Vídeos ficam hospedados fora (link); o envio de vídeo pelo painel exige ativar o R2.
 - Prévia ao vivo no painel antes de salvar. Sem anúncios ativos, a tela mostra "Anuncie aqui".
 
+## Playlists
+
+**Painel > Playlists**: monte a programação inteira da TV num link só
+(`/tela/?cliente=<chave>&playlist=<id>`). Cada conteúdo (notícias, clima, loterias, cotações,
+anúncios) tem o seu tempo na tela, e a sequência se repete o dia todo.
+
+- **Anúncios entre os conteúdos**: entra 1 anúncio do cliente depois de cada conteúdo, um diferente a cada vez.
+- **Começar de um pacote pronto** preenche os conteúdos do segmento (padaria, clínica…).
+- Ao editar, a TV recebe a mudança em até 3 minutos, sem trocar o link. Prévia ao vivo no painel.
+- Cada conteúdo abre num quadro interno (`&embed=1`): o próximo é preparado escondido e entra com
+  transição suave; se falhar, a playlist pula para o seguinte. A playlist e os dados ficam
+  guardados no aparelho e continuam rodando sem internet.
+- Notícias e anúncios continuam de onde pararam em cada aparição, e dados ainda recentes não são
+  buscados de novo (economiza requisições do plano gratuito).
+
 ## Senha do painel
 
 O painel pede uma senha. Em `config/clientes.js` fica só o hash dela (`admin.senhaHash`),

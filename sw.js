@@ -1,7 +1,7 @@
 /* rsscreen — service worker
    - Painel instalável (PWA) e funcionando offline
    - Telas continuam rodando se a internet do ponto cair */
-const VERSION = 'rsscreen-v5';
+const VERSION = 'rsscreen-v6';
 const SHELL = [
   './',
   './index.html',
@@ -11,6 +11,7 @@ const SHELL = [
   './assets/js/core.js',
   './assets/js/icons.js',
   './assets/js/tela.js',
+  './assets/js/playlist.js',
   './assets/js/painel.js',
   './assets/js/landing.js',
   './assets/css/brand.css',

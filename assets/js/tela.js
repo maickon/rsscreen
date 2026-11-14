@@ -1,6 +1,8 @@
 /* rsscreen — motor de exibição das telas
    URL: /tela/?cliente=<chave>&modulo=rss&assunto=esportes&fonte=ge&layout=destaque&orientacao=vertical&tema=noite&tempo=12&girar=90&modo=teste
-   Todos os parâmetros (exceto cliente) são opcionais e têm padrão no manifesto do módulo. */
+   Todos os parâmetros (exceto cliente) são opcionais e têm padrão no manifesto do módulo.
+   Com &playlist=<id> a tela vira uma playlist (assets/js/playlist.js), que mostra cada conteúdo
+   num quadro interno com &embed=1. */
 (function () {
   'use strict';
 
@@ -17,15 +19,19 @@
     tema: get('tema'),
     tempo: Number(P.get('tempo')) || 0,
     girar: get('girar'),
-    teste: get('modo') === 'teste'
+    teste: get('modo') === 'teste',
+    playlist: get('playlist')
   };
+  // embed = esta tela está dentro de uma playlist: começa pausada, não envia sinal de uso
+  // e continua a sequência de onde parou na última vez
+  const embed = P.get('embed') === '1' && window.parent !== window;
 
   const stage = document.getElementById('stage');
   const modules = {};
   const ctx = { state, orient: 'h' };
 
   let manifest = null, mod = null;
-  let data = [], slides = [], idx = 0, elapsed = 0, paused = false;
+  let data = [], slides = [], idx = 0, elapsed = 0, paused = embed;
   let lastUpdate = null, offline = false, lastError = '';
   let progressEl = null, offlineEl = null, failures = 0;
 
@@ -182,7 +188,16 @@
   }
 
   /* =================== telas de status =================== */
+  // avisa a playlist se este conteúdo abriu (ok) ou falhou (ela pula para o próximo)
+  let notified = null;
+  function notifyParent(ok) {
+    if (!embed || notified === ok) return;
+    notified = ok;
+    try { window.parent.postMessage({ rs: 'pl-estado', ok: ok }, '*'); } catch (_) {}
+  }
+
   function statusScreen(title, desc, loading) {
+    if (!loading) notifyParent(false);
     progressEl = null;
     offlineEl = null;
     stage.innerHTML = '<div class="status-screen">' +
@@ -244,6 +259,7 @@
     const olds = Array.from(stage.querySelectorAll('.slide')).filter(s => s !== el);
     setTimeout(() => olds.forEach(o => o.remove()), 1000);
     elapsed = 0;
+    if (embed) { savePos(); notifyParent(true); }
     // pré-carrega a imagem do próximo slide
     const next = slides[(idx + 1) % slides.length];
     if (next && next.imagem) { const im = new Image(); im.referrerPolicy = 'no-referrer'; im.src = next.imagem; }
@@ -267,6 +283,16 @@
     return 'rs_cache_v1_' + [state.modulo, ctx.assunto && ctx.assunto.id, ctx.fonte && ctx.fonte.id].join('_');
   }
 
+  // Na playlist cada aparição continua do slide seguinte ao da última vez
+  function posKey() { return 'rs_pos_' + cacheKey() + '_' + ctx.layout; }
+  function savePos() { try { localStorage.setItem(posKey(), String(idx)); } catch (_) {} }
+  function startIdx(n) {
+    if (!embed || !n) return 0;
+    let last = -1;
+    try { last = parseInt(localStorage.getItem(posKey()), 10); } catch (_) {}
+    return isNaN(last) || last < 0 ? 0 : (last + 1) % n;
+  }
+
   function loadCache() {
     try {
       const raw = localStorage.getItem(cacheKey());
@@ -286,13 +312,14 @@
       data = fresh;
       failures = 0;
       offline = false;
+      if (embed) notifyParent(true);
       lastError = '';
       lastUpdate = Date.now();
       saveCache();
       if (first || slides.length <= 1 || mod.rerenderOnRefresh) {
         const keep = idx;
         slides = mod.slides ? mod.slides(data, ctx) : data.slice();
-        idx = first ? 0 : Math.min(keep, slides.length - 1);
+        idx = first ? startIdx(slides.length) : Math.min(keep, slides.length - 1);
         renderSlide();
       } else {
         // troca os dados sem interromper o slide atual
@@ -305,6 +332,7 @@
       lastError = e.message || String(e);
       offline = true;
       if (!data.length) {
+        notifyParent(false);
         failures++;
         statusScreen('Conectando…', 'Não foi possível carregar o conteúdo agora. Nova tentativa em instantes.', true);
         setTimeout(() => refresh(true), failures < 3 ? 10000 : 30000);
@@ -365,6 +393,8 @@
 
   // Cliente: banco D1 (via /api/cliente) → cópia salva no aparelho → config/clientes.js
   async function resolveClient(chave) {
+    // dentro da playlist o cliente já foi conferido pela página principal
+    if (embed) { try { const pc = window.parent.__rsCliente; if (pc && pc.chave === chave) return pc; } catch (_) {} }
     const local = RS.findClient(chave);
     if (!chave || location.protocol === 'file:') return local;
     const memKey = 'rs_cli_' + chave;
@@ -434,9 +464,13 @@
     if (cached && cached.data && cached.data.length) {
       data = cached.data;
       lastUpdate = cached.t;
+      slides = mod.slides ? mod.slides(data, ctx) : data.slice();
+      idx = startIdx(slides.length);
       rebuild();
     }
-    await refresh(!cached);
+    // na playlist, dados ainda recentes não são buscados de novo a cada aparição
+    const fresh = embed && cached && cached.t && Date.now() - cached.t < (mod.refreshMinutes || 10) * 60 * 1000;
+    if (!fresh) await refresh(!cached);
     startPing();
     startLoop();
     setInterval(() => refresh(false), (mod.refreshMinutes || 10) * 60 * 1000);
@@ -452,12 +486,12 @@
     } catch (_) { return ''; }
   }
   function ping(first) {
-    if (location.protocol === 'file:' || state.teste || P.get('previa') === '1') return;
+    if (location.protocol === 'file:' || state.teste || embed || P.get('previa') === '1') return;
     const q = ['cliente', 'modulo', 'assunto', 'fonte', 'layout', 'orientacao']
       .map(k => k + '=' + encodeURIComponent(state[k] || '')).join('&');
     const img = new Image();
     img.src = RS.ROOT_URL + 'api/hit?' + q + '&d=' + encodeURIComponent(deviceId()) +
-      '&ok=' + (data.length && !offline ? 1 : 0) + (first ? '&novo=1' : '') + '&_=' + Date.now();
+      '&ok=' + (engine.ok ? (engine.ok() ? 1 : 0) : (data.length && !offline ? 1 : 0)) + (first ? '&novo=1' : '') + '&_=' + Date.now();
   }
   function startPing() {
     ping(true);
@@ -595,15 +629,37 @@
   async function wakeLock() {
     try { if ('wakeLock' in navigator && document.visibilityState === 'visible') await navigator.wakeLock.request('screen'); } catch (_) {}
   }
-  document.addEventListener('visibilitychange', wakeLock);
-  wakeLock();
+  if (!embed) {
+    document.addEventListener('visibilitychange', wakeLock);
+    wakeLock();
 
-  // Recarrega a cada 6h para receber atualizações do sistema (só se houver internet)
-  setTimeout(function reloadLater() {
-    if (navigator.onLine !== false) location.reload();
-    else setTimeout(reloadLater, 10 * 60 * 1000);
-  }, 6 * 60 * 60 * 1000);
+    // Recarrega a cada 6h para receber atualizações do sistema (só se houver internet)
+    setTimeout(function reloadLater() {
+      if (navigator.onLine !== false) location.reload();
+      else setTimeout(reloadLater, 10 * 60 * 1000);
+    }, 6 * 60 * 60 * 1000);
 
-  RS.registerSW();
-  init();
+    RS.registerSW();
+  } else {
+    // a playlist manda começar quando este conteúdo aparece na tela
+    window.addEventListener('message', e => {
+      if (e.source !== window.parent || !e.data || e.data.rs !== 'play') return;
+      paused = false;
+      elapsed = 0;
+      if (progressEl) progressEl.firstChild.style.width = '0%';
+    });
+  }
+
+  // peças do motor usadas pela playlist (assets/js/playlist.js)
+  const engine = {
+    state, ctx, stage, embed, fit, applyTheme, statusScreen, resolveClient, fetchWithTimeout, loadScript, startPing,
+    ok: null
+  };
+  RSScreen.engine = engine;
+
+  if (state.playlist && !embed) {
+    loadScript(RS.ROOT_URL + 'assets/js/playlist.js').catch(() => statusScreen('Erro ao carregar', 'Não foi possível abrir a playlist.'));
+  } else {
+    init();
+  }
 })();

@@ -98,7 +98,7 @@
   });
 
   /* =================== navegação =================== */
-  const VIEWS = ['gerar', 'anuncios', 'pacotes', 'links', 'clientes', 'modelos', 'modulos', 'monitor', 'guia'];
+  const VIEWS = ['gerar', 'anuncios', 'playlists', 'pacotes', 'links', 'clientes', 'modelos', 'modulos', 'monitor', 'guia'];
 
   function route() {
     const v = (location.hash || '#gerar').slice(1);
@@ -111,6 +111,7 @@
     if (view === 'monitor') loadMonitor();
     if (view === 'guia') renderGuia();
     if (view === 'anuncios') initAds();
+    if (view === 'playlists') initPlaylists();
     window.scrollTo(0, 0);
   }
   window.addEventListener('hashchange', route);
@@ -1181,7 +1182,7 @@
   /* =================== GUIA DE VENDAS =================== */
   const PLANO_INCLUI = {
     essencial: ['Notícias: 25 assuntos e mais de 90 sites', 'Previsão do tempo', 'Cotações (dólar, euro, cripto)', 'Todos os modelos, horizontal e vertical', 'Até 3 links por tela'],
-    completo: ['Tudo do Essencial', 'Resultados e estatísticas de loterias', 'Tela de anúncios dos anunciantes', 'Módulos novos sem custo extra', 'Links e trocas ilimitadas', 'Suporte prioritário no WhatsApp'],
+    completo: ['Tudo do Essencial', 'Resultados e estatísticas de loterias', 'Tela de anúncios dos anunciantes', 'Playlist: a programação inteira da TV num link só', 'Módulos novos sem custo extra', 'Links e trocas ilimitadas', 'Suporte prioritário no WhatsApp'],
     rede: ['Tudo do Completo', 'Preço por tela a partir de 10 telas', 'Pacotes prontos por segmento', 'Ideal para operadores de mídia indoor'],
     gerenciado: ['Tudo do Completo', 'Você cria os anúncios do estabelecimento', 'Você configura o player do cliente', 'Você monta a programação da TV', 'Ajustes mensais inclusos'],
     cortesia: ['Acesso completo temporário', 'Para teste de 7 dias, permuta ou demonstração']
@@ -1226,6 +1227,306 @@
   });
 
   /* =================== MONITORAMENTO =================== */
+  /* =================== PLAYLISTS =================== */
+  const PL_DUR = { rss: 40, anuncios: 30, clima: 20, cotacoes: 20, loterias: 25 };
+  const PL = { cliente: '', list: [], editing: null, itens: [], orient: 'horizontal', ready: false, pvItem: null };
+  let plTimer;
+
+  function plUrl(id, orient) {
+    return RS.ROOT_URL + 'tela/?cliente=' + encodeURIComponent(PL.cliente) + '&playlist=' + encodeURIComponent(id) +
+      (orient === 'vertical' ? '&orientacao=vertical' : '');
+  }
+  const fmtDur = s => { s = Math.round(s); const m = Math.floor(s / 60), r = s % 60; return m ? m + ' min' + (r ? ' ' + r + ' s' : '') : r + ' s'; };
+
+  function plNewItem(modulo, assunto, layout) {
+    const m = modById(modulo) || active[0];
+    const pad = m.padrao || {};
+    return {
+      modulo: m.id,
+      assunto: assunto || pad.assunto || (m.assuntos[0] && m.assuntos[0].id) || '',
+      fonte: '',
+      layout: layout || pad.layout || (m.layouts[0] && m.layouts[0].id) || '',
+      duracao: PL_DUR[m.id] || 30
+    };
+  }
+
+  function plItemName(it) {
+    const m = modById(it.modulo);
+    if (!m) return it.modulo;
+    const a = (m.assuntos || []).find(x => x.id === it.assunto);
+    const l = (m.layouts || []).find(x => x.id === it.layout);
+    return m.nome + (a && m.assuntos.length > 1 ? ' · ' + a.nome : '') + (l && m.layouts.length > 1 ? ' · ' + l.nome : '');
+  }
+
+  function plCycle(itens, intercalar) {
+    let t = 0;
+    itens.forEach(it => { t += Number(it.duracao) || 30; if (intercalar && it.modulo !== 'anuncios') t += intercalar; });
+    return t;
+  }
+
+  async function initPlaylists() {
+    $('#plNoDb').hidden = dbMode;
+    $('#plGrid').hidden = !dbMode;
+    if (!dbMode) return;
+    if (!PL.cliente || !activeClients.some(c => c.chave === PL.cliente)) {
+      const first = activeClients.find(c => !c.demo) || activeClients[0];
+      PL.cliente = first ? first.chave : '';
+    }
+    $('#plCliente').innerHTML = clientOptions(PL.cliente);
+    $('#plTema').innerHTML = '<option value="">Padrão de cada conteúdo</option>' + RS.THEMES.map(t => '<option value="' + esc(t.id) + '">' + esc(t.nome) + '</option>').join('');
+    $('#plPacote').innerHTML = '<option value="">Escolha um pacote…</option>' + pacotes.map(p => '<option value="' + esc(p.id) + '">' + esc(p.nome) + '</option>').join('');
+    if (!PL.ready) { plReset(); PL.ready = true; }
+    await loadPlaylists();
+    plSetPreviewSrc();
+  }
+
+  async function loadPlaylists() {
+    if (!PL.cliente) { PL.list = []; renderPlList(); return; }
+    try { PL.list = (await api('api/admin/playlists?cliente=' + encodeURIComponent(PL.cliente))).playlists || []; }
+    catch (e) { PL.list = []; toast(e.message, 'x'); }
+    renderPlList();
+  }
+
+  function renderPlList() {
+    const n = PL.list.length;
+    $('#plCount').textContent = n ? n + ' playlist' + (n > 1 ? 's' : '') : 'Nenhuma playlist ainda';
+    $('#plList').innerHTML = n ? PL.list.map(p => {
+      const inter = (p.opcoes && p.opcoes.intercalar) || 0;
+      return '<div class="ad-item pl-row' + (PL.editing === p.id ? ' on' : '') + '">' +
+        '<div class="ad-item-thumb">' + ICON('play') + '</div>' +
+        '<div class="ad-item-txt"><b>' + esc(p.nome) + '</b><small>' + p.itens.length + ' conteúdo' + (p.itens.length > 1 ? 's' : '') +
+          (inter ? ' + anúncios' : '') + ' · ciclo de ' + fmtDur(plCycle(p.itens, inter)) + '</small></div>' +
+        '<div class="acts">' +
+          '<button class="btn btn-ghost btn-sm" data-ed="' + esc(p.id) + '">Editar</button>' +
+          '<button class="btn btn-ghost btn-sm" data-dup="' + esc(p.id) + '" title="Duplicar">' + ICON('copy') + '</button>' +
+        '</div></div>';
+    }).join('') : '<div class="empty">Crie a primeira playlist deste cliente no formulário ao lado.</div>';
+    const c = clients.find(x => x.chave === PL.cliente);
+    const p = PL.list.find(x => x.id === PL.editing);
+    $('#plLink').innerHTML = p ?
+      '<div class="lbl">Link da playlist “' + esc(p.nome) + '”</div>' +
+      '<div class="ad-link-row"><code>' + esc(plUrl(p.id, 'horizontal')) + '</code></div>' +
+      '<div class="acts"><button class="btn btn-dark btn-sm" data-cplink="horizontal">' + ICON('copy') + ' Copiar horizontal</button>' +
+      '<button class="btn btn-ghost btn-sm" data-cplink="vertical">' + ICON('copy') + ' Copiar vertical</button>' +
+      '<a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="' + esc(plUrl(p.id, PL.orient)) + '">' + ICON('external') + ' Abrir</a>' +
+      (c && c.whatsapp ? '<a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="' + esc(RS.whatsappLink(c.whatsapp, 'Olá, ' + c.nome + '! Este é o link da programação da sua TV (' + p.nome + '):\n\nHorizontal: ' + plUrl(p.id, 'horizontal') + '\nVertical: ' + plUrl(p.id, 'vertical') + '\n\nÉ só abrir na TV, TV Box ou no seu sistema de mídia indoor.')) + '">' + ICON('whatsapp') + ' Enviar</a>' : '') +
+      '</div>' : (n ? '<p class="hint">Clique em <b>Editar</b> numa playlist para ver o link dela.</p>' : '');
+  }
+
+  function opts(list, sel, emptyLabel) {
+    return (emptyLabel != null ? '<option value="">' + esc(emptyLabel) + '</option>' : '') +
+      list.map(x => '<option value="' + esc(x.id) + '"' + (x.id === sel ? ' selected' : '') + '>' + esc(x.nome) + '</option>').join('');
+  }
+
+  function renderPlItems() {
+    const n = PL.itens.length;
+    $('#plItems').innerHTML = n ? PL.itens.map((it, k) => {
+      const m = modById(it.modulo) || active[0];
+      const a = (m.assuntos || []).find(x => x.id === it.assunto) || m.assuntos[0];
+      const fontes = (a && a.fontes) || [];
+      return '<div class="pl-item" data-k="' + k + '">' +
+        '<div class="pl-num">' + (k + 1) + '</div>' +
+        '<div class="pl-fields">' +
+          '<label><span>Conteúdo</span><select class="select select-sm" data-p="modulo">' + opts(active, m.id) + '</select></label>' +
+          (m.assuntos.length > 1 ? '<label><span>' + esc(m.rotuloAssunto || 'Assunto') + '</span><select class="select select-sm" data-p="assunto">' + opts(m.assuntos, it.assunto) + '</select></label>' : '') +
+          (fontes.length ? '<label><span>' + esc(m.rotuloFonte || 'Fonte') + '</span><select class="select select-sm" data-p="fonte">' + opts(fontes, it.fonte, a.fonteObrigatoria ? null : 'Todas') + '</select></label>' : '') +
+          (m.layouts.length > 1 ? '<label><span>Modelo</span><select class="select select-sm" data-p="layout">' + opts(m.layouts, it.layout) + '</select></label>' : '') +
+          '<label class="pl-dur"><span>Tempo (s)</span><input class="input input-sm" type="number" min="5" max="900" step="5" data-p="duracao" value="' + (Number(it.duracao) || 30) + '"></label>' +
+        '</div>' +
+        '<div class="pl-acts">' +
+          '<button class="btn btn-ghost btn-sm btn-icon" type="button" data-mv="-1" title="Subir"' + (k === 0 ? ' disabled' : '') + '>↑</button>' +
+          '<button class="btn btn-ghost btn-sm btn-icon" type="button" data-mv="1" title="Descer"' + (k === n - 1 ? ' disabled' : '') + '>↓</button>' +
+          '<button class="btn btn-ghost btn-sm btn-icon" type="button" data-rm title="Remover">' + ICON('x') + '</button>' +
+        '</div></div>';
+    }).join('') : '<div class="empty">Nenhum conteúdo. Use “Adicionar conteúdo” ou comece de um pacote pronto.</div>';
+    plTotal();
+  }
+
+  function plTotal() {
+    const inter = Number($('#plIntercalar').value) || 0;
+    const t = plCycle(PL.itens, inter);
+    const ads = inter ? PL.itens.filter(i => i.modulo !== 'anuncios').length : 0;
+    $('#plTotal').innerHTML = PL.itens.length ?
+      'Ciclo completo: <b>' + fmtDur(t) + '</b> · ' + PL.itens.length + ' conteúdo' + (PL.itens.length > 1 ? 's' : '') +
+      (ads ? ' + ' + ads + ' anúncio' + (ads > 1 ? 's' : '') : '') + ' · repete cerca de <b>' + Math.floor(3600 / Math.max(t, 1)) + '×</b> por hora' : '';
+    $('#plIntercalarHint').hidden = !inter;
+  }
+
+  function plPayload() {
+    const inter = Number($('#plIntercalar').value) || 0;
+    const opcoes = {};
+    if ($('#plTema').value) opcoes.tema = $('#plTema').value;
+    if (inter) opcoes.intercalar = inter;
+    return {
+      id: PL.editing || undefined, cliente: PL.cliente, nome: $('#plNome').value.trim() || 'Playlist',
+      itens: PL.itens.map(it => { const o = { modulo: it.modulo, assunto: it.assunto, layout: it.layout, duracao: Number(it.duracao) || 30 }; if (it.fonte) o.fonte = it.fonte; return o; }),
+      opcoes
+    };
+  }
+
+  function plReset() {
+    PL.editing = null;
+    $('#plForm').reset();
+    $('#plFormTitle').textContent = 'Nova playlist';
+    $('#plDelete').hidden = true;
+    // começa com uma sugestão que já funciona
+    PL.itens = [plNewItem('rss', 'ultimas', 'destaque'), plNewItem('clima'), plNewItem('rss', 'esportes', 'cartao'), plNewItem('cotacoes')].filter(Boolean);
+    $('#plIntercalar').value = '15';
+    renderPlItems();
+    plSchedulePreview(true);
+  }
+
+  function plEdit(id, dup) {
+    const p = PL.list.find(x => x.id === id);
+    if (!p) return;
+    PL.editing = dup ? null : p.id;
+    PL.itens = p.itens.map(it => Object.assign({ fonte: '' }, it));
+    $('#plNome').value = dup ? p.nome + ' (cópia)' : p.nome;
+    $('#plTema').value = (p.opcoes && p.opcoes.tema) || '';
+    const inter = String((p.opcoes && p.opcoes.intercalar) || 0);
+    if (!$('#plIntercalar').querySelector('option[value="' + inter + '"]')) $('#plIntercalar').insertAdjacentHTML('beforeend', '<option value="' + inter + '">Sim, ' + inter + ' segundos</option>');
+    $('#plIntercalar').value = inter;
+    $('#plPacote').value = '';
+    $('#plFormTitle').textContent = dup ? 'Nova playlist (cópia)' : 'Editar playlist';
+    $('#plDelete').hidden = !!dup;
+    renderPlItems();
+    renderPlList();
+    plSchedulePreview(true);
+    if (window.innerWidth < 1000) $('#plForm').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  /* ----- prévia ----- */
+  function plSetPreviewSrc() {
+    const fr = $('#plPreview');
+    $('#plDevice').className = PL.orient === 'vertical' ? 'device-totem' : 'device-tv';
+    if (!PL.cliente) { fr.removeAttribute('src'); return; }
+    const url = plUrl('previa', PL.orient) + '&previa=1';
+    if (fr.dataset.url !== url) { fr.dataset.url = url; fr.src = url; }
+  }
+  function plSendPreview() {
+    const fr = $('#plPreview');
+    if (!fr.contentWindow) return;
+    const p = plPayload();
+    try { fr.contentWindow.postMessage({ rs: 'pl-previa', playlist: { id: 'previa', nome: p.nome, itens: p.itens, opcoes: p.opcoes } }, location.origin); } catch (_) {}
+  }
+  let plLastSent = '';
+  function plSchedulePreview(force) {
+    clearTimeout(plTimer);
+    plTimer = setTimeout(() => {
+      const s = JSON.stringify(plPayload());
+      if (!force && s === plLastSent) return;
+      plLastSent = s;
+      plSendPreview();
+    }, 700);
+  }
+  window.addEventListener('message', e => {
+    if (e.origin !== location.origin || !e.data) return;
+    if (e.data.rs === 'pl-previa-pronta') { plLastSent = ''; plSchedulePreview(true); }
+    if (e.data.rs === 'pl-item') {
+      const it = e.data.item;
+      $('#plPvInfo').textContent = it ? 'Agora: ' + (it.extra ? 'anúncio intercalado' : plItemName(it)) + ' · ' + (e.data.i + 1) + ' de ' + e.data.total : '';
+    }
+  });
+
+  /* ----- eventos ----- */
+  $('#plCliente').addEventListener('change', async e => { PL.cliente = e.target.value; plReset(); await loadPlaylists(); plSetPreviewSrc(); });
+  $('#plNew').addEventListener('click', () => { plReset(); renderPlList(); });
+  $('#plCancel').addEventListener('click', () => { plReset(); renderPlList(); });
+  $('#plAdd').addEventListener('click', () => {
+    const used = PL.itens.map(i => i.modulo);
+    const m = active.find(x => used.indexOf(x.id) < 0) || active[0];
+    PL.itens.push(plNewItem(m.id));
+    renderPlItems();
+    plSchedulePreview();
+  });
+  $('#plPacote').addEventListener('change', e => {
+    const pk = pacotes.find(p => p.id === e.target.value);
+    if (!pk) return;
+    if (PL.itens.length && !confirm('Trocar os conteúdos atuais pelos do pacote "' + pk.nome + '"?')) { e.target.value = ''; return; }
+    PL.itens = (pk.telas || []).filter(t => modById(t.modulo) && active.some(a => a.id === t.modulo)).map(t => {
+      const it = plNewItem(t.modulo, t.assunto, t.layout);
+      if (t.fonte) it.fonte = t.fonte;
+      return it;
+    });
+    if (pk.tema) $('#plTema').value = pk.tema;
+    if (!$('#plNome').value.trim()) $('#plNome').value = pk.nome;
+    renderPlItems();
+    plSchedulePreview();
+  });
+  $('#plItems').addEventListener('change', e => {
+    const row = e.target.closest('[data-k]');
+    const key = e.target.dataset.p;
+    if (!row || !key) return;
+    const it = PL.itens[Number(row.dataset.k)];
+    if (key === 'modulo') { PL.itens[Number(row.dataset.k)] = plNewItem(e.target.value); renderPlItems(); }
+    else if (key === 'assunto') { it.assunto = e.target.value; it.fonte = ''; renderPlItems(); }
+    else if (key === 'duracao') { it.duracao = Math.max(5, Math.min(900, Number(e.target.value) || 30)); e.target.value = it.duracao; plTotal(); }
+    else it[key] = e.target.value;
+    plSchedulePreview();
+  });
+  $('#plItems').addEventListener('click', e => {
+    const row = e.target.closest('[data-k]');
+    if (!row) return;
+    const k = Number(row.dataset.k);
+    const mv = e.target.closest('[data-mv]');
+    if (mv) {
+      const j = k + Number(mv.dataset.mv);
+      [PL.itens[k], PL.itens[j]] = [PL.itens[j], PL.itens[k]];
+    } else if (e.target.closest('[data-rm]')) {
+      PL.itens.splice(k, 1);
+    } else return;
+    renderPlItems();
+    plSchedulePreview();
+  });
+  $('#plIntercalar').addEventListener('change', () => { plTotal(); plSchedulePreview(); });
+  $('#plTema').addEventListener('change', () => plSchedulePreview());
+  $('#plOrient').addEventListener('click', e => {
+    const b = e.target.closest('[data-v]');
+    if (!b) return;
+    PL.orient = b.dataset.v;
+    $$('#plOrient .chip').forEach(x => x.classList.toggle('on', x === b));
+    plSetPreviewSrc();
+    renderPlList();
+  });
+  $('#plPvRestart').addEventListener('click', () => { plLastSent = ''; plSchedulePreview(true); });
+  $('#plPvNext').addEventListener('click', () => {
+    try { $('#plPreview').contentWindow.postMessage({ rs: 'pl-proximo' }, location.origin); } catch (_) {}
+  });
+
+  $('#plForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    if (!PL.cliente) return toast('Escolha um cliente', 'x');
+    if (!PL.itens.length) return toast('Adicione pelo menos um conteúdo', 'x');
+    if (!$('#plNome').value.trim()) { $('#plNome').focus(); return toast('Dê um nome para a playlist', 'x'); }
+    $('#plSave').disabled = true;
+    try {
+      const r = await api('api/admin/playlists', { method: 'POST', headers: { 'X-Admin-Senha': adminSenha(), 'Content-Type': 'application/json' }, body: JSON.stringify(plPayload()) });
+      toast(PL.editing ? 'Playlist atualizada' : 'Playlist criada');
+      await loadPlaylists();
+      plEdit(r.id);
+    } catch (err) { toast(err.message, 'x'); }
+    $('#plSave').disabled = false;
+  });
+
+  $('#plDelete').addEventListener('click', async () => {
+    if (!PL.editing || !confirm('Excluir esta playlist? As TVs que usam o link dela vão parar de mostrar a programação.')) return;
+    try {
+      await api('api/admin/playlists?id=' + encodeURIComponent(PL.editing) + '&cliente=' + encodeURIComponent(PL.cliente), { method: 'DELETE' });
+      toast('Playlist excluída');
+      plReset();
+      await loadPlaylists();
+    } catch (err) { toast(err.message, 'x'); }
+  });
+
+  $('#plList').addEventListener('click', e => {
+    const ed = e.target.closest('[data-ed]'); if (ed) return plEdit(ed.dataset.ed);
+    const dp = e.target.closest('[data-dup]'); if (dp) return plEdit(dp.dataset.dup, true);
+  });
+  $('#plLink').addEventListener('click', e => {
+    const b = e.target.closest('[data-cplink]');
+    if (b && PL.editing) copy(plUrl(PL.editing, b.dataset.cplink), 'Link copiado');
+  });
+
   let monData = null, monLoading = false;
 
   async function api(path, opts) {

@@ -11,6 +11,8 @@
 //   /api/anuncios     anúncios ativos do cliente; /api/midia/<id> fotos dos anúncios
 //   /api/admin/anuncios[/ordem], /api/admin/midia  cadastro de anúncios (exige a senha)
 //   /api/admin/loterias  status e "atualizar agora" (exige a senha)
+//   /api/playlist     playlist do cliente (a tela com &playlist=<id> lê daqui)
+//   /api/admin/playlists  cadastro de playlists (exige a senha)
 //
 // Cron (wrangler.jsonc → triggers): busca os resultados de loterias depois dos sorteios.
 //
@@ -19,6 +21,7 @@ import { onRequestGet } from '../functions/api/rss.js';
 import { Stats, trackRequest, trackFeed, trackOg, trackHit, maybeFlush, statsStub } from './stats.js';
 import { listClientes, countClientes, getCliente, saveCliente, deleteCliente, importClientes } from './clientes.js';
 import { listAds, publicAds, saveAd, setAdsOrder, deleteAd, saveMedia, mediaResponse } from './anuncios.js';
+import { listPlaylists, getPlaylist, savePlaylist, deletePlaylist, playlistCacheKey } from './playlists.js';
 import { loteriasResponse, updateAll, updateStats, JOGOS, STATS_JOGOS } from './loterias.js';
 
 export { Stats };
@@ -157,6 +160,31 @@ export default {
       }
     }
 
+    if (path === '/api/playlist') {
+      // Playlist para a tela (cache de 1 minuto; editar no painel limpa o cache)
+      const id = (url.searchParams.get('id') || '').toLowerCase().replace(/[^a-z0-9-]/g, '');
+      const cliente = (url.searchParams.get('cliente') || '').toLowerCase().replace(/[^a-z0-9-]/g, '');
+      const headers = Object.assign({ 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'public, max-age=60' }, CORS);
+      if (!env.DB || !id || !cliente) return new Response(JSON.stringify({ playlist: null, banco: !!env.DB }), { status: env.DB ? 404 : 503, headers });
+      trackRequest(request, 'playlist');
+      maybeFlush(env, waitUntil);
+      const ck = playlistCacheKey(id);
+      const hit = await caches.default.match(ck);
+      if (hit) {
+        const body = await hit.clone().json().catch(() => null);
+        if (body && body.playlist && body.playlist.cliente === cliente) return hit;
+      }
+      try {
+        const pl = await getPlaylist(env, id, cliente);
+        if (!pl) return new Response(JSON.stringify({ playlist: null, banco: true }), { status: 404, headers });
+        const res = new Response(JSON.stringify({ playlist: pl, banco: true }), { headers });
+        waitUntil(caches.default.put(ck, res.clone()));
+        return res;
+      } catch (e) {
+        return new Response(JSON.stringify({ playlist: null, erro: 'indisponivel' }), { status: 503, headers });
+      }
+    }
+
     if (path.startsWith('/api/midia/')) {
       const id = path.slice('/api/midia/'.length).replace(/[^a-z0-9]/g, '');
       if (!env.DB || !id) return new Response('Não encontrado', { status: 404 });
@@ -227,6 +255,22 @@ export default {
           if (request.method === 'DELETE') {
             await deleteAd(env, url.searchParams.get('id') || '');
             await purge((url.searchParams.get('cliente') || '').toLowerCase());
+            return json({ ok: true });
+          }
+        }
+        if (path === '/api/admin/playlists') {
+          if (!env.DB) return json({ erro: 'Banco D1 não configurado' }, 503);
+          const cliente = (url.searchParams.get('cliente') || '').toLowerCase();
+          if (request.method === 'GET') return json({ playlists: await listPlaylists(env, cliente) });
+          if (request.method === 'POST') {
+            const r = await savePlaylist(env, await readJson(request));
+            await caches.default.delete(playlistCacheKey(r.id));
+            return json({ ok: true, id: r.id });
+          }
+          if (request.method === 'DELETE') {
+            const id = url.searchParams.get('id') || '';
+            await deletePlaylist(env, id, cliente);
+            await caches.default.delete(playlistCacheKey(id));
             return json({ ok: true });
           }
         }
