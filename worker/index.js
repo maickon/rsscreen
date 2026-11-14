@@ -12,6 +12,9 @@
 //   /api/anuncios     anúncios ativos do cliente; /api/midia/<id> fotos dos anúncios
 //   /api/admin/anuncios[/ordem], /api/admin/midia  cadastro de anúncios (exige a senha)
 //   /api/admin/loterias  status e "atualizar agora" (exige a senha)
+//   /api/lista        tabela de preços ou cardápio para a TV (?id=&cliente=)
+//   /api/editar       o cliente edita as listas dele pelo link secreto (?c=&t=)
+//   /api/admin/listas link de edição e listas do cliente (exige a senha)
 //   /api/noticias     todos os feeds de um assunto num pedido só (?assunto=&fonte=)
 //   /api/agro         cotações do agro (CEPEA), guardadas por 1 hora
 //   /api/futebol      jogos, resultados e tabela (?liga=bra.1), dados da ESPN com cache
@@ -29,6 +32,7 @@ import { listPlaylists, getPlaylist, savePlaylist, deletePlaylist, playlistCache
 import { futebolResponse } from './futebol.js';
 import { agroResponse } from './agro.js';
 import { noticiasResponse } from './noticias.js';
+import { listarListas, salvarLista, excluirLista, listaPublica, esquecer, gerarToken, lerToken, tokenValido, LIMITES } from './listas.js';
 import { seo } from './seo.js';
 import { loteriasResponse, updateAll, updateStats, JOGOS, STATS_JOGOS, memoryStub } from './loterias.js';
 
@@ -177,6 +181,34 @@ export default {
       }
     }
 
+    if (path === '/api/lista') {
+      const headers = Object.assign({ 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'public, max-age=60' }, CORS);
+      if (!env.DB) return new Response(JSON.stringify({ lista: null, banco: false }), { status: 503, headers });
+      trackRequest(request, 'lista');
+      maybeFlush(env, waitUntil);
+      try {
+        const l = await listaPublica(env, url.searchParams.get('id') || '', url.searchParams.get('cliente') || '');
+        return new Response(JSON.stringify({ lista: l }), { status: l ? 200 : 404, headers });
+      } catch (e) {
+        return new Response(JSON.stringify({ lista: null, erro: 'indisponivel' }), { status: 503, headers });
+      }
+    }
+
+    if (path === '/api/editar') {
+      // edição pelo cliente, protegida pelo link secreto
+      if (!env.DB) return json({ erro: 'Banco indisponível' }, 503);
+      const c = (url.searchParams.get('c') || '').toLowerCase(), t = url.searchParams.get('t') || '';
+      if (!(await tokenValido(env, c, t))) return json({ erro: 'Link de edição inválido ou trocado. Peça um link novo ao seu fornecedor.' }, 403);
+      const cli = await getCliente(env, c);
+      if (!cli || !cli.ativo) return json({ erro: 'Cadastro suspenso. Fale com o seu fornecedor.' }, 403);
+      try {
+        if (request.method === 'GET') return json({ cliente: { chave: cli.chave, nome: cli.nome }, listas: await listarListas(env, c), limites: LIMITES });
+        if (request.method === 'POST') { const b = await readJson(request); const r = await salvarLista(env, c, b); esquecer(c, r.id); return json({ ok: true, id: r.id }); }
+        if (request.method === 'DELETE') { const id = url.searchParams.get('id') || ''; await excluirLista(env, id, c); esquecer(c, id); return json({ ok: true }); }
+      } catch (e) { return json({ erro: e.message || String(e) }, 400); }
+      return json({ erro: 'Método não permitido' }, 405);
+    }
+
     if (path === '/api/noticias') {
       trackRequest(request, 'noticias');
       const res = await noticiasResponse(request, env, { request, env, waitUntil, trackFeed, trackOg }, CORS);
@@ -294,6 +326,14 @@ export default {
             await purge((url.searchParams.get('cliente') || '').toLowerCase());
             return json({ ok: true });
           }
+        }
+        if (path === '/api/admin/listas') {
+          if (!env.DB) return json({ erro: 'Banco D1 não configurado' }, 503);
+          const cliente = (url.searchParams.get('cliente') || '').toLowerCase();
+          if (request.method === 'GET') return json({ listas: await listarListas(env, cliente), token: await lerToken(env, cliente), limites: LIMITES });
+          if (request.method === 'POST' && url.searchParams.get('acao') === 'token') return json({ ok: true, token: await gerarToken(env, cliente) });
+          if (request.method === 'POST') { const r = await salvarLista(env, cliente, await readJson(request)); esquecer(cliente, r.id); return json({ ok: true, id: r.id }); }
+          if (request.method === 'DELETE') { const id = url.searchParams.get('id') || ''; await excluirLista(env, id, cliente); esquecer(cliente, id); return json({ ok: true }); }
         }
         if (path === '/api/admin/playlists') {
           if (!env.DB) return json({ erro: 'Banco D1 não configurado' }, 503);

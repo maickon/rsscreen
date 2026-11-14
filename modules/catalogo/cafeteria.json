@@ -1,0 +1,27 @@
+{
+  "id": "cafeteria",
+  "nome": "Cafeteria",
+  "tipo": "cardapio",
+  "categorias": [
+    { "nome": "Cafés", "itens": [
+      ["Café expresso", "un"], ["Expresso duplo", "un"], ["Café coado", "un"], ["Café com leite", "un"], ["Pingado", "un"],
+      ["Cappuccino", "un"], ["Cappuccino italiano", "un"], ["Latte", "un"], ["Macchiato", "un"], ["Mocha", "un", "Café, chocolate e leite vaporizado"],
+      ["Café gelado", "un"], ["Frappuccino", "un"], ["Affogato", "un", "Expresso com sorvete de creme"]
+    ] },
+    { "nome": "Chás e outras bebidas", "itens": [
+      ["Chá quente", "un"], ["Chá gelado", "un"], ["Chocolate quente", "un"], ["Suco natural", "un"], ["Suco detox", "un"],
+      ["Vitamina", "un"], ["Água mineral", "un"], ["Refrigerante lata", "un"]
+    ] },
+    { "nome": "Salgados", "itens": [
+      ["Pão de queijo", "un"], ["Croissant de presunto e queijo", "un"], ["Misto quente", "un"], ["Quiche", "un"],
+      ["Torta salgada (fatia)", "un"], ["Sanduíche natural", "un"], ["Tapioca", "un"], ["Wrap", "un"], ["Pão na chapa", "un"]
+    ] },
+    { "nome": "Doces", "itens": [
+      ["Bolo do dia (fatia)", "un"], ["Brownie", "un"], ["Cookie", "un"], ["Cheesecake", "un"], ["Torta de limão", "un"],
+      ["Croissant de chocolate", "un"], ["Muffin", "un"], ["Brigadeiro gourmet", "un"], ["Pão de mel", "un"]
+    ] },
+    { "nome": "Café da manhã", "itens": [
+      ["Combo café da manhã", "un", "Café com leite, pão na chapa e suco"], ["Omelete", "un"], ["Ovos mexidos com torrada", "un"], ["Iogurte com granola", "un"], ["Salada de frutas", "un"]
+    ] }
+  ]
+}

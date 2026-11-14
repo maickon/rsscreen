@@ -387,6 +387,8 @@
     const pad_ = manifest.padrao || {};
     const assuntos = manifest.assuntos || [];
     ctx.assunto = assuntos.find(a => a.id === state.assunto) || assuntos.find(a => a.id === pad_.assunto) || assuntos[0] || null;
+    // módulos com conteúdo do cliente (ex.: tabela de preços): o "assunto" é o código da lista
+    if (manifest.assuntoLivre && state.assunto && (!ctx.assunto || ctx.assunto.id !== state.assunto)) ctx.assunto = { id: state.assunto, nome: manifest.nome };
     state.assunto = ctx.assunto ? ctx.assunto.id : '';
     const fontes = (ctx.assunto && ctx.assunto.fontes) || [];
     ctx.fonte = fontes.find(f => f.id === state.fonte) || fontes.find(f => state.fonte && f.site === state.fonte) || null;

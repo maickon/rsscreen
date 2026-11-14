@@ -110,6 +110,21 @@ O gerador monta menu, sumário, dados estruturados do Google (artigo, trilha e p
 e o "continue lendo". Depois de publicar, cadastre o site no Google Search Console e envie o
 `/sitemap.xml`.
 
+## Tabelas de preços e cardápios
+
+**Painel > Tabelas e cardápios**: escolha o cliente e crie o **link de edição** (`/editar/?c=<chave>&t=<token>`).
+O cliente abre no celular, sem login, e monta as listas dele: pesquisa o produto no catálogo pronto
+(`modules/catalogo/`, mais de 450 produtos de açougue, hortifrúti, padaria, mercado, bebidas,
+lanchonete, pizzaria, açaí e cafeteria), toca para adicionar e digita o preço. Marca a oferta do dia
+e o que acabou. A TV atualiza em até 10 minutos.
+
+- Link da TV: módulo `lista` com o código da lista no lugar do assunto
+  (`/tela/?cliente=…&modulo=lista&assunto=<id>&layout=lista|cardapio|ofertas`). Funciona na playlist.
+- Visual de cada tipo de comércio desenhado em CSS (açougue, hortifrúti, quadro-negro da
+  lanchonete/pizzaria, açaí, cafeteria…), só texto, sem fotos.
+- Limites por cliente: 10 listas e 200 itens por lista. Se o link vazar, **Trocar link** no painel
+  invalida o antigo na hora.
+
 ## Playlists
 
 **Painel > Playlists**: monte a programação inteira da TV num link só

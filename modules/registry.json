@@ -3,6 +3,7 @@
   "modulos": [
     "rss",
     "anuncios",
+    "lista",
     "clima",
     "cotacoes",
     "agro",

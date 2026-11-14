@@ -45,7 +45,7 @@ window.RSSCREEN_CONFIG = {
   // ------------------------------------------------------------------
   planos: [
     { id: 'essencial',  nome: 'Essencial',      valor: 19.90, descricao: 'Notícias de todos os assuntos, clima, cotações, relógio, datas comemorativas e frases, em todos os modelos de tela.' },
-    { id: 'completo',   nome: 'Completo',       valor: 29.90, descricao: 'Tudo do Essencial + futebol, loterias, horóscopo, tela de anúncios e playlist + os módulos novos assim que lançados, com trocas à vontade.' },
+    { id: 'completo',   nome: 'Completo',       valor: 29.90, descricao: 'Tudo do Essencial + futebol, loterias, horóscopo, tela de anúncios, tabelas de preços e cardápios e playlist + os módulos novos assim que lançados, com trocas à vontade.' },
     { id: 'rede',       nome: 'Rede (10+ telas)', valor: 14.90, descricao: 'Plano Completo com preço por tela para operadores com 10 telas ou mais.' },
     { id: 'gerenciado', nome: 'Tela gerenciada', valor: 79.90, descricao: 'Você monta e cuida da programação do estabelecimento (configuração do player incluída, equipamento à parte).' },
     { id: 'cortesia',   nome: 'Cortesia / teste', valor: 0, descricao: 'Sem cobrança: período de teste, permuta ou demonstração.' }

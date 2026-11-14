@@ -1,0 +1,24 @@
+{
+  "id": "bebidas",
+  "nome": "Bebidas e conveniência",
+  "tipo": "precos",
+  "categorias": [
+    { "nome": "Cervejas", "itens": [
+      ["Cerveja lata 350 ml", "un"], ["Cerveja latão 473 ml", "un"], ["Cerveja long neck", "un"], ["Cerveja 600 ml", "un"],
+      ["Cerveja litrão", "un"], ["Cerveja sem álcool", "un"], ["Cerveja artesanal", "un"], ["Pack 12 latas", "un"], ["Caixa 24 latas", "un"]
+    ] },
+    { "nome": "Refrigerantes e sucos", "itens": [
+      ["Refrigerante lata", "un"], ["Refrigerante 600 ml", "un"], ["Refrigerante 2 L", "un"], ["Suco de caixinha 1 L", "un"],
+      ["Água mineral 500 ml", "un"], ["Água mineral 1,5 L", "un"], ["Água com gás", "un"], ["Água de coco", "un"],
+      ["Energético", "un"], ["Isotônico", "un"], ["Chá gelado", "un"]
+    ] },
+    { "nome": "Destilados e vinhos", "itens": [
+      ["Cachaça", "un"], ["Vodca", "un"], ["Gim", "un"], ["Uísque", "un"], ["Rum", "un"], ["Licor", "un"],
+      ["Vinho tinto", "un"], ["Vinho branco", "un"], ["Espumante", "un"], ["Drink pronto (lata)", "un"]
+    ] },
+    { "nome": "Gelo e conveniência", "itens": [
+      ["Gelo 5 kg", "un"], ["Gelo de coco", "un"], ["Carvão 3 kg", "un"], ["Copo descartável (pct)", "un"], ["Salgadinho", "un"],
+      ["Amendoim", "un"], ["Chocolate", "un"], ["Bala", "un"], ["Chiclete", "un"]
+    ] }
+  ]
+}

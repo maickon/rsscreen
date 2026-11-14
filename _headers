@@ -13,6 +13,8 @@
   X-Robots-Tag: noindex, nofollow
 /tela/*
   X-Robots-Tag: noindex, nofollow
+/editar/*
+  X-Robots-Tag: noindex, nofollow
 
 /*
   X-Content-Type-Options: nosniff

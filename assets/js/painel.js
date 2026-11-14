@@ -113,7 +113,7 @@
   });
 
   /* =================== navegação =================== */
-  const VIEWS = ['gerar', 'anuncios', 'playlists', 'pacotes', 'links', 'clientes', 'modelos', 'modulos', 'monitor', 'guia'];
+  const VIEWS = ['gerar', 'anuncios', 'playlists', 'listas', 'pacotes', 'links', 'clientes', 'modelos', 'modulos', 'monitor', 'guia'];
 
   function route() {
     const v = (location.hash || '#gerar').slice(1);
@@ -129,6 +129,7 @@
     if (view === 'guia') renderGuia();
     if (view === 'anuncios') initAds();
     if (view === 'playlists') initPlaylists();
+    if (view === 'listas') initListas();
     window.scrollTo(0, 0);
   }
   window.addEventListener('hashchange', route);
@@ -266,7 +267,7 @@
     const c = clients.find(x => x.chave === G.cliente);
     $('#gClienteInfo').innerHTML = c ? 'Chave do cliente: <code>' + esc(c.chave) + '</code>' + (c.whatsapp ? ' · WhatsApp: ' + esc(c.whatsapp) : ' · sem WhatsApp cadastrado') : '';
 
-    $('#gModulo').innerHTML = active.map(x => '<button data-v="' + x.id + '" class="' + (x.id === m.id ? 'on' : '') + '">' + ICON(MOD_ICON(x)) + esc(x.nome) + '</button>').join('');
+    $('#gModulo').innerHTML = active.filter(x => !x.assuntoLivre).map(x => '<button data-v="' + x.id + '" class="' + (x.id === m.id ? 'on' : '') + '">' + ICON(MOD_ICON(x)) + esc(x.nome) + '</button>').join('');
 
     $('#gAssuntoLabel').textContent = (m.rotuloAssunto || 'Assunto') + 's';
     if (m.sites && m.sites.length) {
@@ -1202,12 +1203,74 @@
     if (b) copy(adScreenUrl(b.dataset.cplink), 'Link copiado');
   });
 
+  /* =================== TABELAS E CARDÁPIOS =================== */
+  const LS = { cliente: '', listas: [], token: '' };
+  const LS_TEMA = { acougue: 'Açougue', hortifruti: 'Hortifrúti', padaria: 'Padaria', mercado: 'Mercado', bebidas: 'Bebidas', lanchonete: 'Lanchonete', pizzaria: 'Pizzaria', acai: 'Açaí', cafeteria: 'Cafeteria', geral: 'Neutro' };
+  const lsEditUrl = () => RS.ROOT_URL + 'editar/?c=' + encodeURIComponent(LS.cliente) + '&t=' + encodeURIComponent(LS.token);
+  const lsTelaUrl = (id, orient) => RS.buildScreenUrl({ cliente: LS.cliente, modulo: 'lista', assunto: id, layout: $('#lsLayout').value, orientacao: orient });
+
+  async function initListas() {
+    $('#lsNoDb').hidden = dbMode;
+    $('#lsGrid').hidden = !dbMode;
+    if (!dbMode) return;
+    if (!LS.cliente || !activeClients.some(c => c.chave === LS.cliente)) {
+      const first = activeClients.find(c => !c.demo) || activeClients[0];
+      LS.cliente = first ? first.chave : '';
+    }
+    $('#lsCliente').innerHTML = clientOptions(LS.cliente);
+    await loadListas();
+  }
+  async function loadListas() {
+    if (!LS.cliente) return;
+    try { const r = await api('api/admin/listas?cliente=' + encodeURIComponent(LS.cliente)); LS.listas = r.listas || []; LS.token = r.token || ''; }
+    catch (e) { LS.listas = []; LS.token = ''; toast(e.message, 'x'); }
+    renderListasAdm();
+  }
+  function renderListasAdm() {
+    const c = clients.find(x => x.chave === LS.cliente);
+    $('#lsLink').innerHTML = LS.token ?
+      '<div class="lbl">Link de edição do cliente</div><code>' + esc(lsEditUrl()) + '</code>' +
+      '<div class="acts"><button class="btn btn-primary btn-sm" data-ls="copiar">' + ICON('copy') + ' Copiar link</button>' +
+      (c && c.whatsapp ? '<a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="' + esc(RS.whatsappLink(c.whatsapp, 'Olá, ' + c.nome + '! Este é o seu link para montar e atualizar a tabela de preços ou o cardápio da TV, direto pelo celular:\n\n' + lsEditUrl() + '\n\nÉ só pesquisar o produto, tocar para adicionar e digitar o preço. A TV atualiza sozinha em até 10 minutos.')) + '">' + ICON('whatsapp') + ' Enviar</a>' : '') +
+      '<a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="' + esc(lsEditUrl()) + '">' + ICON('external') + ' Abrir editor</a>' +
+      '<button class="btn btn-ghost btn-sm" data-ls="novo">' + ICON('refresh') + ' Trocar link</button></div>' +
+      '<p class="hint">Quem tiver este link consegue editar as listas deste cliente. Se ele vazar, use <b>Trocar link</b>: o antigo para de funcionar na hora.</p>'
+      : '<p class="hint">Este cliente ainda não tem link de edição.</p><button class="btn btn-primary btn-sm" data-ls="novo">' + ICON('link') + ' Criar link de edição</button>';
+    const n = LS.listas.length;
+    $('#lsConta').textContent = n ? n + (n > 1 ? ' listas' : ' lista') + ' (máx. 10)' : 'Nenhuma lista ainda: o cliente cria pelo link de edição.';
+    $('#lsListas').innerHTML = n ? '<div class="table-wrap"><table class="table"><thead><tr><th>Lista</th><th>Itens</th><th>Atualizada</th><th>Link da TV</th></tr></thead><tbody>' +
+      LS.listas.map(l => {
+        const its = (l.dados && l.dados.itens) || [];
+        const of = its.filter(i => i.o).length, x = its.filter(i => i.x).length;
+        return '<tr><td><b>' + esc(l.nome) + '</b><br><small>' + (l.tipo === 'cardapio' ? 'Cardápio' : 'Tabela de preços') + ' · ' + esc(LS_TEMA[l.tema] || l.tema) + '</small></td>' +
+          '<td>' + its.length + (of ? '<br><small>' + of + ' em oferta</small>' : '') + (x ? '<br><small>' + x + ' esgotado(s)</small>' : '') + '</td>' +
+          '<td><small>' + (l.atualizado ? new Date(l.atualizado).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—') + '</small></td>' +
+          '<td><div class="acts"><button class="btn btn-dark btn-sm" data-lstv="' + l.id + '" data-o="horizontal">' + ICON('copy') + ' Deitada</button>' +
+          '<button class="btn btn-ghost btn-sm" data-lstv="' + l.id + '" data-o="vertical">' + ICON('copy') + ' Em pé</button>' +
+          '<a class="btn btn-ghost btn-sm btn-icon" target="_blank" rel="noopener" title="Abrir" href="' + esc(lsTelaUrl(l.id, 'horizontal')) + '">' + ICON('external') + '</a></div></td></tr>';
+      }).join('') + '</tbody></table></div>' : '<div class="empty">Envie o link de edição para o cliente montar a primeira tabela ou cardápio. Você também pode abrir o editor e montar para ele.</div>';
+  }
+  $('#lsCliente').addEventListener('change', e => { LS.cliente = e.target.value; loadListas(); });
+  $('#lsLayout').addEventListener('change', renderListasAdm);
+  $('#lsLink').addEventListener('click', async e => {
+    const b = e.target.closest('[data-ls]');
+    if (!b) return;
+    if (b.dataset.ls === 'copiar') return copy(lsEditUrl(), 'Link de edição copiado');
+    if (LS.token && !confirm('Trocar o link de edição? O link antigo para de funcionar na hora.')) return;
+    try { LS.token = (await api('api/admin/listas?acao=token&cliente=' + encodeURIComponent(LS.cliente), { method: 'POST' })).token; renderListasAdm(); toast('Link de edição pronto'); }
+    catch (err) { toast(err.message, 'x'); }
+  });
+  $('#lsListas').addEventListener('click', e => {
+    const b = e.target.closest('[data-lstv]');
+    if (b) copy(lsTelaUrl(b.dataset.lstv, b.dataset.o), 'Link da TV copiado');
+  });
+
   /* =================== GUIA DE VENDAS =================== */
   $('#gPlanosCopy').addEventListener('click', () => copy(RS.ROOT_URL + 'planos/', 'Link da página de planos copiado'));
 
   const PLANO_INCLUI = {
     essencial: ['Notícias: 25 assuntos e mais de 90 sites', 'Previsão do tempo', 'Cotações (dólar, euro, cripto)', 'Relógio, datas comemorativas e frases', 'Todos os modelos, horizontal e vertical', 'Até 3 links por tela'],
-    completo: ['Tudo do Essencial', 'Futebol ao vivo, agenda e tabela', 'Resultados e estatísticas de loterias', 'Horóscopo do dia', 'Tela de anúncios dos anunciantes', 'Playlist: a programação inteira da TV num link só', 'Módulos novos sem custo extra', 'Links e trocas ilimitadas', 'Suporte prioritário no WhatsApp'],
+    completo: ['Tudo do Essencial', 'Futebol ao vivo, agenda e tabela', 'Resultados e estatísticas de loterias', 'Horóscopo do dia', 'Tela de anúncios dos anunciantes', 'Tabela de preços e cardápio que o próprio cliente edita', 'Playlist: a programação inteira da TV num link só', 'Módulos novos sem custo extra', 'Links e trocas ilimitadas', 'Suporte prioritário no WhatsApp'],
     rede: ['Tudo do Completo', 'Preço por tela a partir de 10 telas', 'Pacotes prontos por segmento', 'Ideal para operadores de mídia indoor'],
     gerenciado: ['Tudo do Completo', 'Você cria os anúncios do estabelecimento', 'Você configura o player do cliente', 'Você monta a programação da TV', 'Ajustes mensais inclusos'],
     cortesia: ['Acesso completo temporário', 'Para teste de 7 dias, permuta ou demonstração']
@@ -1268,7 +1331,7 @@
     const pad = m.padrao || {};
     return {
       modulo: m.id,
-      assunto: assunto || pad.assunto || (m.assuntos[0] && m.assuntos[0].id) || '',
+      assunto: assunto || (m.assuntoLivre && PL.listas && PL.listas[0] ? PL.listas[0].id : '') || pad.assunto || (m.assuntos[0] && m.assuntos[0].id) || '',
       fonte: '',
       layout: layout || pad.layout || (m.layouts[0] && m.layouts[0].id) || '',
       duracao: PL_DUR[m.id] || 30
@@ -1278,7 +1341,8 @@
   function plItemName(it) {
     const m = modById(it.modulo);
     if (!m) return it.modulo;
-    const a = (m.assuntos || []).find(x => x.id === it.assunto);
+    const a = m.assuntoLivre ? (PL.listas || []).find(x => x.id === it.assunto) : (m.assuntos || []).find(x => x.id === it.assunto);
+    if (m.assuntoLivre) return m.nome + (a ? ' · ' + a.nome : '');
     const l = (m.layouts || []).find(x => x.id === it.layout);
     return m.nome + (a && m.assuntos.length > 1 ? ' · ' + a.nome : '') + (l && m.layouts.length > 1 ? ' · ' + l.nome : '');
   }
@@ -1309,6 +1373,9 @@
     if (!PL.cliente) { PL.list = []; renderPlList(); return; }
     try { PL.list = (await api('api/admin/playlists?cliente=' + encodeURIComponent(PL.cliente))).playlists || []; }
     catch (e) { PL.list = []; toast(e.message, 'x'); }
+    try { PL.listas = ((await api('api/admin/listas?cliente=' + encodeURIComponent(PL.cliente))).listas || []).map(l => ({ id: l.id, nome: l.nome })); }
+    catch (_) { PL.listas = []; }
+    renderPlItems();
     renderPlList();
   }
 
@@ -1353,7 +1420,8 @@
         '<div class="pl-num">' + (k + 1) + '</div>' +
         '<div class="pl-fields">' +
           '<label><span>Conteúdo</span><select class="select select-sm" data-p="modulo">' + opts(active, m.id) + '</select></label>' +
-          (m.assuntos.length > 1 ? '<label><span>' + esc(m.rotuloAssunto || 'Assunto') + '</span><select class="select select-sm" data-p="assunto">' + opts(m.assuntos, it.assunto) + '</select></label>' : '') +
+          (m.assuntoLivre ? '<label><span>Lista</span><select class="select select-sm" data-p="assunto">' + opts((PL.listas || []).concat(m.assuntos), it.assunto) + '</select></label>' :
+            m.assuntos.length > 1 ? '<label><span>' + esc(m.rotuloAssunto || 'Assunto') + '</span><select class="select select-sm" data-p="assunto">' + opts(m.assuntos, it.assunto) + '</select></label>' : '') +
           (fontes.length ? '<label><span>' + esc(m.rotuloFonte || 'Fonte') + '</span><select class="select select-sm" data-p="fonte">' + opts(fontes, it.fonte, a.fonteObrigatoria ? null : 'Todas') + '</select></label>' : '') +
           (m.layouts.length > 1 ? '<label><span>Modelo</span><select class="select select-sm" data-p="layout">' + opts(m.layouts, it.layout) + '</select></label>' : '') +
           '<label class="pl-dur"><span>Tempo (s)</span><input class="input input-sm" type="number" min="5" max="900" step="5" data-p="duracao" value="' + (Number(it.duracao) || 30) + '"></label>' +

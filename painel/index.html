@@ -60,6 +60,7 @@
         <a href="#gerar" data-view="gerar"><i data-icon="link"></i> Gerar links</a>
         <a href="#anuncios" data-view="anuncios"><i data-icon="tag"></i> Anúncios</a>
         <a href="#playlists" data-view="playlists"><i data-icon="play"></i> Playlists</a>
+        <a href="#listas" data-view="listas"><i data-icon="cart"></i> Tabelas e cardápios</a>
         <a href="#pacotes" data-view="pacotes"><i data-icon="package"></i> Pacotes prontos</a>
         <a href="#links" data-view="links"><i data-icon="layers"></i> Meus links <em id="navLinksCount"></em></a>
         <a href="#clientes" data-view="clientes"><i data-icon="users"></i> Clientes</a>
@@ -442,6 +443,29 @@
               <button class="btn btn-ghost" type="button" id="plDelete" hidden><i data-icon="trash"></i> Excluir</button>
             </div>
           </form>
+        </div>
+      </section>
+
+      <!-- ===== TABELAS E CARDÁPIOS ===== -->
+      <section class="view" id="view-listas" hidden>
+        <div class="page-head">
+          <div>
+            <h1>Tabelas e cardápios</h1>
+            <p>Cada cliente recebe um link de edição: ele mesmo monta a tabela de preços ou o cardápio pelo celular, a partir de um catálogo pronto, e a TV atualiza sozinha. Sem login e sem senha.</p>
+          </div>
+        </div>
+        <div class="db-banner muted" id="lsNoDb" hidden><div><b>Tabelas e cardápios precisam do banco de dados</b> (site publicado como Worker na Cloudflare).</div></div>
+        <div class="ls-grid" id="lsGrid">
+          <div class="card">
+            <div class="card-head"><div><h3>Cliente</h3><p>Escolha o cliente para ver o link de edição e as listas dele.</p></div></div>
+            <select class="select" id="lsCliente"></select>
+            <div id="lsLink" class="ls-link"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div><h3>Listas do cliente</h3><p id="lsConta"></p></div>
+              <select class="select select-sm" id="lsLayout"><option value="lista">Modelo: lista com preços</option><option value="cardapio">Modelo: cardápio em cartões</option><option value="ofertas">Modelo: ofertas em destaque</option></select></div>
+            <div id="lsListas"></div>
+          </div>
         </div>
       </section>
 

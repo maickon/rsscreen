@@ -1,0 +1,23 @@
+{
+  "id": "acai",
+  "nome": "Açaí e sorveteria",
+  "tipo": "cardapio",
+  "categorias": [
+    { "nome": "Açaí", "itens": [
+      ["Açaí 300 ml", "un"], ["Açaí 400 ml", "un"], ["Açaí 500 ml", "un"], ["Açaí 700 ml", "un"], ["Açaí 1 litro", "un"],
+      ["Açaí na tigela", "un", "Com granola e banana"], ["Açaí no copo da casa", "un", "Com 3 acompanhamentos"], ["Açaí por quilo", "kg"]
+    ] },
+    { "nome": "Acompanhamentos", "itens": [
+      ["Leite condensado", "un"], ["Leite em pó", "un"], ["Granola", "un"], ["Paçoca", "un"], ["Banana", "un"], ["Morango", "un"],
+      ["Kiwi", "un"], ["Confete", "un"], ["Granulado", "un"], ["Creme de avelã", "un"], ["Creme de ninho", "un"], ["Mel", "un"],
+      ["Bis", "un"], ["Ovomaltine", "un"], ["Chocoball", "un"], ["Amendoim", "un"]
+    ] },
+    { "nome": "Sorvetes", "itens": [
+      ["Sorvete 1 bola", "un"], ["Sorvete 2 bolas", "un"], ["Sorvete por quilo", "kg"], ["Casquinha", "un"], ["Milkshake 400 ml", "un"],
+      ["Milkshake 500 ml", "un"], ["Picolé", "un"], ["Sundae", "un"], ["Banana split", "un"]
+    ] },
+    { "nome": "Bebidas", "itens": [
+      ["Água mineral", "un"], ["Refrigerante lata", "un"], ["Suco natural", "un"], ["Vitamina de açaí", "un"]
+    ] }
+  ]
+}

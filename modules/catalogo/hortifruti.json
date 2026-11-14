@@ -1,0 +1,27 @@
+{
+  "id": "hortifruti",
+  "nome": "Hortifrúti",
+  "tipo": "precos",
+  "categorias": [
+    { "nome": "Frutas", "itens": [
+      ["Banana prata", "kg"], ["Banana nanica", "kg"], ["Maçã", "kg"], ["Laranja pera", "kg"], ["Laranja lima", "kg"],
+      ["Mexerica (tangerina)", "kg"], ["Limão taiti", "kg"], ["Mamão papaia", "kg"], ["Mamão formosa", "kg"], ["Melancia", "kg"],
+      ["Melão", "kg"], ["Abacaxi", "un"], ["Manga", "kg"], ["Uva", "kg"], ["Morango (caixa)", "un"], ["Pera", "kg"],
+      ["Abacate", "kg"], ["Goiaba", "kg"], ["Maracujá", "kg"], ["Kiwi", "kg"], ["Coco verde", "un"], ["Caqui", "kg"], ["Ameixa", "kg"]
+    ] },
+    { "nome": "Legumes", "itens": [
+      ["Tomate", "kg"], ["Tomate cereja", "un"], ["Batata", "kg"], ["Batata-doce", "kg"], ["Cebola", "kg"], ["Cebola roxa", "kg"],
+      ["Alho", "kg"], ["Cenoura", "kg"], ["Beterraba", "kg"], ["Abobrinha", "kg"], ["Abóbora", "kg"], ["Chuchu", "kg"],
+      ["Pepino", "kg"], ["Pimentão verde", "kg"], ["Pimentão vermelho", "kg"], ["Berinjela", "kg"], ["Quiabo", "kg"],
+      ["Vagem", "kg"], ["Mandioca (aipim)", "kg"], ["Inhame", "kg"], ["Milho verde", "un"], ["Gengibre", "kg"]
+    ] },
+    { "nome": "Verduras", "itens": [
+      ["Alface", "maço"], ["Alface americana", "un"], ["Rúcula", "maço"], ["Agrião", "maço"], ["Couve", "maço"],
+      ["Espinafre", "maço"], ["Repolho", "un"], ["Brócolis", "un"], ["Couve-flor", "un"], ["Cheiro-verde", "maço"],
+      ["Coentro", "maço"], ["Hortelã", "maço"], ["Manjericão", "maço"]
+    ] },
+    { "nome": "Ovos e outros", "itens": [
+      ["Ovos brancos (dúzia)", "un"], ["Ovos vermelhos (dúzia)", "un"], ["Ovos (bandeja com 30)", "un"], ["Castanhas", "kg"], ["Amendoim", "kg"]
+    ] }
+  ]
+}

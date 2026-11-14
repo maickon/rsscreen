@@ -1,0 +1,34 @@
+{
+  "id": "acougue",
+  "nome": "Açougue",
+  "tipo": "precos",
+  "categorias": [
+    { "nome": "Bovinos", "itens": [
+      ["Picanha", "kg"], ["Alcatra", "kg"], ["Maminha", "kg"], ["Fraldinha", "kg"], ["Contrafilé", "kg"],
+      ["Filé mignon", "kg"], ["Coxão mole", "kg"], ["Coxão duro", "kg"], ["Patinho", "kg"], ["Lagarto", "kg"],
+      ["Acém", "kg"], ["Músculo", "kg"], ["Cupim", "kg"], ["Costela bovina", "kg"], ["Costela de ripa", "kg"],
+      ["Paleta", "kg"], ["Fígado bovino", "kg"], ["Carne moída de primeira", "kg"], ["Carne moída de segunda", "kg"],
+      ["Bife de alcatra", "kg"], ["Cupim recheado", "kg"], ["Rabada", "kg"], ["Mocotó", "kg"], ["Bucho", "kg"]
+    ] },
+    { "nome": "Suínos", "itens": [
+      ["Pernil suíno", "kg"], ["Lombo suíno", "kg"], ["Costelinha suína", "kg"], ["Bisteca suína", "kg"],
+      ["Panceta", "kg"], ["Barriga suína", "kg"], ["Toucinho", "kg"], ["Pé de porco", "kg"], ["Orelha de porco", "kg"]
+    ] },
+    { "nome": "Aves", "itens": [
+      ["Frango inteiro", "kg"], ["Peito de frango", "kg"], ["Filé de peito", "kg"], ["Coxa e sobrecoxa", "kg"],
+      ["Coxinha da asa", "kg"], ["Asa de frango", "kg"], ["Tulipa de frango", "kg"], ["Coração de frango", "kg"],
+      ["Moela", "kg"], ["Fígado de frango", "kg"], ["Pé de frango", "kg"], ["Frango a passarinho", "kg"]
+    ] },
+    { "nome": "Linguiças e embutidos", "itens": [
+      ["Linguiça toscana", "kg"], ["Linguiça calabresa", "kg"], ["Linguiça de frango", "kg"], ["Linguiça apimentada", "kg"],
+      ["Linguiça cuiabana", "kg"], ["Salsicha", "kg"], ["Bacon", "kg"], ["Paio", "kg"], ["Carne seca", "kg"], ["Charque", "kg"]
+    ] },
+    { "nome": "Para o churrasco", "itens": [
+      ["Kit churrasco", "un", "Picanha, linguiça, frango e pão de alho"], ["Pão de alho", "un"], ["Queijo coalho (espeto)", "un"],
+      ["Espetinho de carne", "un"], ["Espetinho de frango", "un"], ["Espetinho misto", "un"], ["Carvão 3 kg", "un"], ["Sal grosso 1 kg", "un"]
+    ] },
+    { "nome": "Peixes", "itens": [
+      ["Tilápia (filé)", "kg"], ["Salmão (filé)", "kg"], ["Merluza (filé)", "kg"], ["Pescada", "kg"], ["Sardinha", "kg"], ["Camarão", "kg"]
+    ] }
+  ]
+}

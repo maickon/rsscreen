@@ -2,7 +2,7 @@
 export async function seo(path, url, env, request) {
   const origin = url.origin;
   if (path === '/robots.txt') {
-    const txt = ['User-agent: *', 'Allow: /', 'Disallow: /painel/', 'Disallow: /tela/', 'Disallow: /api/', 'Disallow: /admin', '', 'Sitemap: ' + origin + '/sitemap.xml', ''].join('\n');
+    const txt = ['User-agent: *', 'Allow: /', 'Disallow: /painel/', 'Disallow: /tela/', 'Disallow: /editar/', 'Disallow: /api/', 'Disallow: /admin', '', 'Sitemap: ' + origin + '/sitemap.xml', ''].join('\n');
     return new Response(txt,
       { headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=3600' } });
   }

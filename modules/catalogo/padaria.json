@@ -1,0 +1,33 @@
+{
+  "id": "padaria",
+  "nome": "Padaria",
+  "tipo": "precos",
+  "categorias": [
+    { "nome": "Pães", "itens": [
+      ["Pão francês", "kg"], ["Pão de forma", "un"], ["Pão integral", "un"], ["Pão de leite", "un"], ["Pão doce", "un"],
+      ["Pão sovado", "un"], ["Pão de queijo", "kg"], ["Pão italiano", "un"], ["Baguete", "un"], ["Bisnaguinha", "pct"],
+      ["Pão de batata", "un"], ["Pão australiano", "un"]
+    ] },
+    { "nome": "Salgados", "itens": [
+      ["Coxinha", "un"], ["Risole", "un"], ["Pastel assado", "un"], ["Esfiha de carne", "un"], ["Esfiha de frango", "un"],
+      ["Enroladinho de salsicha", "un"], ["Empada de frango", "un"], ["Quibe", "un"], ["Joelho (presunto e queijo)", "un"],
+      ["Croissant", "un"], ["Mini salgados (cento)", "un"]
+    ] },
+    { "nome": "Doces e bolos", "itens": [
+      ["Sonho", "un"], ["Rosca doce", "un"], ["Bolo de fubá", "un"], ["Bolo de cenoura com chocolate", "un"], ["Bolo de chocolate", "un"],
+      ["Bolo de laranja", "un"], ["Fatia de bolo", "un"], ["Pudim (fatia)", "un"], ["Brigadeiro", "un"], ["Torta doce (fatia)", "un"],
+      ["Bolo de aniversário", "kg"]
+    ] },
+    { "nome": "Frios", "itens": [
+      ["Presunto", "kg"], ["Queijo muçarela", "kg"], ["Queijo prato", "kg"], ["Mortadela", "kg"], ["Peito de peru", "kg"],
+      ["Salame", "kg"], ["Queijo minas frescal", "kg"], ["Requeijão", "un"]
+    ] },
+    { "nome": "Lanches e café", "itens": [
+      ["Misto quente", "un"], ["Pão na chapa", "un"], ["Café expresso", "un"], ["Café com leite", "un"], ["Pingado", "un"],
+      ["Cappuccino", "un"], ["Chocolate quente", "un"], ["Suco natural", "un"], ["Vitamina", "un"]
+    ] },
+    { "nome": "Leite e derivados", "itens": [
+      ["Leite integral 1 L", "un"], ["Leite desnatado 1 L", "un"], ["Iogurte", "un"], ["Manteiga", "un"], ["Margarina", "un"]
+    ] }
+  ]
+}

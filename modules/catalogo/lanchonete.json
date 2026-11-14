@@ -1,0 +1,39 @@
+{
+  "id": "lanchonete",
+  "nome": "Lanchonete e hamburgueria",
+  "tipo": "cardapio",
+  "categorias": [
+    { "nome": "Hambúrgueres", "itens": [
+      ["X-Burguer", "un", "Pão, hambúrguer e queijo"], ["X-Salada", "un", "Hambúrguer, queijo, alface e tomate"],
+      ["X-Bacon", "un", "Hambúrguer, queijo e bacon crocante"], ["X-Egg", "un", "Hambúrguer, queijo e ovo"],
+      ["X-Tudo", "un", "Hambúrguer, queijo, presunto, bacon, ovo, alface e tomate"], ["X-Frango", "un", "Frango desfiado, queijo e salada"],
+      ["X-Calabresa", "un", "Calabresa, queijo e cebola"], ["Hambúrguer artesanal", "un", "Blend 180 g, queijo cheddar e molho da casa"],
+      ["Duplo cheddar", "un", "Dois hambúrgueres e cheddar cremoso"], ["Cheeseburger", "un", "Hambúrguer e queijo"]
+    ] },
+    { "nome": "Lanches", "itens": [
+      ["Misto quente", "un", "Presunto e queijo"], ["Bauru", "un", "Rosbife, queijo, tomate e picles"],
+      ["Cachorro-quente", "un", "Salsicha, molho, batata palha e milho"], ["Cachorro-quente duplo", "un", "Duas salsichas e complementos"],
+      ["Beirute", "un", "Pão sírio, rosbife, queijo e salada"], ["Sanduíche natural", "un", "Frango, cenoura e maionese"],
+      ["Wrap de frango", "un"], ["Pastel de carne", "un"], ["Pastel de queijo", "un"], ["Pastel de frango", "un"], ["Pastel de pizza", "un"]
+    ] },
+    { "nome": "Porções", "itens": [
+      ["Batata frita", "un", "Porção média"], ["Batata com cheddar e bacon", "un"], ["Mandioca frita", "un"], ["Calabresa acebolada", "un"],
+      ["Frango a passarinho", "un"], ["Isca de peixe", "un"], ["Anéis de cebola", "un"], ["Bolinho de bacalhau", "un"], ["Tábua de frios", "un"]
+    ] },
+    { "nome": "Pratos", "itens": [
+      ["Prato feito", "un", "Arroz, feijão, salada, fritas e carne do dia"], ["Parmegiana de frango", "un", "Com arroz e fritas"],
+      ["Parmegiana de carne", "un", "Com arroz e fritas"], ["Bife acebolado", "un", "Com arroz, feijão e salada"],
+      ["Filé de frango grelhado", "un", "Com arroz, feijão e salada"], ["Omelete", "un"], ["Feijoada (sábado)", "un"]
+    ] },
+    { "nome": "Bebidas", "itens": [
+      ["Refrigerante lata", "un"], ["Refrigerante 600 ml", "un"], ["Refrigerante 2 L", "un"], ["Suco natural", "un"],
+      ["Suco de laranja", "un"], ["Água mineral", "un"], ["Água com gás", "un"], ["Chá gelado", "un"], ["Milkshake", "un"]
+    ] },
+    { "nome": "Sobremesas", "itens": [
+      ["Pudim", "un"], ["Sorvete (bola)", "un"], ["Petit gâteau", "un"], ["Brownie", "un"], ["Açaí 300 ml", "un"]
+    ] },
+    { "nome": "Combos", "itens": [
+      ["Combo X-Burguer", "un", "Lanche, batata e refrigerante"], ["Combo X-Tudo", "un", "Lanche, batata e refrigerante"], ["Combo família", "un", "4 lanches, 2 batatas e refrigerante 2 L"]
+    ] }
+  ]
+}

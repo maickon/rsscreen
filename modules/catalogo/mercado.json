@@ -1,0 +1,26 @@
+{
+  "id": "mercado",
+  "nome": "Mercado e mercearia",
+  "tipo": "precos",
+  "categorias": [
+    { "nome": "Mercearia", "itens": [
+      ["Arroz 5 kg", "un"], ["Arroz 1 kg", "un"], ["Feijão carioca 1 kg", "un"], ["Feijão preto 1 kg", "un"], ["Açúcar 1 kg", "un"],
+      ["Açúcar 5 kg", "un"], ["Café 500 g", "un"], ["Óleo de soja", "un"], ["Azeite", "un"], ["Macarrão 500 g", "un"],
+      ["Farinha de trigo 1 kg", "un"], ["Farinha de mandioca", "un"], ["Fubá", "un"], ["Sal 1 kg", "un"], ["Molho de tomate", "un"],
+      ["Extrato de tomate", "un"], ["Leite em pó", "un"], ["Achocolatado", "un"], ["Biscoito recheado", "un"], ["Biscoito de água e sal", "un"],
+      ["Sardinha em lata", "un"], ["Atum em lata", "un"], ["Milho em lata", "un"], ["Ervilha em lata", "un"], ["Maionese", "un"], ["Ketchup", "un"]
+    ] },
+    { "nome": "Frios e laticínios", "itens": [
+      ["Leite integral 1 L", "un"], ["Leite desnatado 1 L", "un"], ["Manteiga", "un"], ["Margarina", "un"], ["Iogurte", "un"],
+      ["Requeijão", "un"], ["Queijo muçarela", "kg"], ["Presunto", "kg"], ["Ovos (dúzia)", "un"]
+    ] },
+    { "nome": "Limpeza", "itens": [
+      ["Sabão em pó", "un"], ["Sabão líquido", "un"], ["Detergente", "un"], ["Água sanitária", "un"], ["Desinfetante", "un"],
+      ["Amaciante", "un"], ["Esponja (pct)", "un"], ["Saco de lixo", "un"], ["Papel toalha", "un"]
+    ] },
+    { "nome": "Higiene", "itens": [
+      ["Papel higiênico (12 rolos)", "un"], ["Sabonete", "un"], ["Creme dental", "un"], ["Escova de dentes", "un"], ["Xampu", "un"],
+      ["Condicionador", "un"], ["Desodorante", "un"], ["Absorvente", "un"], ["Fralda (pct)", "un"]
+    ] }
+  ]
+}

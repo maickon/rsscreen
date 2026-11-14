@@ -1,0 +1,30 @@
+{
+  "id": "lista",
+  "ordem": 2,
+  "status": "ativo",
+  "nome": "Tabela de Preços e Cardápio",
+  "tag": "Novo",
+  "icone": "tag",
+  "assuntoLivre": true,
+  "chamada": "O próprio comerciante atualiza os preços pelo celular e a TV muda sozinha.",
+  "descricao": "Tabela de preços para açougue, hortifrúti, padaria e mercado, e cardápio para lanchonete, pizzaria, açaí e cafeteria. O comerciante recebe um link de edição: pesquisa o produto num catálogo pronto, digita o preço e marca a oferta do dia ou o que acabou. Fundos temáticos para cada tipo de comércio e letra que se ajusta à quantidade de itens.",
+  "beneficios": [
+    "Catálogo pronto com mais de 450 produtos",
+    "O cliente edita pelo celular, sem login",
+    "Oferta do dia em destaque e item esgotado",
+    "Fundos temáticos por tipo de comércio"
+  ],
+  "indicado": ["Açougues", "Hortifrútis", "Lanchonetes e pizzarias", "Padarias e cafeterias"],
+  "script": "screen.js",
+  "estilo": "style.css",
+  "rotuloAssunto": "Lista",
+  "padrao": { "assunto": "exemplo", "layout": "lista", "tema": "noite", "tempo": 12 },
+  "layouts": [
+    { "id": "lista", "nome": "Lista com preços", "descricao": "Produtos e preços em linhas, com pontilhado, em uma ou duas colunas." },
+    { "id": "cardapio", "nome": "Cardápio em cartões", "descricao": "Itens com descrição em cartões, ideal para lanches e pratos." },
+    { "id": "ofertas", "nome": "Ofertas em destaque", "descricao": "Um item em oferta por vez, com o preço grande." }
+  ],
+  "assuntos": [
+    { "id": "exemplo", "nome": "Exemplo (açougue)" }
+  ]
+}

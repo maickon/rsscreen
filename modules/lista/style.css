@@ -1,0 +1,110 @@
+/* Módulo Tabela de Preços e Cardápio — fundos desenhados em CSS (sem imagens), um por tipo de comércio */
+.m-lista .li-wrap {
+  --l-bg: var(--bg); --l-txt: var(--text); --l-muted: var(--muted); --l-acc: var(--accent); --l-acc-txt: var(--accent-text);
+  --l-card: var(--surface); --l-line: var(--text-a12);
+  position: absolute; inset: 0; padding: 2.8rem 3.4rem 2rem; display: flex; flex-direction: column; gap: 1.6rem;
+  color: var(--l-txt); background: var(--l-bg); isolation: isolate;
+}
+.m-lista .li-bg { position: absolute; inset: 0; z-index: -1; }
+
+/* ---------- temas ---------- */
+.li-wrap[data-tm="acougue"] { --l-bg: #1c0f0c; --l-txt: #fff7f0; --l-muted: #d9b8a8; --l-acc: #e23b2e; --l-acc-txt: #fff; --l-card: rgba(255,255,255,.07); --l-line: rgba(255,255,255,.14); }
+.li-wrap[data-tm="acougue"] .li-bg { background:
+  repeating-linear-gradient(92deg, rgba(255,255,255,.025) 0 .3rem, transparent .3rem 1.6rem),
+  repeating-linear-gradient(88deg, rgba(0,0,0,.18) 0 .15rem, transparent .15rem 4rem),
+  radial-gradient(circle at 90% 0%, rgba(226,59,46,.35), transparent 45%),
+  linear-gradient(180deg, #2a1510, #160b08); }
+.li-wrap[data-tm="hortifruti"] { --l-bg: #0f2a16; --l-txt: #f4fff2; --l-muted: #b9dcb9; --l-acc: #8bd450; --l-acc-txt: #0f2a16; --l-card: rgba(255,255,255,.08); --l-line: rgba(255,255,255,.15); }
+.li-wrap[data-tm="hortifruti"] .li-bg { background:
+  radial-gradient(ellipse 9rem 4rem at 8% 12%, rgba(139,212,80,.22), transparent 70%),
+  radial-gradient(ellipse 12rem 5rem at 95% 90%, rgba(139,212,80,.18), transparent 70%),
+  radial-gradient(circle at 80% 10%, rgba(255,200,60,.18), transparent 35%),
+  linear-gradient(160deg, #164022, #0b1f10); }
+.li-wrap[data-tm="padaria"] { --l-bg: #f5ead8; --l-txt: #3a2414; --l-muted: #8a6a50; --l-acc: #c2621f; --l-acc-txt: #fff; --l-card: rgba(255,255,255,.6); --l-line: rgba(58,36,20,.18); }
+.li-wrap[data-tm="padaria"] .li-bg { background:
+  radial-gradient(circle at 12% 18%, rgba(194,98,31,.16), transparent 32%),
+  repeating-radial-gradient(circle at 50% 50%, rgba(58,36,20,.025) 0 .2rem, transparent .2rem .9rem),
+  linear-gradient(180deg, #f8eedd, #ecdcc2); }
+.li-wrap[data-tm="mercado"] { --l-bg: #0d2347; --l-txt: #fff; --l-muted: #b6c8ea; --l-acc: #ffd23f; --l-acc-txt: #0d2347; --l-card: rgba(255,255,255,.08); --l-line: rgba(255,255,255,.15); }
+.li-wrap[data-tm="mercado"] .li-bg { background: linear-gradient(135deg, #12306a 0, #0a1c3a 70%), #0d2347; }
+.li-wrap[data-tm="bebidas"] { --l-bg: #071a2c; --l-txt: #eef8ff; --l-muted: #9cc2dd; --l-acc: #2ec5ff; --l-acc-txt: #031220; --l-card: rgba(255,255,255,.07); --l-line: rgba(255,255,255,.14); }
+.li-wrap[data-tm="bebidas"] .li-bg { background:
+  radial-gradient(circle at 15% 85%, rgba(46,197,255,.25), transparent 40%), radial-gradient(circle .5rem at 80% 30%, rgba(255,255,255,.3), transparent),
+  radial-gradient(circle .3rem at 86% 42%, rgba(255,255,255,.25), transparent), radial-gradient(circle .4rem at 74% 55%, rgba(255,255,255,.2), transparent),
+  linear-gradient(180deg, #0b2740, #050f1c); }
+.li-wrap[data-tm="lanchonete"], .li-wrap[data-tm="pizzaria"] { --l-bg: #1e2421; --l-txt: #f6f3ea; --l-muted: #c2c7bf; --l-acc: #ffb02e; --l-acc-txt: #1e2421; --l-card: rgba(255,255,255,.06); --l-line: rgba(246,243,234,.22); }
+.li-wrap[data-tm="lanchonete"] .li-bg, .li-wrap[data-tm="pizzaria"] .li-bg { background:
+  radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.07), transparent 55%),
+  radial-gradient(ellipse at 80% 85%, rgba(255,255,255,.05), transparent 50%),
+  repeating-linear-gradient(-30deg, rgba(255,255,255,.012) 0 .2rem, transparent .2rem .6rem),
+  linear-gradient(180deg, #252c28, #181d1a); box-shadow: inset 0 0 0 1.2rem #5a3a22, inset 0 0 0 1.4rem #3e2716; }
+.li-wrap[data-tm="pizzaria"] { --l-acc: #ff5a3c; --l-acc-txt: #fff; }
+.li-wrap[data-tm="lanchonete"], .li-wrap[data-tm="pizzaria"] { padding: 3.6rem 4.2rem 2.8rem; }
+.li-wrap[data-tm="acai"] { --l-bg: #2b0b3d; --l-txt: #fff; --l-muted: #d7b6ea; --l-acc: #c86bff; --l-acc-txt: #20062e; --l-card: rgba(255,255,255,.08); --l-line: rgba(255,255,255,.16); }
+.li-wrap[data-tm="acai"] .li-bg { background: radial-gradient(circle at 85% 15%, rgba(200,107,255,.4), transparent 45%), radial-gradient(circle at 10% 90%, rgba(255,120,200,.22), transparent 40%), linear-gradient(180deg, #3a0f52, #1c0629); }
+.li-wrap[data-tm="cafeteria"] { --l-bg: #2a1c14; --l-txt: #fbf3ea; --l-muted: #cdb6a1; --l-acc: #e0a96d; --l-acc-txt: #2a1c14; --l-card: rgba(255,255,255,.07); --l-line: rgba(255,255,255,.14); }
+.li-wrap[data-tm="cafeteria"] .li-bg { background: radial-gradient(circle at 88% 12%, rgba(224,169,109,.3), transparent 42%), repeating-radial-gradient(circle at 100% 100%, rgba(255,255,255,.02) 0 .3rem, transparent .3rem 1.4rem), linear-gradient(180deg, #34231a, #1d130d); }
+.li-wrap[data-tm="geral"] .li-bg { background: radial-gradient(circle at 85% 0%, var(--accent-a35), transparent 45%), var(--bg); }
+
+/* ---------- topo e rodapé ---------- */
+.m-lista .li-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 2rem; }
+.m-lista .li-title { font-size: 3.6rem; font-weight: 900; letter-spacing: -.03em; line-height: 1.05; }
+.m-lista .li-sub { display: inline-block; margin-top: .6rem; font-size: 1.4rem; font-weight: 800; text-transform: uppercase; letter-spacing: .12em; background: var(--l-acc); color: var(--l-acc-txt); padding: .35rem 1rem; border-radius: 99rem; }
+.m-lista .li-clock { font-size: 3rem; }
+.m-lista .li-foot { display: flex; justify-content: space-between; gap: 2rem; font-size: 1.4rem; color: var(--l-muted); font-weight: 600; margin-top: auto; }
+.m-lista .li-pag { font-weight: 800; color: var(--l-acc); }
+
+/* ---------- lista com pontilhado ---------- */
+.m-lista .li-cols { flex: 1; min-height: 0; display: grid; gap: 0 4rem; align-content: start; }
+.m-lista .li-cols.n2 { grid-template-columns: 1fr 1fr; }
+.m-lista .li-col { display: flex; flex-direction: column; min-width: 0; }
+.m-lista .li-cat { font-size: 1.3rem; font-weight: 900; text-transform: uppercase; letter-spacing: .14em; color: var(--l-acc); margin: 1rem 0 .3rem; }
+.m-lista .li-col > .li-cat:first-child { margin-top: 0; }
+.m-lista .li-row { display: flex; align-items: baseline; gap: .8rem; padding: .55rem 0; font-size: 2.6rem; font-weight: 700; }
+.m-lista .q8 .li-row, .m-lista .q9 .li-row { font-size: 2.3rem; padding: .4rem 0; }
+.m-lista .q1 .li-row, .m-lista .q2 .li-row, .m-lista .q3 .li-row, .m-lista .q4 .li-row { font-size: 3.4rem; padding: .9rem 0; }
+.m-lista .li-n { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex-shrink: 1; }
+.m-lista .li-dots { flex: 1; min-width: 2rem; border-bottom: .25rem dotted var(--l-line); transform: translateY(-.4rem); }
+.m-lista .li-p { font-weight: 900; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.m-lista .li-p small { font-size: .55em; margin-right: .2em; opacity: .8; }
+.m-lista .li-p sup { font-size: .55em; vertical-align: .6em; }
+.m-lista .li-u { font-size: 1.3rem; color: var(--l-muted); font-weight: 700; margin-left: -.2rem; }
+.m-lista .li-row.o .li-p { color: var(--l-acc); }
+.m-lista .li-row.x .li-n, .m-lista .li-row.x .li-p { text-decoration: line-through; opacity: .45; }
+.m-lista .li-tag { font-style: normal; font-size: .45em; font-weight: 900; text-transform: uppercase; letter-spacing: .08em; background: var(--l-acc); color: var(--l-acc-txt); padding: .2em .6em; border-radius: .4em; vertical-align: .35em; }
+.m-lista .li-tag.x { background: var(--l-line); color: var(--l-txt); }
+
+/* ---------- cardápio em cartões ---------- */
+.m-lista .li-cards { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: minmax(0, 1fr); gap: 1.4rem; }
+.m-lista .li-cards.n1, .m-lista .li-cards.n2, .m-lista .li-cards.n4 { grid-template-columns: repeat(2, 1fr); }
+.m-lista .li-cards.n1, .m-lista .li-cards.n2, .m-lista .li-cards.n3 { grid-auto-rows: minmax(0, .5fr); }
+.m-lista .li-card { background: var(--l-card); border: .15rem solid var(--l-line); border-radius: 1.4rem; padding: 1.6rem 1.8rem; display: flex; flex-direction: column; gap: .4rem; min-height: 0; overflow: hidden; }
+.m-lista .li-card.o { border-color: var(--l-acc); box-shadow: 0 0 0 .2rem var(--l-acc) inset; }
+.m-lista .li-card.x { opacity: .5; }
+.m-lista .li-card-cat { font-size: 1.1rem; font-weight: 900; text-transform: uppercase; letter-spacing: .12em; color: var(--l-acc); }
+.m-lista .li-card-n { font-size: 2.4rem; font-weight: 900; line-height: 1.1; letter-spacing: -.01em; }
+.m-lista .li-card-d { font-size: 1.45rem; color: var(--l-muted); line-height: 1.3; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.m-lista .li-card-p { margin-top: auto; font-size: 3rem; }
+.m-lista .li-card-p .li-p { color: var(--l-acc); }
+
+/* ---------- oferta do dia ---------- */
+.m-lista .li-hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: .8rem; }
+.m-lista .li-hero-tag { font-size: 2rem; font-weight: 900; text-transform: uppercase; letter-spacing: .16em; background: var(--l-acc); color: var(--l-acc-txt); padding: .5rem 1.6rem; border-radius: 99rem; }
+.m-lista .li-hero-n { font-size: 8rem; font-weight: 900; letter-spacing: -.04em; line-height: 1; margin-top: 1rem; }
+.m-lista .li-hero-d { font-size: 2.2rem; color: var(--l-muted); max-width: 80rem; }
+.m-lista .li-hero-de { font-size: 2.6rem; color: var(--l-muted); text-decoration: line-through; margin-top: 1rem; }
+.m-lista .li-hero-p { font-size: 13rem; line-height: 1; color: var(--l-acc); }
+.m-lista .li-hp { font-weight: 900; letter-spacing: -.05em; font-variant-numeric: tabular-nums; }
+.m-lista .li-hp small { font-size: .35em; margin-right: .15em; }
+.m-lista .li-hp sup { font-size: .45em; vertical-align: .9em; }
+.m-lista .li-hero-p .li-u { font-size: 3rem; }
+
+/* ---------- vertical ---------- */
+.o-v .m-lista .li-wrap { padding: 2.8rem 2.6rem 2rem; }
+.o-v .m-lista .li-title { font-size: 3.2rem; }
+.o-v .m-lista .li-cols .li-row { font-size: 3.1rem; padding: .75rem 0; }
+.o-v .m-lista .li-cols .li-cat { font-size: 1.6rem; margin-top: 1.4rem; }
+.o-v .m-lista .li-u { font-size: 1.5rem; }
+.o-v .m-lista .li-cards { grid-template-columns: 1fr 1fr; }
+.o-v .m-lista .li-hero-n { font-size: 6rem; }
+.o-v .m-lista .li-hero-p { font-size: 10rem; }
