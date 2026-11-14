@@ -1,0 +1,58 @@
+<!--
+slug: ferramentas/tabela-de-precos
+titulo: Tabela de preços de mídia indoor pronta para imprimir (grátis)
+descricao: Monte a sua tabela de preços de anúncio em TV de mídia indoor com pacotes por quantidade de telas, desconto por tempo de contrato e serviços extras. Pronta para imprimir ou salvar em PDF.
+h1: Tabela de preços de mídia indoor
+lead: Coloque o preço base e os descontos. A tabela calcula todos os pacotes e fica pronta para imprimir, salvar em PDF e mandar para os anunciantes.
+cartao: Pacotes por telas e por tempo de contrato, pronta para imprimir.
+icone: tag
+tipo: ferramenta
+ordem: 12
+script: {raiz}assets/js/ferramentas.js
+-->
+<div class="tool" id="tab">
+  <form class="tool-form" autocomplete="off" onsubmit="return false">
+    <h2>Sua empresa</h2>
+    <div class="row-2">
+      <label class="field"><span>Nome da sua empresa</span><input class="input" id="tEmpresa" placeholder="Ex.: Lagos Mídia Indoor"></label>
+      <label class="field"><span>WhatsApp</span><input class="input" id="tWhats" placeholder="(22) 99999-0000"></label>
+    </div>
+    <h2>Preço base</h2>
+    <div class="row-2">
+      <label class="field"><span>1 anúncio, 1 tela, por mês (R$)</span><input class="input" type="number" min="0" step="5" id="tBase" value="80"></label>
+      <label class="field"><span>Tempo do anúncio (s)</span><input class="input" type="number" min="5" max="60" id="tSeg" value="15"></label>
+    </div>
+    <h2>Desconto por quantidade de telas</h2>
+    <div class="row-2">
+      <label class="field"><span>2 telas (% por tela)</span><input class="input" type="number" min="0" max="80" id="tD2" value="10"></label>
+      <label class="field"><span>3 ou mais telas (% por tela)</span><input class="input" type="number" min="0" max="80" id="tD3" value="20"></label>
+    </div>
+    <h2>Desconto por tempo de contrato</h2>
+    <div class="row-2">
+      <label class="field"><span>3 meses (%)</span><input class="input" type="number" min="0" max="80" id="tM3" value="5"></label>
+      <label class="field"><span>6 meses (%)</span><input class="input" type="number" min="0" max="80" id="tM6" value="10"></label>
+    </div>
+    <label class="field"><span>12 meses (%)</span><input class="input" type="number" min="0" max="80" id="tM12" value="15"></label>
+    <h2>Extras</h2>
+    <div class="row-2">
+      <label class="field"><span>Criação da arte (R$, uma vez)</span><input class="input" type="number" min="0" step="5" id="tArte" value="40"></label>
+      <label class="field"><span>Vídeo de até 30 s (+% no mês)</span><input class="input" type="number" min="0" max="200" id="tVideo" value="50"></label>
+    </div>
+    <label class="field"><span>Exclusividade no segmento (+% no mês)</span><input class="input" type="number" min="0" max="200" id="tExcl" value="30"></label>
+  </form>
+  <div class="tool-out doc-wrap">
+    <div class="doc" id="tDoc"></div>
+    <div class="tool-actions">
+      <button class="btn btn-primary" type="button" id="tPrint"><i data-icon="download"></i> Imprimir ou salvar PDF</button>
+    </div>
+  </div>
+</div>
+<div class="prose" style="margin-top:48px">
+  <h2>Dicas para a sua tabela</h2>
+  <ul>
+    <li>Mostre sempre o preço <strong>por mês</strong>. O pequeno comércio pensa em mensalidade.</li>
+    <li>Destaque o plano que você mais quer vender (normalmente 3 meses): ele dá previsibilidade para você e desconto para o cliente.</li>
+    <li>Revise os preços a cada 6 meses, ou quando abrir um ponto novo muito movimentado.</li>
+  </ul>
+  <p>Para entender como chegar no preço base, leia <a href="{raiz}guia/quanto-cobrar-por-anuncio-em-tv/">quanto cobrar por anúncio em TV</a>.</p>
+</div>

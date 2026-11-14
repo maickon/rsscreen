@@ -1,0 +1,68 @@
+<!--
+slug: ferramentas/proposta-comercial
+titulo: Modelo de proposta comercial de mídia indoor (grátis)
+descricao: Gere uma proposta comercial de anúncio em TV de mídia indoor pronta para imprimir, salvar em PDF ou mandar no WhatsApp: pontos, exibições, valor, período e condições.
+h1: Modelo de proposta comercial para mídia indoor
+lead: Preencha os campos e a proposta fica pronta ao lado, para imprimir, salvar em PDF ou copiar para o WhatsApp do anunciante. Os dados ficam só no seu aparelho.
+cartao: Proposta pronta para imprimir, salvar em PDF ou mandar no WhatsApp.
+icone: copy
+tipo: ferramenta
+ordem: 11
+script: {raiz}assets/js/ferramentas.js
+-->
+<div class="tool" id="prop">
+  <form class="tool-form" autocomplete="off" onsubmit="return false">
+    <h2>Sua empresa</h2>
+    <div class="row-2">
+      <label class="field"><span>Nome da sua empresa</span><input class="input" id="pEmpresa" placeholder="Ex.: Lagos Mídia Indoor"></label>
+      <label class="field"><span>Seu WhatsApp</span><input class="input" id="pWhats" placeholder="(22) 99999-0000"></label>
+    </div>
+    <h2>Anunciante e anúncio</h2>
+    <div class="row-2">
+      <label class="field"><span>Anunciante</span><input class="input" id="pCliente" placeholder="Ex.: Pet Shop Amigo Fiel"></label>
+      <label class="field"><span>Responsável</span><input class="input" id="pContato" placeholder="Ex.: Carla"></label>
+    </div>
+    <label class="field"><span>Pontos (um por linha)</span><textarea class="input" rows="3" id="pPontos" placeholder="Padaria Pão Dourado · Centro&#10;Clínica Sorriso · Jardim"></textarea></label>
+    <div class="row-2">
+      <label class="field"><span>Tempo do anúncio (segundos)</span><input class="input" type="number" min="5" max="60" id="pSeg" value="15"></label>
+      <label class="field"><span>Exibições por dia em cada tela</span><input class="input" type="number" min="1" id="pExib" value="150"></label>
+    </div>
+    <p class="hint">Não sabe as exibições? Use a <a href="{raiz}ferramentas/calculadora-midia-indoor/" style="color:var(--brand-700);font-weight:700">calculadora</a>.</p>
+    <h2>Valores e condições</h2>
+    <div class="row-2">
+      <label class="field"><span>Valor por mês (R$, todas as telas)</span><input class="input" type="number" min="0" step="5" id="pValor" value="150"></label>
+      <label class="field"><span>Período (meses)</span><input class="input" type="number" min="1" max="24" id="pMeses" value="3"></label>
+    </div>
+    <div class="row-2">
+      <label class="field"><span>Desconto (%)</span><input class="input" type="number" min="0" max="90" id="pDesc" value="5"></label>
+      <label class="field"><span>Início</span><input class="input" type="date" id="pInicio"></label>
+    </div>
+    <div class="row-2">
+      <label class="field"><span>Dia do pagamento</span><input class="input" type="number" min="1" max="28" id="pDia" value="10"></label>
+      <label class="field"><span>Validade da proposta (dias)</span><input class="input" type="number" min="1" max="60" id="pVal" value="7"></label>
+    </div>
+    <label class="field"><span>Criação da arte</span><select class="select" id="pArte"><option value="inclusa">Inclusa no valor</option><option value="cliente">O anunciante envia a arte pronta</option><option value="cobrada">Cobrada à parte</option></select></label>
+    <label class="field"><span>Observações (opcional)</span><textarea class="input" rows="2" id="pObs" placeholder="Ex.: exclusividade no segmento pet nos pontos acima."></textarea></label>
+  </form>
+  <div class="tool-out doc-wrap">
+    <div class="doc" id="pDoc"></div>
+    <div class="tool-actions">
+      <button class="btn btn-primary" type="button" id="pPrint"><i data-icon="download"></i> Imprimir ou salvar PDF</button>
+      <button class="btn btn-dark" type="button" id="pCopy"><i data-icon="whatsapp"></i> Copiar para WhatsApp</button>
+    </div>
+  </div>
+</div>
+<div class="prose" style="margin-top:48px">
+  <h2>Como usar a proposta para fechar o anúncio</h2>
+  <ol class="steps-list">
+    <li>Visite o anunciante com a tela funcionando no celular e mostre a prévia do anúncio dele.</li>
+    <li>Envie a proposta logo depois da conversa, enquanto o interesse está alto.</li>
+    <li>Coloque validade curta (7 dias) e um bônus para quem fechar dentro do prazo, como a arte grátis.</li>
+    <li>Depois do aceite, a proposta assinada vale como acordo simples entre vocês.</li>
+  </ol>
+  <h2>Perguntas frequentes</h2>
+  <div class="faq">
+    <details><summary>A proposta substitui um contrato?<i data-icon="chevron"></i></summary><p>Para valores pequenos, a proposta assinada pelos dois funciona como acordo. Para contratos maiores ou longos, peça a um advogado ou contador um modelo de contrato.</p></details>
+    <details><summary>Meus dados ficam salvos no site?<i data-icon="chevron"></i></summary><p>Não. Os campos ficam guardados só no navegador do seu aparelho, para você não precisar digitar de novo.</p></details>
+  </div>
+</div>

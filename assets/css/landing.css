@@ -215,3 +215,14 @@
   .showcase-stage .device-totem { width: 62%; }
   .seg button { padding: 8px 10px; font-size: 13px; }
 }
+
+/* ---------- guia grátis ---------- */
+.guide-links { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.guide-links a { display: flex; flex-direction: column; gap: 8px; border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; background: var(--bg); box-shadow: var(--shadow-sm); transition: .18s; }
+.guide-links a:hover { border-color: var(--brand); transform: translateY(-2px); box-shadow: var(--shadow); }
+.guide-links .ico { width: 26px; height: 26px; color: var(--brand-700); }
+.guide-links b { font-size: 16.5px; line-height: 1.25; }
+.guide-links span { font-size: 14px; color: var(--muted); }
+.footer p a:hover { color: var(--brand); }
+@media (max-width: 1024px) { .guide-links { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) { .guide-links { grid-template-columns: 1fr; } }

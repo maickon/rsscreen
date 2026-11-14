@@ -111,6 +111,23 @@ async function readJson(request) {
   try { return await request.json(); } catch (_) { return {}; }
 }
 
+/* ---------- busca do Google: robots.txt e sitemap.xml com o endereço real do site ---------- */
+async function seo(path, url, env, request) {
+  const origin = url.origin;
+  if (path === '/robots.txt') {
+    const txt = ['User-agent: *', 'Allow: /', 'Disallow: /painel/', 'Disallow: /tela/', 'Disallow: /api/', 'Disallow: /admin', '', 'Sitemap: ' + origin + '/sitemap.xml', ''].join('\n');
+    return new Response(txt,
+      { headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=3600' } });
+  }
+  let pages = [];
+  try { pages = await (await env.ASSETS.fetch(new URL('/guia/paginas.json', request.url))).json(); } catch (_) {}
+  const urls = [{ url: '/', atualizado: '' }].concat(pages);
+  const xml = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    .concat(urls.map(p => '  <url><loc>' + origin + p.url + '</loc>' + (p.atualizado ? '<lastmod>' + p.atualizado + '</lastmod>' : '') + '</url>'))
+    .concat(['</urlset>', '']).join('\n');
+  return new Response(xml, { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=3600' } });
+}
+
 /* ---------- rotas ---------- */
 export default {
   // Cron: resultados de loterias (só busca os jogos cujo sorteio já aconteceu)
@@ -122,6 +139,7 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const path = url.pathname;
+    if (path === '/robots.txt' || path === '/sitemap.xml') return seo(path, url, env, request);
     if (!path.startsWith('/api/')) return env.ASSETS.fetch(request);
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
     const waitUntil = p => ctx.waitUntil(p);

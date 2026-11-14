@@ -78,6 +78,22 @@ atualiza a cada 2 minutos.
   Vídeos ficam hospedados fora (link); o envio de vídeo pelo painel exige ativar o R2.
 - Prévia ao vivo no painel antes de salvar. Sem anúncios ativos, a tela mostra "Anuncie aqui".
 
+## Guia e ferramentas (site para a busca do Google)
+
+Páginas públicas para atrair quem está começando na mídia indoor:
+
+- `/guia/`: índice, com 6 guias: como ganhar dinheiro, quanto cobrar por anúncio, sistema/player,
+  conteúdo para a TV, TV Box e TV com propaganda por tipo de comércio.
+- `/ferramentas/calculadora-midia-indoor/`, `/ferramentas/proposta-comercial/` e
+  `/ferramentas/tabela-de-precos/`: funcionam no navegador, sem cadastro; os campos ficam só no aparelho.
+- `/sitemap.xml` e `/robots.txt` são gerados pelo Worker com o endereço real do site (painel, telas e
+  API ficam fora da busca).
+
+**Para editar um texto:** mude o arquivo em `tools/paginas/` e rode `python tools/gerar-site.py`.
+O gerador monta menu, sumário, dados estruturados do Google (artigo, trilha e perguntas frequentes)
+e o "continue lendo". Depois de publicar, cadastre o site no Google Search Console e envie o
+`/sitemap.xml`.
+
 ## Playlists
 
 **Painel > Playlists**: monte a programação inteira da TV num link só

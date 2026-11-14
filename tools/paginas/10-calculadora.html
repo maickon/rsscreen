@@ -1,0 +1,76 @@
+<!--
+slug: ferramentas/calculadora-midia-indoor
+titulo: Calculadora de mídia indoor: quanto posso ganhar? (grátis)
+descricao: Simule quanto dá para ganhar com mídia indoor: faturamento, custos, lucro por mês, em quantos meses o investimento se paga e quantas vezes cada anúncio aparece por dia.
+h1: Calculadora de mídia indoor: quanto posso ganhar?
+lead: Coloque os seus números e veja na hora o faturamento, o lucro por mês e em quanto tempo o investimento volta. Nada é enviado para lugar nenhum: a conta é feita no seu celular.
+cartao: Simule faturamento, lucro, retorno do investimento e exibições por dia.
+icone: chart
+tipo: ferramenta
+ordem: 10
+script: {raiz}assets/js/ferramentas.js
+-->
+<div class="tool" id="calc">
+  <form class="tool-form" autocomplete="off" onsubmit="return false">
+    <h2>Suas telas e anunciantes</h2>
+    <div class="row-2">
+      <label class="field"><span>Quantas telas (pontos)</span><input class="input" type="number" min="1" max="500" id="cTelas" value="3"></label>
+      <label class="field"><span>Anunciantes por tela (média)</span><input class="input" type="number" min="0" max="40" id="cAnun" value="8"></label>
+    </div>
+    <label class="field"><span>Preço médio do anúncio por tela (R$ por mês)</span><input class="input" type="number" min="0" step="5" id="cPreco" value="80"></label>
+    <p class="hint">Não sabe quanto cobrar? Veja o guia <a href="{raiz}guia/quanto-cobrar-por-anuncio-em-tv/" style="color:var(--brand-700);font-weight:700">quanto cobrar por anúncio</a>.</p>
+    <h2>Investimento e custos</h2>
+    <div class="row-2">
+      <label class="field"><span>Equipamento por tela (R$, uma vez)</span><input class="input" type="number" min="0" step="10" id="cEquip" value="350"></label>
+      <label class="field"><span>TVs que você vai comprar</span><input class="input" type="number" min="0" id="cTvs" value="0"></label>
+    </div>
+    <div class="row-2">
+      <label class="field"><span>Preço de cada TV (R$)</span><input class="input" type="number" min="0" step="50" id="cTvPreco" value="1100"></label>
+      <label class="field"><span>Sistema e conteúdo (R$ por tela/mês)</span><input class="input" type="number" min="0" id="cSist" value="30"></label>
+    </div>
+    <div class="row-2">
+      <label class="field"><span>Repasse ao dono do ponto (%)</span><input class="input" type="number" min="0" max="100" id="cRepasse" value="0"></label>
+      <label class="field"><span>Outros custos por mês (R$)</span><input class="input" type="number" min="0" step="10" id="cOutros" value="100"></label>
+    </div>
+    <label class="field"><span>Impostos sobre o faturamento (%)</span><input class="input" type="number" min="0" max="40" step="0.5" id="cImposto" value="0"></label>
+    <p class="hint">No MEI o imposto é um valor fixo por mês: coloque 0 aqui e some o valor em "outros custos".</p>
+    <h2>Programação da tela</h2>
+    <div class="row-2">
+      <label class="field"><span>Tempo de cada anúncio (s)</span><input class="input" type="number" min="5" max="60" id="cSeg" value="15"></label>
+      <label class="field"><span>Conteúdo entre anúncios (s)</span><input class="input" type="number" min="0" max="120" id="cCont" value="30"></label>
+    </div>
+    <label class="field"><span>Horas por dia que o ponto fica aberto</span><input class="input" type="number" min="1" max="24" id="cHoras" value="10"></label>
+  </form>
+  <div class="tool-out">
+    <div class="kpi-grid">
+      <div class="kpi hl"><small>Lucro por mês</small><b id="oLucro">-</b></div>
+      <div class="kpi"><small>Faturamento por mês</small><b id="oFat">-</b></div>
+      <div class="kpi"><small>Custos por mês</small><b id="oCusto">-</b></div>
+      <div class="kpi"><small>Investimento inicial</small><b id="oInv">-</b></div>
+      <div class="kpi"><small>Retorno do investimento</small><b id="oRet">-</b></div>
+      <div class="kpi"><small>Lucro em 12 meses</small><b id="oAno">-</b></div>
+    </div>
+    <div class="box"><h3>Cada anúncio na tela</h3><p id="oExib">-</p></div>
+    <div class="box"><h3>O que esses números dizem</h3><p id="oDica">-</p></div>
+    <div class="tool-actions">
+      <button class="btn btn-dark" type="button" id="cCopiar"><i data-icon="copy"></i> Copiar resumo</button>
+      <a class="btn btn-ghost js-wa" data-msg="Olá! Fiz a simulação na calculadora do rsscreen e quero conteúdo para as minhas telas." href="#"><i data-icon="whatsapp"></i> Falar com o rsscreen</a>
+    </div>
+  </div>
+</div>
+<div class="prose" style="margin-top:48px">
+  <h2>Como a conta é feita</h2>
+  <ul>
+    <li><strong>Faturamento</strong> = telas × anunciantes por tela × preço do anúncio.</li>
+    <li><strong>Custos por mês</strong> = sistema e conteúdo de cada tela + repasse ao ponto + impostos + outros custos.</li>
+    <li><strong>Investimento inicial</strong> = equipamento de cada tela + as TVs que você comprar.</li>
+    <li><strong>Retorno</strong> = investimento inicial ÷ lucro por mês.</li>
+    <li><strong>Exibições</strong>: o ciclo da programação é a soma de cada anúncio com o conteúdo depois dele. Quanto mais anúncios na mesma tela, maior o ciclo e menos vezes cada um aparece.</li>
+  </ul>
+  <p>Os valores que já vêm preenchidos são só um exemplo. Troque pelos preços da sua cidade e pelo que você combinar com os pontos.</p>
+  <h2>Perguntas frequentes</h2>
+  <div class="faq">
+    <details><summary>Quantos anunciantes por tela é realista?<i data-icon="chevron"></i></summary><p>No começo, de 5 a 10 por ponto. Com o tempo, de 10 a 20. Acima disso cada anúncio passa poucas vezes por hora.</p></details>
+    <details><summary>Devo repassar parte do faturamento ao ponto?<i data-icon="chevron"></i></summary><p>Não é obrigatório. Muitos operadores oferecem a TV com conteúdo e o anúncio do próprio ponto de graça. Em pontos muito disputados, um repasse de 10% a 20% ajuda a fechar.</p></details>
+  </div>
+</div>
