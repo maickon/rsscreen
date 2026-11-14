@@ -21,7 +21,7 @@ function baseDomain(host) {
   return p.slice(-n).join('.');
 }
 
-async function getAllowed(context) {
+export async function getAllowed(context) {
   if (allowed && Date.now() - allowedAt < 10 * 60 * 1000) return allowed;
   const hosts = new Set(), bases = new Set();
   try {
@@ -99,7 +99,7 @@ async function readStart(res, limit) {
   return out;
 }
 
-async function handleOg(context, target) {
+export async function handleOg(context, target) {
   const cache = caches.default;
   const key = new Request('https://og-cache.rsscreen/' + encodeURIComponent(target.toString()));
   const hit = await cache.match(key);
@@ -138,7 +138,7 @@ function xmlResponse(body, ttl, extra) {
   });
 }
 
-async function handleFeed(context, target) {
+export async function handleFeed(context, target) {
   const track = context.trackFeed || noop;
   const url = target.toString();
   const cache = caches.default;

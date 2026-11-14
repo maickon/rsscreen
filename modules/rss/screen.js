@@ -167,11 +167,14 @@
     } catch (_) { return ''; }
   }
 
+  let ogServidor = {};   // fotos que o servidor já achou (vêm junto em /api/noticias)
   async function fillImages(items) {
     const cache = ogCache();
+    Object.keys(ogServidor).forEach(l => { cache[l] = ogServidor[l]; });
     const missing = items.filter(it => !it.imagem && it.link);
     missing.forEach(it => { if (cache[it.link]) it.imagem = cache[it.link]; });
-    const todo = missing.filter(it => !it.imagem && cache[it.link] !== '').slice(0, 14);
+    // no máximo 6 fotos por atualização (cada uma é um pedido ao servidor); as outras vêm nas próximas
+    const todo = missing.filter(it => !it.imagem && cache[it.link] !== '').slice(0, 6);
     let i = 0;
     async function worker() {
       while (i < todo.length) {
@@ -190,6 +193,10 @@
   }
 
   async function load(ctx) {
+    // 1 pedido só para todas as fontes do assunto (economiza o limite diário do servidor)
+    if (location.protocol !== 'file:') {
+      try { return await loadServidor(ctx); } catch (e) { console.warn('[rss] /api/noticias falhou, buscando fonte por fonte:', e.message); }
+    }
     if (ctx.fonte) {
       // site escolhido; se ele estiver fora do ar ou bloqueado, a tela usa os outros sites do assunto
       try { return await loadFrom([ctx.fonte], ctx); } catch (e) {
@@ -200,11 +207,27 @@
     return loadFrom(outras.slice(0, 4), ctx);
   }
 
+  async function loadServidor(ctx) {
+    const d = await S.fetchJson(RS.ROOT_URL + 'api/noticias?assunto=' + encodeURIComponent(ctx.assunto.id) + (ctx.fonte ? '&fonte=' + encodeURIComponent(ctx.fonte.id) : ''));
+    const fontes = ctx.assunto.fontes || [];
+    ogServidor = (d && d.imagens) || {};
+    const lists = ((d && d.feeds) || []).map(f => {
+      const fonte = fontes.find(x => x.id === f.id) || { id: f.id, nome: f.id };
+      try { return parseFeed(f.xml, fonte); } catch (_) { return []; }
+    }).filter(l => l.length);
+    if (!lists.length) throw new Error('Nenhuma fonte respondeu');
+    return juntar(lists, ctx);
+  }
+
   async function loadFrom(fontes, ctx) {
     if (!fontes.length) throw new Error('Nenhuma fonte cadastrada');
     const results = await S.settle(fontes.map(f => S.fetchText(f.url).then(x => parseFeed(x, f))));
     const lists = results.filter(r => r.status === 'fulfilled' && r.value.length).map(r => r.value);
     if (!lists.length) throw new Error('Nenhuma fonte respondeu');
+    return juntar(lists, ctx);
+  }
+
+  async function juntar(lists, ctx) {
     // intercala as fontes e remove manchetes repetidas
     let out = [];
     const seen = new Set();
@@ -343,7 +366,7 @@
     '</div>';
 
   S.register('rss', {
-    refreshMinutes: 10,
+    refreshMinutes: 15,
     load,
     render(it, i, all, ctx) {
       return (L[ctx.layout] || L.destaque)(it, i, all, ctx);

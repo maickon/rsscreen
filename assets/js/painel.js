@@ -598,7 +598,7 @@
     $('#dbForm').hidden = !dbMode;
     $('#fileClientCard').hidden = dbMode;
     $('#cIntro').innerHTML = dbMode
-      ? 'Clientes salvos no banco de dados da Cloudflare (D1). Cadastrar, editar ou suspender vale em até 1 minuto, sem commit.'
+      ? 'Clientes salvos no banco de dados da Cloudflare (D1). Cadastrar, editar ou suspender vale nas telas em até 30 minutos, sem commit.'
       : 'Clientes cadastrados em <code>config/clientes.js</code>. A chave de cada um é gerada automaticamente a partir do nome.';
   }
 
@@ -1638,7 +1638,7 @@
         '<div class="card kpi' + (bad ? ' kpi-bad' : '') + '"><span>Feeds com problema</span><b>' + fmtN(bad + warn) + '</b><small>' + okN + ' ativos · ' + feeds.length + ' cadastrados</small></div>' +
       '</div>' +
       '<div id="monLot"></div>' +
-      '<div class="card"><div class="card-head"><div><h3>Requisições por dia</h3><p>Sinais das telas (a cada 5 min), leituras de feed e buscas de foto.</p></div></div>' + chart + '</div>' +
+      '<div class="card"><div class="card-head"><div><h3>Requisições por dia</h3><p>Sinais das telas (a cada 30 min), leituras de feed e buscas de foto.</p></div></div>' + chart + '</div>' +
 
       '<div class="card"><div class="card-head"><div><h3>Feeds RSS</h3><p>“Recusado” = o site bloqueou ou não respondeu na última tentativa. As telas usam a última cópia boa (até 7 dias) e, sem ela, os outros sites do assunto.</p></div>' +
         '<div class="mon-filter" id="monFeedFilter"><button class="chip on" data-f="">Todos</button><button class="chip" data-f="bad">Com problema</button><button class="chip" data-f="ok">Ativos</button><button class="chip" data-f="idle">Sem uso</button></div></div>' +
@@ -1663,10 +1663,10 @@
         topList('Fotos não encontradas (por site)', d.ogVazio || [], 'Todas as fotos foram encontradas.') +
       '</div>' +
 
-      '<div class="card"><div class="card-head"><div><h3>Aparelhos</h3><p>Cada TV, player ou navegador que abriu um link no período. “Ligada” = enviou sinal nos últimos 12 minutos.</p></div></div>' +
+      '<div class="card"><div class="card-head"><div><h3>Aparelhos</h3><p>Cada TV, player ou navegador que abriu um link no período. “Ligada” = enviou sinal nos últimos 40 minutos.</p></div></div>' +
         (devs.length ? '<div class="table-wrap"><table class="table"><thead><tr><th>Status</th><th>Cliente / tela</th><th>Local</th><th>Player</th><th>IP</th><th>Último sinal</th><th>Sinais</th></tr></thead><tbody>' +
         devs.map(v => {
-          const on = Date.now() - v.last < 12 * 60000;
+          const on = Date.now() - v.last < 40 * 60000;
           return '<tr><td><span class="st ' + (on ? (v.ok ? 'st-ok' : 'st-warn') : 'st-idle') + '">' + ICON(on ? (v.ok ? 'check' : 'offline') : 'clock') + (on ? (v.ok ? 'Ligada' : 'Sem conteúdo') : 'Desligada') + '</span></td>' +
             '<td>' + telaName(v.cliente + ' · ' + v.tela) + '</td><td><small>' + esc(v.local || '—') + '</small></td>' +
             '<td><small title="' + esc(v.ua) + '">' + esc(v.player) + '</small></td><td><small class="mono">' + esc(v.ip) + '</small></td>' +

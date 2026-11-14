@@ -12,6 +12,7 @@
 //   /api/anuncios     anúncios ativos do cliente; /api/midia/<id> fotos dos anúncios
 //   /api/admin/anuncios[/ordem], /api/admin/midia  cadastro de anúncios (exige a senha)
 //   /api/admin/loterias  status e "atualizar agora" (exige a senha)
+//   /api/noticias     todos os feeds de um assunto num pedido só (?assunto=&fonte=)
 //   /api/agro         cotações do agro (CEPEA), guardadas por 1 hora
 //   /api/futebol      jogos, resultados e tabela (?liga=bra.1), dados da ESPN com cache
 //   /api/playlist     playlist do cliente (a tela com &playlist=<id> lê daqui)
@@ -27,6 +28,7 @@ import { listAds, publicAds, saveAd, setAdsOrder, deleteAd, saveMedia, mediaResp
 import { listPlaylists, getPlaylist, savePlaylist, deletePlaylist, playlistCacheKey } from './playlists.js';
 import { futebolResponse } from './futebol.js';
 import { agroResponse } from './agro.js';
+import { noticiasResponse } from './noticias.js';
 import { seo } from './seo.js';
 import { loteriasResponse, updateAll, updateStats, JOGOS, STATS_JOGOS, memoryStub } from './loterias.js';
 
@@ -173,6 +175,13 @@ export default {
       } catch (e) {
         return new Response(JSON.stringify({ anuncios: [], erro: 'indisponivel' }), { status: 503, headers });
       }
+    }
+
+    if (path === '/api/noticias') {
+      trackRequest(request, 'noticias');
+      const res = await noticiasResponse(request, env, { request, env, waitUntil, trackFeed, trackOg }, CORS);
+      maybeFlush(env, waitUntil);
+      return res;
     }
 
     if (path === '/api/agro') {

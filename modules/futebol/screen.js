@@ -78,7 +78,7 @@
   };
 
   S.register('futebol', {
-    refreshMinutes: 2,
+    refreshMinutes: 5,
     rerenderOnRefresh: false,
     load,
     slides(data, ctx) {

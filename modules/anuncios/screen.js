@@ -162,7 +162,7 @@
   };
 
   S.register('anuncios', {
-    refreshMinutes: 2,
+    refreshMinutes: 10,
     load,
     render(a, i, all, ctx) {
       const cor = (a.dados && a.dados.cor) || '';

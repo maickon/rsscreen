@@ -224,7 +224,7 @@ export class Stats extends DurableObject {
       ogVazio: top('og-vazio', 40),
       feeds: sql.exec('SELECT * FROM feeds').toArray(),
       dispositivos: sql.exec('SELECT * FROM devices WHERE last >= ? ORDER BY last DESC LIMIT 300', now - n * 86400000).toArray(),
-      ativosAgora: sql.exec('SELECT COUNT(*) AS c FROM devices WHERE last >= ?', now - 12 * 60000).toArray()[0].c,
+      ativosAgora: sql.exec('SELECT COUNT(*) AS c FROM devices WHERE last >= ?', now - 40 * 60000).toArray()[0].c,
       erros: sql.exec('SELECT * FROM errors ORDER BY t DESC LIMIT 60').toArray()
     };
   }

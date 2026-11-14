@@ -47,7 +47,7 @@ Os clientes ficam no **Cloudflare D1**. O banco é criado sozinho no primeiro de
 
 1. Abra **Painel > Clientes**. Na primeira vez aparece o botão **Importar clientes**, que copia
    a lista do `config/clientes.js` para o banco **com as mesmas chaves** (nenhum link para).
-2. Cadastre, edite, suspenda ou exclua pelo formulário: vale nas telas em até 1 minuto, sem commit.
+2. Cadastre, edite, suspenda ou exclua pelo formulário: vale nas telas em até 30 minutos, sem commit.
 3. Cada cliente tem plano, número de telas, valor mensal, dia de vencimento e observações.
    O painel soma o faturamento mensal previsto.
 
@@ -85,7 +85,7 @@ premiação e ganhadores, números quentes e frios, e atrasados com pares × ím
 
 **Painel > Anúncios**: escolha o cliente, crie os anúncios dos anunciantes dele e copie o link da
 tela de anúncios (`modulo=anuncios`). A tela mostra todos os anúncios ativos em sequência e se
-atualiza a cada 2 minutos.
+atualiza a cada 10 minutos.
 
 - 6 modelos: oferta (preço de/por), empresa/serviço, aviso, evento (com data), arte pronta
   (imagem inteira, ex.: feita no Canva) e vídeo (link MP4 https).
@@ -118,7 +118,7 @@ anúncios) tem o seu tempo na tela, e a sequência se repete o dia todo.
 
 - **Anúncios entre os conteúdos**: entra 1 anúncio do cliente depois de cada conteúdo, um diferente a cada vez.
 - **Começar de um pacote pronto** preenche os conteúdos do segmento (padaria, clínica…).
-- Ao editar, a TV recebe a mudança em até 3 minutos, sem trocar o link. Prévia ao vivo no painel.
+- Ao editar, a TV recebe a mudança em até 10 minutos, sem trocar o link. Prévia ao vivo no painel.
 - Cada conteúdo abre num quadro interno (`&embed=1`): o próximo é preparado escondido e entra com
   transição suave; se falhar, a playlist pula para o seguinte. A playlist e os dados ficam
   guardados no aparelho e continuam rodando sem internet.
@@ -169,7 +169,7 @@ Módulos ativos: notícias (`rss`), anúncios, clima, cotações, loterias, **fu
 **datas comemorativas**, **frases** e **horóscopo**.
 
 - **Futebol** lê `/api/futebol?liga=bra.1` (Worker). Os dados são públicos da ESPN, sem chave, com
-  cache de 1 minuto durante os jogos e 10 minutos no resto do tempo; se a ESPN falhar, a última
+  cache de 1 minuto durante os jogos (as telas atualizam a cada 5 minutos) e 10 minutos no resto do tempo; se a ESPN falhar, a última
   resposta boa continua valendo por até 2 dias. Brasileirão A e B, Copa do Brasil, Libertadores,
   Sul-Americana, Champions, Premier League e La Liga.
 - **Cotações do Agro** lê `/api/agro` (Worker): indicadores diários do CEPEA (ESALQ/USP), pelo widget
@@ -186,7 +186,7 @@ Módulos ativos: notícias (`rss`), anúncios, clima, cotações, loterias, **fu
   mídia indoor (por URL/página web), sem login.
 - Se o site escolhido bloquear ou cair, a tela mostra a última cópia boa (até 7 dias) e,
   sem ela, notícias dos outros sites do mesmo assunto. Ela não fica parada no "Carregando".
-- Notícias atualizam a cada 10 min, cotações a cada 5 min e clima a cada 15 min.
+- Notícias atualizam a cada 15 min, cotações a cada 5 min e clima a cada 15 min.
 - O último conteúdo fica salvo no aparelho: se a internet cair, a tela continua rodando.
 - A página recarrega a cada 6 h para receber atualizações do sistema.
 - Tudo escala pelo tamanho da tela (720p, 1080p, 4K), nas duas orientações.

@@ -6,10 +6,10 @@
   "tag": "Novo",
   "icone": "zap",
   "chamada": "Placar ao vivo, resultados, próximos jogos e a tabela do Brasileirão com os escudos dos times.",
-  "descricao": "O assunto que mais prende a atenção em bares, padarias, barbearias e academias. Mostra os jogos rolando com o placar e o minuto, os últimos resultados, a agenda da rodada com dia e horário de Brasília e a classificação. Atualiza a cada minuto durante os jogos.",
+  "descricao": "O assunto que mais prende a atenção em bares, padarias, barbearias e academias. Mostra os jogos rolando com o placar e o minuto, os últimos resultados, a agenda da rodada com dia e horário de Brasília e a classificação. Atualiza a cada 5 minutos.",
   "beneficios": [
     "Brasileirão A e B, Copa do Brasil, Libertadores, Sul-Americana e Europa",
-    "Placar ao vivo com o minuto do jogo",
+    "Placar dos jogos rolando, atualizado a cada 5 minutos",
     "Tabela de classificação com escudos",
     "Horizontal e vertical"
   ],

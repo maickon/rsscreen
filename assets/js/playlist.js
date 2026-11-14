@@ -235,7 +235,7 @@
     E.state.assunto = E.state.playlist;
     E.startPing();
     restart();
-    setInterval(check, 3 * 60 * 1000);
+    setInterval(check, 10 * 60 * 1000);
   }
 
   // mudou de horizontal para vertical (ou o contrário): reabre com o formato certo

@@ -398,19 +398,23 @@
     const local = RS.findClient(chave);
     if (!chave || location.protocol === 'file:') return local;
     const memKey = 'rs_cli_' + chave;
+    let saved = null;
+    try { saved = JSON.parse(localStorage.getItem(memKey) || 'null'); } catch (_) {}
+    // conferido há menos de 30 min: não pergunta de novo ao servidor
+    if (saved && saved.c && saved.t && Date.now() - saved.t < 30 * 60 * 1000) return saved.c;
     try {
       const res = await fetchWithTimeout(RS.ROOT_URL + 'api/cliente?chave=' + encodeURIComponent(chave), 6000);
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const r = await res.json();
       if (r && r.banco) {
         const c = r.cliente ? { nome: r.cliente.nome, chave: r.cliente.chave, ativo: r.cliente.ativo, demo: r.cliente.demo } : null;
-        try { if (c) localStorage.setItem(memKey, JSON.stringify(c)); else localStorage.removeItem(memKey); } catch (_) {}
+        try { if (c) localStorage.setItem(memKey, JSON.stringify({ c, t: Date.now() })); else localStorage.removeItem(memKey); } catch (_) {}
         return c;
       }
       return local;
     } catch (_) {
       // sem internet ou servidor fora: usa o que já sabia
-      try { const saved = JSON.parse(localStorage.getItem(memKey) || 'null'); if (saved) return saved; } catch (_) {}
+      if (saved) return saved.c || saved;
       return local;
     }
   }
@@ -468,12 +472,14 @@
       idx = startIdx(slides.length);
       rebuild();
     }
-    // na playlist, dados ainda recentes não são buscados de novo a cada aparição
-    const fresh = embed && cached && cached.t && Date.now() - cached.t < (mod.refreshMinutes || 10) * 60 * 1000;
-    if (!fresh) await refresh(!cached);
+    // Dados ainda recentes não são buscados de novo ao abrir. Muitos players recarregam o link
+    // toda vez que ele volta na programação; sem isso, cada TV gastaria dezenas de pedidos por dia.
+    const per = (mod.refreshMinutes || 10) * 60 * 1000;
+    const idade = cached && cached.t ? Date.now() - cached.t : Infinity;
+    if (idade >= per) await refresh(!cached);
     startPing();
     startLoop();
-    setInterval(() => refresh(false), (mod.refreshMinutes || 10) * 60 * 1000);
+    setTimeout(() => { refresh(false); setInterval(() => refresh(false), per); }, idade >= per ? per : per - idade);
   }
 
   /* =================== registro de uso (painel > Monitoramento) =================== */
@@ -493,9 +499,16 @@
     img.src = RS.ROOT_URL + 'api/hit?' + q + '&d=' + encodeURIComponent(deviceId()) +
       '&ok=' + (engine.ok ? (engine.ok() ? 1 : 0) : (data.length && !offline ? 1 : 0)) + (first ? '&novo=1' : '') + '&_=' + Date.now();
   }
+  // sinal a cada 30 min; ao abrir, só avisa se o último sinal desta tela foi há mais de 25 min
+  // (players que recarregam o link a cada volta na programação não multiplicam os pedidos)
+  const PING_MS = 30 * 60 * 1000;
   function startPing() {
-    ping(true);
-    setInterval(() => ping(false), 5 * 60 * 1000);
+    const k = 'rs_ping_' + [state.cliente, state.modulo, state.assunto].join('_');
+    let last = 0;
+    try { last = Number(localStorage.getItem(k)) || 0; } catch (_) {}
+    const marca = () => { try { localStorage.setItem(k, String(Date.now())); } catch (_) {} };
+    if (Date.now() - last > 25 * 60 * 1000) { ping(true); marca(); }
+    setInterval(() => { ping(false); marca(); }, PING_MS);
   }
 
   /* =================== modo teste =================== */
