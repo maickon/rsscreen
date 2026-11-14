@@ -4,24 +4,63 @@
   "tipo": "cardapio",
   "categorias": [
     { "nome": "Cafés", "itens": [
-      ["Café expresso", "un"], ["Expresso duplo", "un"], ["Café coado", "un"], ["Café com leite", "un"], ["Pingado", "un"],
-      ["Cappuccino", "un"], ["Cappuccino italiano", "un"], ["Latte", "un"], ["Macchiato", "un"], ["Mocha", "un", "Café, chocolate e leite vaporizado"],
-      ["Café gelado", "un"], ["Frappuccino", "un"], ["Affogato", "un", "Expresso com sorvete de creme"]
+      ["Café expresso","un","Grãos especiais, extraído na hora"],
+      ["Expresso duplo","un","Dose dupla de energia"],
+      ["Café coado","un","Passado na hora"],
+      ["Café com leite","un","Clássico do café da manhã"],
+      ["Pingado","un","Leite com um toque de café"],
+      ["Cappuccino","un","Café, leite vaporizado e canela"],
+      ["Cappuccino italiano","un","Expresso com espuma de leite"],
+      ["Latte","un","Expresso com bastante leite vaporizado"],
+      ["Macchiato","un","Expresso manchado com espuma de leite"],
+      ["Mocha","un","Café, chocolate e leite vaporizado"],
+      ["Café gelado","un","Refrescante, com gelo"],
+      ["Frappuccino","un","Batido com gelo e chantili"],
+      ["Affogato","un","Expresso com sorvete de creme"]
     ] },
     { "nome": "Chás e outras bebidas", "itens": [
-      ["Chá quente", "un"], ["Chá gelado", "un"], ["Chocolate quente", "un"], ["Suco natural", "un"], ["Suco detox", "un"],
-      ["Vitamina", "un"], ["Água mineral", "un"], ["Refrigerante lata", "un"]
+      ["Chá quente","un","Ervas e frutas, vários sabores"],
+      ["Chá gelado","un","Feito na casa"],
+      ["Chocolate quente","un","Cremoso e encorpado"],
+      ["Suco natural","un","Feito na hora com a fruta"],
+      ["Suco detox","un","Couve, limão, gengibre e maçã"],
+      ["Vitamina","un","Leite com frutas frescas"],
+      ["Água mineral","un","Com ou sem gás"],
+      ["Refrigerante lata","un","Gelado, 350 ml"]
     ] },
     { "nome": "Salgados", "itens": [
-      ["Pão de queijo", "un"], ["Croissant de presunto e queijo", "un"], ["Misto quente", "un"], ["Quiche", "un"],
-      ["Torta salgada (fatia)", "un"], ["Sanduíche natural", "un"], ["Tapioca", "un"], ["Wrap", "un"], ["Pão na chapa", "un"]
+      ["Pão de queijo","un","Quentinho, saindo do forno"],
+      ["Croissant de presunto e queijo","un","Massa folhada amanteigada"],
+      ["Misto quente","un","Presunto e queijo na chapa"],
+      ["Quiche","un","Alho-poró, queijo ou lorraine"],
+      ["Torta salgada (fatia)","un","Frango ou palmito"],
+      ["Sanduíche natural","un","Pão integral, frango e salada"],
+      ["Tapioca","un","Recheios doces e salgados"],
+      ["Wrap","un","Frango grelhado e salada"],
+      ["Pão na chapa","un","Com manteiga, douradinho"]
     ] },
     { "nome": "Doces", "itens": [
-      ["Bolo do dia (fatia)", "un"], ["Brownie", "un"], ["Cookie", "un"], ["Cheesecake", "un"], ["Torta de limão", "un"],
-      ["Croissant de chocolate", "un"], ["Muffin", "un"], ["Brigadeiro gourmet", "un"], ["Pão de mel", "un"]
+      ["Bolo do dia (fatia)","un","Caseiro, feito aqui"],
+      ["Brownie","un","Chocolate intenso e casquinha crocante"],
+      ["Cookie","un","Com gotas de chocolate"],
+      ["Cheesecake","un","Com calda de frutas vermelhas"],
+      ["Torta de limão","un","Cremosa, com merengue"],
+      ["Croissant de chocolate","un","Massa folhada com chocolate"],
+      ["Muffin","un","Chocolate ou frutas vermelhas"],
+      ["Brigadeiro gourmet","un","Chocolate belga"],
+      ["Pão de mel","un","Recheado com doce de leite"]
     ] },
     { "nome": "Café da manhã", "itens": [
-      ["Combo café da manhã", "un", "Café com leite, pão na chapa e suco"], ["Omelete", "un"], ["Ovos mexidos com torrada", "un"], ["Iogurte com granola", "un"], ["Salada de frutas", "un"]
+      ["Combo café da manhã","un","Café com leite, pão na chapa e suco"],
+      ["Omelete","un","Com queijo e ervas"],
+      ["Ovos mexidos com torrada","un","Cremosos, com pão tostado"],
+      ["Iogurte com granola","un","Com mel e frutas"],
+      ["Salada de frutas","un","Frutas frescas da estação"]
     ] }
+  ],
+  "modelos": [
+    {"id":"cafes","nome":"Cafés","titulo":"Nossos cafés","subtitulo":"Grãos especiais","itens":["Café expresso","Expresso duplo","Café coado","Cappuccino","Cappuccino italiano","Latte","Macchiato","Mocha","Café gelado","Frappuccino","Affogato","Chocolate quente"]},
+    {"id":"cafe-manha","nome":"Café da manhã","titulo":"Café da manhã","subtitulo":"Comece bem o dia","itens":["Combo café da manhã","Pão de queijo","Misto quente","Pão na chapa","Tapioca","Ovos mexidos com torrada","Iogurte com granola","Salada de frutas","Café com leite","Suco natural"]},
+    {"id":"doces","nome":"Doces","titulo":"Doces","subtitulo":"Para acompanhar o café","itens":["Bolo do dia (fatia)","Brownie","Cookie","Cheesecake","Torta de limão","Croissant de chocolate","Muffin","Brigadeiro gourmet","Pão de mel"]}
   ]
 }

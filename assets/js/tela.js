@@ -475,7 +475,9 @@
     if (state.teste) buildTestbar();
 
     // Mostra o cache imediatamente (tela nunca fica preta), depois busca dados novos
-    const cached = loadCache();
+    // ?atualizar=1 (botão "Abrir na TV" do editor): ignora o que está guardado e busca a versão nova
+    const forcar = P.get('atualizar') === '1';
+    const cached = forcar ? null : loadCache();
     if (cached && cached.data && cached.data.length) {
       data = cached.data;
       lastUpdate = cached.t;

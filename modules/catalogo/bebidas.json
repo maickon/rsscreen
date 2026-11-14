@@ -4,21 +4,56 @@
   "tipo": "precos",
   "categorias": [
     { "nome": "Cervejas", "itens": [
-      ["Cerveja lata 350 ml", "un"], ["Cerveja latão 473 ml", "un"], ["Cerveja long neck", "un"], ["Cerveja 600 ml", "un"],
-      ["Cerveja litrão", "un"], ["Cerveja sem álcool", "un"], ["Cerveja artesanal", "un"], ["Pack 12 latas", "un"], ["Caixa 24 latas", "un"]
+      ["Cerveja lata 350 ml","un","Trincando de gelada"],
+      ["Cerveja latão 473 ml","un","Latão gelado"],
+      ["Cerveja long neck","un","Gelada, várias marcas"],
+      ["Cerveja 600 ml","un","Garrafa retornável, traga o casco"],
+      ["Cerveja litrão","un","Retornável, mais economia"],
+      ["Cerveja sem álcool","un","Todo o sabor, zero álcool"],
+      ["Cerveja artesanal","un","Rótulos especiais"],
+      ["Pack 12 latas","un","Gelado e pronto para levar"],
+      ["Caixa 24 latas","un","Preço especial para a sua festa"]
     ] },
     { "nome": "Refrigerantes e sucos", "itens": [
-      ["Refrigerante lata", "un"], ["Refrigerante 600 ml", "un"], ["Refrigerante 2 L", "un"], ["Suco de caixinha 1 L", "un"],
-      ["Água mineral 500 ml", "un"], ["Água mineral 1,5 L", "un"], ["Água com gás", "un"], ["Água de coco", "un"],
-      ["Energético", "un"], ["Isotônico", "un"], ["Chá gelado", "un"]
+      ["Refrigerante lata","un","Gelado, vários sabores"],
+      ["Refrigerante 600 ml","un","Gelado, vários sabores"],
+      ["Refrigerante 2 L","un","Para toda a família"],
+      ["Suco de caixinha 1 L","un","Vários sabores"],
+      ["Água mineral 500 ml","un","Sem gás, gelada"],
+      ["Água mineral 1,5 L","un","Sem gás"],
+      ["Água com gás","un","Gelada"],
+      ["Água de coco","un","Natural e hidratante"],
+      ["Energético","un","Gelado, lata 473 ml"],
+      ["Isotônico","un","Repõe sais minerais"],
+      ["Chá gelado","un","Pêssego ou limão"]
     ] },
     { "nome": "Destilados e vinhos", "itens": [
-      ["Cachaça", "un"], ["Vodca", "un"], ["Gim", "un"], ["Uísque", "un"], ["Rum", "un"], ["Licor", "un"],
-      ["Vinho tinto", "un"], ["Vinho branco", "un"], ["Espumante", "un"], ["Drink pronto (lata)", "un"]
+      ["Cachaça","un","Envelhecida ou prata"],
+      ["Vodca","un","Para drinks e caipirinhas"],
+      ["Gim","un","Para a sua tônica"],
+      ["Uísque","un","Rótulos nacionais e importados"],
+      ["Rum","un","Para drinks"],
+      ["Licor","un","Vários sabores"],
+      ["Vinho tinto","un","Seco ou suave"],
+      ["Vinho branco","un","Seco ou suave"],
+      ["Espumante","un","Para brindar"],
+      ["Drink pronto (lata)","un","É só abrir e brindar"]
     ] },
     { "nome": "Gelo e conveniência", "itens": [
-      ["Gelo 5 kg", "un"], ["Gelo de coco", "un"], ["Carvão 3 kg", "un"], ["Copo descartável (pct)", "un"], ["Salgadinho", "un"],
-      ["Amendoim", "un"], ["Chocolate", "un"], ["Bala", "un"], ["Chiclete", "un"]
+      ["Gelo 5 kg","un","Em cubos, filtrado"],
+      ["Gelo de coco","un","Para drinks especiais"],
+      ["Carvão 3 kg","un","Para o seu churrasco"],
+      ["Copo descartável (pct)","un","Pacote com 100"],
+      ["Salgadinho","un","Vários sabores"],
+      ["Amendoim","un","Torrado e salgado"],
+      ["Chocolate","un","Barras e bombons"],
+      ["Bala","un","Vários sabores"],
+      ["Chiclete","un","Vários sabores"]
     ] }
+  ],
+  "modelos": [
+    {"id":"geladas","nome":"Geladas","titulo":"Bem geladas","subtitulo":"Pronta entrega","itens":["Cerveja lata 350 ml","Cerveja latão 473 ml","Cerveja long neck","Cerveja 600 ml","Cerveja litrão","Pack 12 latas","Refrigerante 2 L","Água mineral 500 ml","Energético","Gelo 5 kg"]},
+    {"id":"festa","nome":"Para a festa","titulo":"Tudo para a sua festa","subtitulo":"Preço especial","itens":["Caixa 24 latas","Pack 12 latas","Refrigerante 2 L","Vodca","Cachaça","Gelo 5 kg","Gelo de coco","Carvão 3 kg","Copo descartável (pct)","Salgadinho","Amendoim"]},
+    {"id":"adega","nome":"Adega","titulo":"Adega","subtitulo":"Vinhos e destilados","itens":["Vinho tinto","Vinho branco","Espumante","Cachaça","Vodca","Gim","Uísque","Rum","Licor","Drink pronto (lata)"]}
   ]
 }

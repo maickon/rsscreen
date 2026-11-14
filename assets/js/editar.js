@@ -13,7 +13,7 @@
   const ehLista = tipo => tipo === 'precos' || tipo === 'cardapio';
   const temaNome = id => (TEMAS.find(t => t[0] === id) || [id, id])[1];
 
-  let cliente = null, listas = [], limites = { listas: 10, itens: 200 }, segs = [], catalogo = {};
+  let cliente = null, listas = [], limites = { listas: 10, itens: 200 }, segs = [], catalogo = {}, fundos = {};
   let atual = null, sujo = false, pvTimer;
 
   hydrateIcons();
@@ -33,12 +33,26 @@
     return RS.buildScreenUrl({ cliente: C, modulo: 'lista', assunto: id, layout: layout || 'lista', orientacao: orient });
   }
 
+  const abrirUrl = (orient) => telaUrl(atual.id, orient, $('edLayout').value) + '&atualizar=1';
+  const fotoUrl = (id, w) => 'https://images.pexels.com/photos/' + id + '/pexels-photo-' + id + '.jpeg?auto=compress&cs=tinysrgb&w=' + w;
+
+  // preço com máscara de real: digita só números, os centavos entram sozinhos (6990 → 69,90; 129990 → 1.299,90)
+  function mascara(v) {
+    let d = String(v || '').replace(/\D/g, '').replace(/^0+/, '').slice(0, 9);
+    if (!d) return '';
+    d = d.padStart(3, '0');
+    return d.slice(0, -2).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ',' + d.slice(-2);
+  }
+
   /* ---------- catálogo ---------- */
   async function carregarCatalogo() {
     try {
       segs = (await RS.fetchJson(RS.ROOT_URL + 'modules/catalogo/index.json')).segmentos || [];
       await Promise.all(segs.map(async s => { catalogo[s.id] = await RS.fetchJson(RS.ROOT_URL + 'modules/catalogo/' + s.id + '.json'); }));
+      fundos = (await RS.fetchJson(RS.ROOT_URL + 'modules/catalogo/fundos.json')).temas || {};
     } catch (_) {}
+    $('edFundoSeg').innerHTML = Object.keys(fundos).map(t => '<option value="' + t + '">Fotos de ' + esc(temaNome(t)) + '</option>').join('');
+    $('edModSeg').innerHTML = segs.map(s => '<option value="' + s.id + '">' + esc(s.nome) + '</option>').join('');
     $('edSeg').innerHTML = segs.map(s => '<option value="' + s.id + '" data-tipo="' + s.tipo + '">' + esc(s.nome) + '</option>').join('') + '<option value="geral">Outro</option>';
     $('edTema').innerHTML = TEMAS.map(t => '<option value="' + t[0] + '">' + esc(t[1]) + '</option>').join('');
   }
@@ -66,7 +80,7 @@
       const info = ehLista(l.tipo) ? n + (n === 1 ? ' item' : ' itens') : l.tipo === 'mural' ? ((d.aniversarios || []).length + ' aniversariantes · ' + (d.avisos || []).length + ' avisos') : (d.wifiNome ? 'com Wi-Fi' : 'sem Wi-Fi');
       return '<div class="ed-card ed-item-lista"><div><b>' + esc(l.nome) + '</b><small>' + esc(NOME_TIPO[l.tipo] || l.tipo) + ' · ' + esc(temaNome(l.tema)) + ' · ' + info + '</small></div>' +
         '<div class="ed-acts"><button class="btn btn-primary btn-sm" data-ed="' + l.id + '">Editar</button>' +
-        '<a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="' + esc(telaUrl(l.id, 'horizontal', '', l.tipo)) + '">' + ICON('eye') + ' Ver na TV</a></div></div>';
+        '<a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="' + esc(telaUrl(l.id, 'horizontal', '', l.tipo) + '&atualizar=1') + '">' + ICON('external') + ' Abrir na TV</a></div></div>';
     }).join('') : '<div class="ed-empty">Você ainda não criou nenhum conteúdo. Toque em <b>Nova</b> para começar.</div>';
     $('edNova').disabled = listas.length >= limites.listas;
   }
@@ -97,6 +111,13 @@
     atual.dados.avisos = atual.dados.avisos || [];
     renderMural();
     $('edTit').value = atual.dados.titulo || '';
+    $('edMarca').value = atual.dados.marca || '';
+    $('edIcone').checked = !atual.dados.semIcone;
+    $('edFundoSeg').value = fundos[atual.tema] ? atual.tema : (Object.keys(fundos).find(t => (fundos[t] || []).indexOf(Number(atual.dados.fundo)) >= 0) || Object.keys(fundos)[0] || '');
+    renderFundos();
+    $('edModPainel').hidden = true;
+    if (catalogo[atual.tema]) $('edModSeg').value = atual.tema;
+    else { const s0 = segs.find(s => s.tipo === atual.tipo); if (s0) $('edModSeg').value = s0.id; }
     $('edSub').value = atual.dados.subtitulo || '';
     $('edRod').value = atual.dados.rodape || '';
     $('edEsg').value = atual.dados.esgotado || 'riscar';
@@ -110,20 +131,20 @@
   }
 
   function renderItens() {
-    const its = atual.dados.itens, card = atual.tipo === 'cardapio';
+    const its = atual.dados.itens;
     $('edConta').textContent = its.length + ' de ' + limites.itens;
     const cats = Array.from(new Set(its.map(i => i.c).filter(Boolean)));
     $('edCats').innerHTML = cats.map(c => '<option value="' + esc(c) + '">').join('');
     $('edItens').innerHTML = its.length ? its.map((it, k) =>
       '<div class="ed-it' + (it.o ? ' o' : '') + (it.x ? ' x' : '') + '" data-k="' + k + '">' +
         '<div class="ed-it-l1"><input class="input" data-f="n" value="' + esc(it.n) + '" maxlength="60" aria-label="Produto">' +
-          '<div class="ed-preco"><span>R$</span><input class="input" data-f="p" value="' + esc(it.p || '') + '" inputmode="decimal" placeholder="0,00" aria-label="Preço"></div></div>' +
+          '<div class="ed-preco"><span>R$</span><input class="input" data-f="p" value="' + esc(it.p || '') + '" inputmode="numeric" placeholder="0,00" aria-label="Preço"></div></div>' +
         '<div class="ed-it-l2">' +
           '<input class="input input-sm" data-f="u" value="' + esc(it.u || '') + '" list="edUnidades" placeholder="unidade" aria-label="Unidade">' +
           '<input class="input input-sm" data-f="c" value="' + esc(it.c || '') + '" list="edCats" placeholder="categoria" aria-label="Categoria">' +
-          (it.o ? '<input class="input input-sm" data-f="de" value="' + esc(it.de || '') + '" inputmode="decimal" placeholder="preço antigo" aria-label="Preço antigo">' : '') +
+          (it.o ? '<input class="input input-sm" data-f="de" value="' + esc(it.de || '') + '" inputmode="numeric" placeholder="de R$ (antigo)" aria-label="Preço antigo">' : '') +
         '</div>' +
-        (card ? '<input class="input input-sm ed-desc" data-f="d" value="' + esc(it.d || '') + '" maxlength="90" placeholder="descrição (ingredientes)" aria-label="Descrição">' : '') +
+        '<input class="input input-sm ed-desc" data-f="d" value="' + esc(it.d || '') + '" maxlength="90" placeholder="descrição (opcional)" aria-label="Descrição">' +
         '<div class="ed-it-acts">' +
           '<button type="button" class="ed-tg' + (it.o ? ' on' : '') + '" data-tg="o">★ Oferta</button>' +
           '<button type="button" class="ed-tg x' + (it.x ? ' on' : '') + '" data-tg="x">Acabou</button>' +
@@ -131,13 +152,67 @@
           '<button type="button" class="ed-ic" data-mv="-1" aria-label="Subir"' + (k === 0 ? ' disabled' : '') + '>↑</button>' +
           '<button type="button" class="ed-ic" data-mv="1" aria-label="Descer"' + (k === its.length - 1 ? ' disabled' : '') + '>↓</button>' +
           '<button type="button" class="ed-ic" data-rm aria-label="Remover">✕</button>' +
-        '</div></div>').join('') : '<div class="ed-empty">Busque um produto acima ou adicione um item próprio.</div>';
+        '</div></div>').join('') : '<div class="ed-empty">Lista vazia. Comece por um <b>modelo pronto</b> (só digita os preços) ou busque os produtos acima.</div>';
+    if (!its.length && $('edModPainel').hidden) abrirModelos();
   }
+
+  /* ---------- modelos prontos ---------- */
+  function abrirModelos() { $('edModPainel').hidden = false; renderModelos(); }
+  function renderModelos() {
+    const cat = catalogo[$('edModSeg').value];
+    $('edModTrocaWrap').hidden = !atual.dados.itens.length;
+    $('edModLista').innerHTML = cat && cat.modelos ? cat.modelos.map(m =>
+      '<button type="button" class="ed-mod" data-mod="' + esc(m.id) + '"><b>' + esc(m.nome) + '</b><small>' + m.itens.length + ' produtos · ' +
+        esc(m.itens.slice(0, 4).join(', ')) + '…</small></button>').join('') : '<div class="ed-res-vazio">Sem modelos para este segmento.</div>';
+  }
+  function importarModelo(segId, mid) {
+    const cat = catalogo[segId], m = cat && (cat.modelos || []).find(x => x.id === mid);
+    if (!m) return;
+    const idx = {};
+    cat.categorias.forEach(c => c.itens.forEach(it => { if (!idx[it[0]]) idx[it[0]] = { n: it[0], u: it[1], d: it[2] || '', c: c.nome }; }));
+    const vazia = !atual.dados.itens.length, troca = $('edModTroca').checked;
+    if (troca && !vazia && !confirm('Apagar os ' + atual.dados.itens.length + ' itens atuais e importar "' + m.nome + '"?')) return;
+    if (troca) atual.dados.itens = [];
+    const tem = new Set(atual.dados.itens.map(i => RS.normalize(i.n)));
+    let n = 0;
+    m.itens.forEach(nome => {
+      const r = idx[nome];
+      if (!r || tem.has(RS.normalize(r.n)) || atual.dados.itens.length >= limites.itens) return;
+      const it = { n: r.n, u: r.u, c: r.c };
+      if (r.d) it.d = r.d;
+      atual.dados.itens.push(it); n++;
+    });
+    if (vazia || troca) { $('edTit').value = m.titulo || $('edTit').value; $('edSub').value = m.subtitulo || $('edSub').value; }
+    $('edModPainel').hidden = true; $('edModTroca').checked = false;
+    renderItens(); mudou();
+    toast(n + ' produtos importados. Agora é só digitar os preços.');
+    const vaz = document.querySelector('.ed-it [data-f=p]');
+    if (vaz) { vaz.closest('.ed-it').scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(() => vaz.focus(), 350); }
+  }
+  $('edModelos').addEventListener('click', () => { if ($('edModPainel').hidden) abrirModelos(); else $('edModPainel').hidden = true; });
+  $('edModSeg').addEventListener('change', renderModelos);
+  $('edModLista').addEventListener('click', e => { const b = e.target.closest('[data-mod]'); if (b) importarModelo($('edModSeg').value, b.dataset.mod); });
+
+  /* ---------- foto de fundo ---------- */
+  function renderFundos() {
+    const sel = String(atual.dados.fundo || ''), ids = fundos[$('edFundoSeg').value] || [];
+    $('edFundos').innerHTML = '<button type="button" class="ed-fd ed-fd-0' + (!sel ? ' on' : '') + '" data-fd="">Sem foto<small>fundo do visual</small></button>' +
+      ids.map(id => '<button type="button" class="ed-fd' + (String(id) === sel ? ' on' : '') + '" data-fd="' + id + '" aria-label="Foto ' + id + '"><img loading="lazy" alt="" src="' + fotoUrl(id, 320) + '"></button>').join('');
+  }
+  $('edFundoSeg').addEventListener('change', renderFundos);
+  $('edFundos').addEventListener('click', e => {
+    const b = e.target.closest('[data-fd]');
+    if (!b) return;
+    if (b.dataset.fd) atual.dados.fundo = b.dataset.fd; else delete atual.dados.fundo;
+    renderFundos(); mudou();
+  });
 
   function estado() {
     $('edEstado').textContent = sujo ? 'Alterações não salvas' : 'Tudo salvo';
     $('edSaveBar').classList.toggle('sujo', sujo);
     $('edLink').textContent = telaUrl(atual.id, 'horizontal', $('edLayout').value);
+    $('edAbrirH').href = abrirUrl('horizontal');
+    $('edAbrirV').href = abrirUrl('vertical');
   }
   function mudou() { sujo = true; estado(); agendaPrevia(); }
 
@@ -187,6 +262,8 @@
 
   function lerCampos() {
     atual.dados.titulo = $('edTit').value.trim();
+    atual.dados.marca = $('edMarca').value.trim();
+    if ($('edIcone').checked) delete atual.dados.semIcone; else atual.dados.semIcone = 1;
     if (atual.tipo === 'boasvindas') {
       atual.dados.mensagem = $('bvMsg').value.trim();
       atual.dados.horario = $('bvHora').value.trim();
@@ -235,7 +312,7 @@
     const seg = $('edSeg').value;
     const nome = $('edNome').value.trim() || NOME_TIPO[tipo];
     try {
-      const r = await api('POST', '', { tipo, tema: seg, nome, dados: { titulo: cliente.nome, subtitulo: tipo === 'cardapio' ? 'Cardápio' : 'Preços de hoje', itens: [] } });
+      const r = await api('POST', '', { tipo, tema: seg, nome, dados: ehLista(tipo) ? { marca: cliente.nome, titulo: tipo === 'cardapio' ? 'Cardápio' : 'Preços de hoje', itens: [] } : { titulo: cliente.nome } });
       await recarregar();
       $('edNovaForm').hidden = true; $('edNome').value = '';
       abrir(r.id);
@@ -260,7 +337,7 @@
     if (atual.dados.itens.length >= limites.itens) return toast('Limite de ' + limites.itens + ' itens nesta lista');
     const r = $('edRes')._res[Number(b.dataset.add)];
     const it = { n: r.n, u: r.u, c: r.c };
-    if (r.d && atual.tipo === 'cardapio') it.d = r.d;
+    if (r.d) it.d = r.d;
     atual.dados.itens.push(it);
     $('edBusca').value = ''; $('edRes').hidden = true;
     renderItens(); mudou();
@@ -278,6 +355,7 @@
   $('edItens').addEventListener('input', e => {
     const row = e.target.closest('[data-k]'), f = e.target.dataset.f;
     if (!row || !f) return;
+    if (f === 'p' || f === 'de') e.target.value = mascara(e.target.value);
     atual.dados.itens[Number(row.dataset.k)][f] = e.target.value;
     mudou();
   });
@@ -292,8 +370,9 @@
     else return;
     renderItens(); mudou();
   });
-  ['edTit', 'edSub', 'edRod', 'bvMsg', 'bvHora', 'bvRede', 'bvSenha', 'bvInsta', 'bvWhats'].forEach(id => $(id).addEventListener('input', mudou));
-  ['edEsg', 'edTema', 'bvTipo'].forEach(id => $(id).addEventListener('change', mudou));
+  ['edTit', 'edMarca', 'edSub', 'edRod', 'bvMsg', 'bvHora', 'bvRede', 'bvSenha', 'bvInsta', 'bvWhats'].forEach(id => $(id).addEventListener('input', mudou));
+  ['edEsg', 'edTema', 'bvTipo', 'edIcone'].forEach(id => $(id).addEventListener('change', mudou));
+  $('edTema').addEventListener('change', () => { if (fundos[$('edTema').value]) { $('edFundoSeg').value = $('edTema').value; renderFundos(); } });
   $('edLayout').addEventListener('change', () => { estado(); preparaPrevia(); });
 
   $('edSalvar').addEventListener('click', async () => {
@@ -312,7 +391,7 @@
       const i = listas.findIndex(x => x.id === atual.id);
       if (i >= 0) listas[i] = JSON.parse(JSON.stringify(atual));
       sujo = false; estado(); renderItens();
-      toast('Salvo! A TV atualiza em até 10 minutos.' + (vazios ? ' (itens sem nome foram removidos)' : ''));
+      toast('Salvo! A TV atualiza em até 5 minutos. Use "Abrir" para ver agora.' + (vazios ? ' (itens sem nome foram removidos)' : ''));
     } catch (err) { toast(err.message); }
     $('edSalvar').disabled = false;
   });

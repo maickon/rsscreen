@@ -62,7 +62,10 @@ function limparDados(d) {
     return o;
   }).filter(it => it.n);
   const out = { itens };
-  ['titulo', 'subtitulo', 'rodape'].forEach(k => { if (d[k]) out[k] = txt(d[k], k === 'rodape' ? 120 : 60); });
+  ['titulo', 'subtitulo', 'rodape', 'marca'].forEach(k => { if (d[k]) out[k] = txt(d[k], k === 'rodape' ? 120 : 60); });
+  // foto de fundo: só o número de uma foto do banco (Pexels), nunca um endereço livre
+  if (/^\d{3,12}$/.test(String(d.fundo || ''))) out.fundo = String(d.fundo);
+  if (d.semIcone) out.semIcone = 1;
   if (d.esgotado === 'riscar' || d.esgotado === 'esconder') out.esgotado = d.esgotado;
   // boas-vindas e Wi-Fi
   const multi = (v, n) => String(v == null ? '' : v).replace(/[\u0000-\u0009\u000b-\u001f]/g, ' ').trim().slice(0, n);
@@ -132,10 +135,10 @@ export async function excluirLista(env, id, cliente) {
 
 // leitura pelas TVs: guardada na memória do servidor por 1 minuto
 const mem = new Map();
-export async function listaPublica(env, id, cliente) {
+export async function listaPublica(env, id, cliente, novo) {
   const k = slug(cliente) + '/' + slug(id);
   const m = mem.get(k);
-  if (m && Date.now() - m.t < 60000) return m.v;
+  if (!novo && m && Date.now() - m.t < 60000) return m.v;
   const v = await lerLista(env, id, cliente);
   mem.set(k, { t: Date.now(), v });
   if (mem.size > 500) mem.delete(mem.keys().next().value);

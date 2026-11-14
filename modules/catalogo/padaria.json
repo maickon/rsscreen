@@ -4,30 +4,78 @@
   "tipo": "precos",
   "categorias": [
     { "nome": "Pães", "itens": [
-      ["Pão francês", "kg"], ["Pão de forma", "un"], ["Pão integral", "un"], ["Pão de leite", "un"], ["Pão doce", "un"],
-      ["Pão sovado", "un"], ["Pão de queijo", "kg"], ["Pão italiano", "un"], ["Baguete", "un"], ["Bisnaguinha", "pct"],
-      ["Pão de batata", "un"], ["Pão australiano", "un"]
+      ["Pão francês","kg","Quentinho, saindo do forno a toda hora"],
+      ["Pão de forma","un","Macio, para sanduíches e torradas"],
+      ["Pão integral","un","Rico em fibras, para uma dieta leve"],
+      ["Pão de leite","un","Fofinho e levemente adocicado"],
+      ["Pão doce","un","Com cobertura e coco"],
+      ["Pão sovado","un","Massa macia e casca dourada"],
+      ["Pão de queijo","kg","Crocante por fora, macio por dentro"],
+      ["Pão italiano","un","Casca crocante, ótimo com azeite"],
+      ["Baguete","un","Crocante, para bruschettas e lanches"],
+      ["Bisnaguinha","pct","Macia, a preferida das crianças"],
+      ["Pão de batata","un","Recheado e macio"],
+      ["Pão australiano","un","Escuro, levemente adocicado"]
     ] },
     { "nome": "Salgados", "itens": [
-      ["Coxinha", "un"], ["Risole", "un"], ["Pastel assado", "un"], ["Esfiha de carne", "un"], ["Esfiha de frango", "un"],
-      ["Enroladinho de salsicha", "un"], ["Empada de frango", "un"], ["Quibe", "un"], ["Joelho (presunto e queijo)", "un"],
-      ["Croissant", "un"], ["Mini salgados (cento)", "un"]
+      ["Coxinha","un","Massa de batata e recheio de frango"],
+      ["Risole","un","Crocante, de carne ou queijo e presunto"],
+      ["Pastel assado","un","Massa leve e recheio caprichado"],
+      ["Esfiha de carne","un","Aberta, com carne temperada"],
+      ["Esfiha de frango","un","Com frango desfiado e temperado"],
+      ["Enroladinho de salsicha","un","Massa macia e salsicha"],
+      ["Empada de frango","un","Massa que derrete na boca"],
+      ["Quibe","un","Frito, com carne e hortelã"],
+      ["Joelho (presunto e queijo)","un","Massa macia com presunto e queijo"],
+      ["Croissant","un","Massa folhada amanteigada"],
+      ["Mini salgados (cento)","un","Sortidos, para festas e eventos"]
     ] },
     { "nome": "Doces e bolos", "itens": [
-      ["Sonho", "un"], ["Rosca doce", "un"], ["Bolo de fubá", "un"], ["Bolo de cenoura com chocolate", "un"], ["Bolo de chocolate", "un"],
-      ["Bolo de laranja", "un"], ["Fatia de bolo", "un"], ["Pudim (fatia)", "un"], ["Brigadeiro", "un"], ["Torta doce (fatia)", "un"],
-      ["Bolo de aniversário", "kg"]
+      ["Sonho","un","Recheado com creme e açúcar por cima"],
+      ["Rosca doce","un","Com coco e leite condensado"],
+      ["Bolo de fubá","un","Caseirinho, receita da vó"],
+      ["Bolo de cenoura com chocolate","un","Com cobertura de chocolate"],
+      ["Bolo de chocolate","un","Fofinho com cobertura cremosa"],
+      ["Bolo de laranja","un","Macio e com calda de laranja"],
+      ["Fatia de bolo","un","Sabores do dia"],
+      ["Pudim (fatia)","un","Pudim de leite com calda de caramelo"],
+      ["Brigadeiro","un","Feito com chocolate de verdade"],
+      ["Torta doce (fatia)","un","Sabores do dia"],
+      ["Bolo de aniversário","kg","Sob encomenda, no sabor que você quiser"]
     ] },
     { "nome": "Frios", "itens": [
-      ["Presunto", "kg"], ["Queijo muçarela", "kg"], ["Queijo prato", "kg"], ["Mortadela", "kg"], ["Peito de peru", "kg"],
-      ["Salame", "kg"], ["Queijo minas frescal", "kg"], ["Requeijão", "un"]
+      ["Presunto","kg","Fatiado na hora"],
+      ["Queijo muçarela","kg","Fatiado na hora"],
+      ["Queijo prato","kg","Fatiado na hora"],
+      ["Mortadela","kg","Fatiada fininha na hora"],
+      ["Peito de peru","kg","Leve, fatiado na hora"],
+      ["Salame","kg","Fatiado na hora"],
+      ["Queijo minas frescal","kg","Fresco e leve"],
+      ["Requeijão","un","Cremoso"]
     ] },
     { "nome": "Lanches e café", "itens": [
-      ["Misto quente", "un"], ["Pão na chapa", "un"], ["Café expresso", "un"], ["Café com leite", "un"], ["Pingado", "un"],
-      ["Cappuccino", "un"], ["Chocolate quente", "un"], ["Suco natural", "un"], ["Vitamina", "un"]
+      ["Misto quente","un","Presunto e queijo na chapa"],
+      ["Pão na chapa","un","Com manteiga, douradinho"],
+      ["Café expresso","un","Grãos selecionados"],
+      ["Café com leite","un","Na medida certa"],
+      ["Pingado","un","Leite com um toque de café"],
+      ["Cappuccino","un","Cremoso, com canela"],
+      ["Chocolate quente","un","Cremoso e encorpado"],
+      ["Suco natural","un","Feito na hora com a fruta"],
+      ["Vitamina","un","Com leite e frutas frescas"]
     ] },
     { "nome": "Leite e derivados", "itens": [
-      ["Leite integral 1 L", "un"], ["Leite desnatado 1 L", "un"], ["Iogurte", "un"], ["Manteiga", "un"], ["Margarina", "un"]
+      ["Leite integral 1 L","un","Caixinha de 1 litro"],
+      ["Leite desnatado 1 L","un","Caixinha de 1 litro"],
+      ["Iogurte","un","Vários sabores"],
+      ["Manteiga","un","Com sal, pote 200 g"],
+      ["Margarina","un","Pote 500 g"]
     ] }
+  ],
+  "modelos": [
+    {"id":"cafe","nome":"Café da manhã","titulo":"Café da manhã","subtitulo":"Quentinho todo dia","itens":["Pão francês","Pão de queijo","Misto quente","Pão na chapa","Café expresso","Café com leite","Cappuccino","Chocolate quente","Suco natural","Fatia de bolo"]},
+    {"id":"salgados","nome":"Salgados","titulo":"Salgados","subtitulo":"Fritos e assados na hora","itens":["Coxinha","Risole","Pastel assado","Esfiha de carne","Esfiha de frango","Enroladinho de salsicha","Empada de frango","Quibe","Joelho (presunto e queijo)","Croissant","Mini salgados (cento)"]},
+    {"id":"paes-frios","nome":"Pães e frios","titulo":"Pães e frios","subtitulo":"Fatiados na hora","itens":["Pão francês","Pão de forma","Pão integral","Bisnaguinha","Pão italiano","Presunto","Queijo muçarela","Queijo prato","Mortadela","Peito de peru","Requeijão","Manteiga"]},
+    {"id":"doces","nome":"Doces e bolos","titulo":"Doces e bolos","subtitulo":"Feitos aqui","itens":["Sonho","Rosca doce","Bolo de fubá","Bolo de cenoura com chocolate","Bolo de chocolate","Pudim (fatia)","Brigadeiro","Torta doce (fatia)","Bolo de aniversário"]}
   ]
 }

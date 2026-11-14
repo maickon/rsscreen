@@ -4,36 +4,78 @@
   "tipo": "cardapio",
   "categorias": [
     { "nome": "Hambúrgueres", "itens": [
-      ["X-Burguer", "un", "Pão, hambúrguer e queijo"], ["X-Salada", "un", "Hambúrguer, queijo, alface e tomate"],
-      ["X-Bacon", "un", "Hambúrguer, queijo e bacon crocante"], ["X-Egg", "un", "Hambúrguer, queijo e ovo"],
-      ["X-Tudo", "un", "Hambúrguer, queijo, presunto, bacon, ovo, alface e tomate"], ["X-Frango", "un", "Frango desfiado, queijo e salada"],
-      ["X-Calabresa", "un", "Calabresa, queijo e cebola"], ["Hambúrguer artesanal", "un", "Blend 180 g, queijo cheddar e molho da casa"],
-      ["Duplo cheddar", "un", "Dois hambúrgueres e cheddar cremoso"], ["Cheeseburger", "un", "Hambúrguer e queijo"]
+      ["X-Burguer","un","Pão, hambúrguer e queijo"],
+      ["X-Salada","un","Hambúrguer, queijo, alface e tomate"],
+      ["X-Bacon","un","Hambúrguer, queijo e bacon crocante"],
+      ["X-Egg","un","Hambúrguer, queijo e ovo"],
+      ["X-Tudo","un","Hambúrguer, queijo, presunto, bacon, ovo, alface e tomate"],
+      ["X-Frango","un","Frango desfiado, queijo e salada"],
+      ["X-Calabresa","un","Calabresa, queijo e cebola"],
+      ["Hambúrguer artesanal","un","Blend 180 g, queijo cheddar e molho da casa"],
+      ["Duplo cheddar","un","Dois hambúrgueres e cheddar cremoso"],
+      ["Cheeseburger","un","Hambúrguer e queijo"]
     ] },
     { "nome": "Lanches", "itens": [
-      ["Misto quente", "un", "Presunto e queijo"], ["Bauru", "un", "Rosbife, queijo, tomate e picles"],
-      ["Cachorro-quente", "un", "Salsicha, molho, batata palha e milho"], ["Cachorro-quente duplo", "un", "Duas salsichas e complementos"],
-      ["Beirute", "un", "Pão sírio, rosbife, queijo e salada"], ["Sanduíche natural", "un", "Frango, cenoura e maionese"],
-      ["Wrap de frango", "un"], ["Pastel de carne", "un"], ["Pastel de queijo", "un"], ["Pastel de frango", "un"], ["Pastel de pizza", "un"]
+      ["Misto quente","un","Presunto e queijo"],
+      ["Bauru","un","Rosbife, queijo, tomate e picles"],
+      ["Cachorro-quente","un","Salsicha, molho, batata palha e milho"],
+      ["Cachorro-quente duplo","un","Duas salsichas e complementos"],
+      ["Beirute","un","Pão sírio, rosbife, queijo e salada"],
+      ["Sanduíche natural","un","Frango, cenoura e maionese"],
+      ["Wrap de frango","un","Tortilha com frango grelhado e salada"],
+      ["Pastel de carne","un","Massa crocante e carne temperada"],
+      ["Pastel de queijo","un","Muçarela derretida"],
+      ["Pastel de frango","un","Frango desfiado e temperado"],
+      ["Pastel de pizza","un","Queijo, presunto, tomate e orégano"]
     ] },
     { "nome": "Porções", "itens": [
-      ["Batata frita", "un", "Porção média"], ["Batata com cheddar e bacon", "un"], ["Mandioca frita", "un"], ["Calabresa acebolada", "un"],
-      ["Frango a passarinho", "un"], ["Isca de peixe", "un"], ["Anéis de cebola", "un"], ["Bolinho de bacalhau", "un"], ["Tábua de frios", "un"]
+      ["Batata frita","un","Porção média"],
+      ["Batata com cheddar e bacon","un","Fritas com cheddar cremoso e bacon"],
+      ["Mandioca frita","un","Crocante por fora, macia por dentro"],
+      ["Calabresa acebolada","un","Calabresa fatiada com cebola"],
+      ["Frango a passarinho","un","Crocante, com alho frito"],
+      ["Isca de peixe","un","Empanada e crocante, com molho tártaro"],
+      ["Anéis de cebola","un","Empanados e crocantes"],
+      ["Bolinho de bacalhau","un","Porção com 10 unidades"],
+      ["Tábua de frios","un","Queijos, embutidos e azeitonas"]
     ] },
     { "nome": "Pratos", "itens": [
-      ["Prato feito", "un", "Arroz, feijão, salada, fritas e carne do dia"], ["Parmegiana de frango", "un", "Com arroz e fritas"],
-      ["Parmegiana de carne", "un", "Com arroz e fritas"], ["Bife acebolado", "un", "Com arroz, feijão e salada"],
-      ["Filé de frango grelhado", "un", "Com arroz, feijão e salada"], ["Omelete", "un"], ["Feijoada (sábado)", "un"]
+      ["Prato feito","un","Arroz, feijão, salada, fritas e carne do dia"],
+      ["Parmegiana de frango","un","Com arroz e fritas"],
+      ["Parmegiana de carne","un","Com arroz e fritas"],
+      ["Bife acebolado","un","Com arroz, feijão e salada"],
+      ["Filé de frango grelhado","un","Com arroz, feijão e salada"],
+      ["Omelete","un","Com queijo, presunto e tomate"],
+      ["Feijoada (sábado)","un","Completa, com arroz, couve e farofa"]
     ] },
     { "nome": "Bebidas", "itens": [
-      ["Refrigerante lata", "un"], ["Refrigerante 600 ml", "un"], ["Refrigerante 2 L", "un"], ["Suco natural", "un"],
-      ["Suco de laranja", "un"], ["Água mineral", "un"], ["Água com gás", "un"], ["Chá gelado", "un"], ["Milkshake", "un"]
+      ["Refrigerante lata","un","Gelado, 350 ml"],
+      ["Refrigerante 600 ml","un","Gelado"],
+      ["Refrigerante 2 L","un","Para dividir"],
+      ["Suco natural","un","Feito na hora com a fruta"],
+      ["Suco de laranja","un","Espremido na hora"],
+      ["Água mineral","un","Sem gás, 500 ml"],
+      ["Água com gás","un","500 ml"],
+      ["Chá gelado","un","Pêssego ou limão"],
+      ["Milkshake","un","Chocolate, morango ou baunilha"]
     ] },
     { "nome": "Sobremesas", "itens": [
-      ["Pudim", "un"], ["Sorvete (bola)", "un"], ["Petit gâteau", "un"], ["Brownie", "un"], ["Açaí 300 ml", "un"]
+      ["Pudim","un","Pudim de leite com calda"],
+      ["Sorvete (bola)","un","Vários sabores"],
+      ["Petit gâteau","un","Bolinho quente com sorvete"],
+      ["Brownie","un","Chocolate intenso"],
+      ["Açaí 300 ml","un","Com granola e banana"]
     ] },
     { "nome": "Combos", "itens": [
-      ["Combo X-Burguer", "un", "Lanche, batata e refrigerante"], ["Combo X-Tudo", "un", "Lanche, batata e refrigerante"], ["Combo família", "un", "4 lanches, 2 batatas e refrigerante 2 L"]
+      ["Combo X-Burguer","un","Lanche, batata e refrigerante"],
+      ["Combo X-Tudo","un","Lanche, batata e refrigerante"],
+      ["Combo família","un","4 lanches, 2 batatas e refrigerante 2 L"]
     ] }
+  ],
+  "modelos": [
+    {"id":"lanches","nome":"Cardápio de lanches","titulo":"Nossos lanches","subtitulo":"Feitos na hora","itens":["X-Burguer","X-Salada","X-Bacon","X-Egg","X-Tudo","X-Frango","Hambúrguer artesanal","Duplo cheddar","Misto quente","Cachorro-quente","Batata frita","Refrigerante lata"]},
+    {"id":"combos","nome":"Combos","titulo":"Combos","subtitulo":"Lanche, batata e refri","itens":["Combo X-Burguer","Combo X-Tudo","Combo família","Batata frita","Batata com cheddar e bacon","Milkshake"]},
+    {"id":"porcoes","nome":"Porções","titulo":"Porções","subtitulo":"Para dividir","itens":["Batata frita","Batata com cheddar e bacon","Mandioca frita","Calabresa acebolada","Frango a passarinho","Isca de peixe","Anéis de cebola","Bolinho de bacalhau","Tábua de frios"]},
+    {"id":"almoco","nome":"Almoço","titulo":"Almoço","subtitulo":"Comida caseira","itens":["Prato feito","Parmegiana de frango","Parmegiana de carne","Bife acebolado","Filé de frango grelhado","Omelete","Feijoada (sábado)","Suco natural","Refrigerante lata"]}
   ]
 }

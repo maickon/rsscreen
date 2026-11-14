@@ -1,0 +1,81 @@
+{
+ "_comentario": "Fotos de fundo por tema para tabelas e cardápios. Todas do Pexels (licença Pexels: uso gratuito, inclusive comercial, sem obrigação de crédito; conferidas uma a uma). Endereço: https://images.pexels.com/photos/<id>/pexels-photo-<id>.jpeg?auto=compress&cs=tinysrgb&w=<largura>",
+ "fonte": "Pexels",
+ "temas": {
+  "acougue": [
+   21287057,
+   8444102,
+   11677646,
+   28881691,
+   15814371,
+   618773,
+   3997609,
+   8250702,
+   9843971
+  ],
+  "hortifruti": [
+   30893233,
+   30460546,
+   17302468,
+   33554298,
+   12708049,
+   3978830,
+   8426464
+  ],
+  "padaria": [
+   1287278,
+   25068164,
+   1756062,
+   30403209,
+   2245293,
+   19498991,
+   29380140
+  ],
+  "lanchonete": [
+   12034622,
+   18713424,
+   3219547,
+   70497,
+   1556688,
+   14773000
+  ],
+  "pizzaria": [
+   2762938,
+   17848752,
+   27582711,
+   18126715,
+   10406184,
+   905847
+  ],
+  "cafeteria": [
+   585754,
+   13737042,
+   32862007,
+   12106429,
+   11137171,
+   34382038,
+   29976667
+  ],
+  "acai": [
+   8230032,
+   12273052,
+   8230023,
+   6637835,
+   29173451,
+   28935593
+  ],
+  "bebidas": [
+   14356408,
+   5858219,
+   5858172,
+   15750727,
+   27897615
+  ],
+  "mercado": [
+   32550092,
+   12081286,
+   18123381,
+   14201321
+  ]
+ }
+}

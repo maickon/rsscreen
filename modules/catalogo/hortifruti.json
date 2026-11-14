@@ -4,24 +4,80 @@
   "tipo": "precos",
   "categorias": [
     { "nome": "Frutas", "itens": [
-      ["Banana prata", "kg"], ["Banana nanica", "kg"], ["Maçã", "kg"], ["Laranja pera", "kg"], ["Laranja lima", "kg"],
-      ["Mexerica (tangerina)", "kg"], ["Limão taiti", "kg"], ["Mamão papaia", "kg"], ["Mamão formosa", "kg"], ["Melancia", "kg"],
-      ["Melão", "kg"], ["Abacaxi", "un"], ["Manga", "kg"], ["Uva", "kg"], ["Morango (caixa)", "un"], ["Pera", "kg"],
-      ["Abacate", "kg"], ["Goiaba", "kg"], ["Maracujá", "kg"], ["Kiwi", "kg"], ["Coco verde", "un"], ["Caqui", "kg"], ["Ameixa", "kg"]
+      ["Banana prata","kg","Doce e firme, ótima para o dia a dia"],
+      ["Banana nanica","kg","Bem doce, perfeita para vitaminas e bolos"],
+      ["Maçã","kg","Crocante e suculenta"],
+      ["Laranja pera","kg","Suculenta, a melhor para suco"],
+      ["Laranja lima","kg","Suave e pouco ácida"],
+      ["Mexerica (tangerina)","kg","Doce e fácil de descascar"],
+      ["Limão taiti","kg","Suculento, para sucos e temperos"],
+      ["Mamão papaia","kg","Docinho, no ponto para o café da manhã"],
+      ["Mamão formosa","kg","Grande e saboroso"],
+      ["Melancia","kg","Doce e refrescante"],
+      ["Melão","kg","Docinho e perfumado"],
+      ["Abacaxi","un","Doce e suculento"],
+      ["Manga","kg","Madura e cheirosa"],
+      ["Uva","kg","Doce, selecionada"],
+      ["Morango (caixa)","un","Fresquinho, selecionado"],
+      ["Pera","kg","Macia e suculenta"],
+      ["Abacate","kg","Cremoso, para vitaminas e saladas"],
+      ["Goiaba","kg","Para comer ou fazer suco"],
+      ["Maracujá","kg","Azedinho, perfeito para suco e mousse"],
+      ["Kiwi","kg","Rico em vitamina C"],
+      ["Coco verde","un","Água de coco gelada e natural"],
+      ["Caqui","kg","Doce e macio"],
+      ["Ameixa","kg","Suculenta e adocicada"]
     ] },
     { "nome": "Legumes", "itens": [
-      ["Tomate", "kg"], ["Tomate cereja", "un"], ["Batata", "kg"], ["Batata-doce", "kg"], ["Cebola", "kg"], ["Cebola roxa", "kg"],
-      ["Alho", "kg"], ["Cenoura", "kg"], ["Beterraba", "kg"], ["Abobrinha", "kg"], ["Abóbora", "kg"], ["Chuchu", "kg"],
-      ["Pepino", "kg"], ["Pimentão verde", "kg"], ["Pimentão vermelho", "kg"], ["Berinjela", "kg"], ["Quiabo", "kg"],
-      ["Vagem", "kg"], ["Mandioca (aipim)", "kg"], ["Inhame", "kg"], ["Milho verde", "un"], ["Gengibre", "kg"]
+      ["Tomate","kg","Firme, para saladas e molhos"],
+      ["Tomate cereja","un","Docinho, para saladas e petiscos"],
+      ["Batata","kg","Lavada, para fritar, cozinhar e assar"],
+      ["Batata-doce","kg","Fonte de energia, assada ou cozida"],
+      ["Cebola","kg","Para todos os temperos"],
+      ["Cebola roxa","kg","Mais suave, ótima crua na salada"],
+      ["Alho","kg","Cabeças graúdas e cheirosas"],
+      ["Cenoura","kg","Doce e crocante"],
+      ["Beterraba","kg","Para saladas e sucos"],
+      ["Abobrinha","kg","Leve, refogada ou recheada"],
+      ["Abóbora","kg","Para doces, sopas e quibebe"],
+      ["Chuchu","kg","Leve, para refogados e saladas"],
+      ["Pepino","kg","Crocante e refrescante"],
+      ["Pimentão verde","kg","Para temperos e refogados"],
+      ["Pimentão vermelho","kg","Mais doce, colorido e saboroso"],
+      ["Berinjela","kg","Para antepastos e lasanhas"],
+      ["Quiabo","kg","Para frango com quiabo e caruru"],
+      ["Vagem","kg","Macia, refogada ou na salada"],
+      ["Mandioca (aipim)","kg","Cozinha rápido, frita ou cozida"],
+      ["Inhame","kg","Nutritivo, cozido ou em caldos"],
+      ["Milho verde","un","Para cozinhar, assar ou fazer pamonha"],
+      ["Gengibre","kg","Para chás, sucos e temperos"]
     ] },
     { "nome": "Verduras", "itens": [
-      ["Alface", "maço"], ["Alface americana", "un"], ["Rúcula", "maço"], ["Agrião", "maço"], ["Couve", "maço"],
-      ["Espinafre", "maço"], ["Repolho", "un"], ["Brócolis", "un"], ["Couve-flor", "un"], ["Cheiro-verde", "maço"],
-      ["Coentro", "maço"], ["Hortelã", "maço"], ["Manjericão", "maço"]
+      ["Alface","maço","Crespa e fresquinha"],
+      ["Alface americana","un","Crocante, ótima em lanches"],
+      ["Rúcula","maço","Sabor marcante para saladas"],
+      ["Agrião","maço","Picante, para saladas e sopas"],
+      ["Couve","maço","Para feijoada e refogados"],
+      ["Espinafre","maço","Para refogados, tortas e sucos"],
+      ["Repolho","un","Para saladas e refogados"],
+      ["Brócolis","un","Fresquinho, no vapor ou gratinado"],
+      ["Couve-flor","un","Para gratinados e saladas"],
+      ["Cheiro-verde","maço","Salsinha e cebolinha fresquinhas"],
+      ["Coentro","maço","Indispensável na moqueca"],
+      ["Hortelã","maço","Para sucos, chás e quibe"],
+      ["Manjericão","maço","Perfumado, para molhos e pizzas"]
     ] },
     { "nome": "Ovos e outros", "itens": [
-      ["Ovos brancos (dúzia)", "un"], ["Ovos vermelhos (dúzia)", "un"], ["Ovos (bandeja com 30)", "un"], ["Castanhas", "kg"], ["Amendoim", "kg"]
+      ["Ovos brancos (dúzia)","un","Frescos, de granja"],
+      ["Ovos vermelhos (dúzia)","un","Frescos, de granja"],
+      ["Ovos (bandeja com 30)","un","Mais economia para a família"],
+      ["Castanhas","kg","Selecionadas, para lanches e receitas"],
+      ["Amendoim","kg","Torrado ou cru, para petiscos e doces"]
     ] }
+  ],
+  "modelos": [
+    {"id":"ofertas","nome":"Ofertas do dia","titulo":"Ofertas do dia","subtitulo":"Fresquinho todo dia","itens":["Banana prata","Maçã","Laranja pera","Mamão papaia","Tomate","Batata","Cebola","Cenoura","Alface","Ovos brancos (dúzia)"]},
+    {"id":"frutas","nome":"Frutas","titulo":"Frutas da estação","subtitulo":"Selecionadas","itens":["Banana prata","Banana nanica","Maçã","Laranja pera","Mexerica (tangerina)","Limão taiti","Mamão papaia","Melancia","Melão","Abacaxi","Manga","Uva","Morango (caixa)","Abacate"]},
+    {"id":"legumes","nome":"Legumes e verduras","titulo":"Legumes e verduras","subtitulo":"Direto do produtor","itens":["Tomate","Batata","Cebola","Alho","Cenoura","Beterraba","Abobrinha","Chuchu","Pimentão verde","Mandioca (aipim)","Alface","Couve","Brócolis","Cheiro-verde"]}
   ]
 }

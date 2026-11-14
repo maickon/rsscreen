@@ -1270,7 +1270,7 @@
           '<td><small>' + (l.atualizado ? new Date(l.atualizado).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—') + '</small></td>' +
           '<td><div class="acts"><button class="btn btn-dark btn-sm" data-lstv="' + l.id + '" data-o="horizontal">' + ICON('copy') + ' Deitada</button>' +
           '<button class="btn btn-ghost btn-sm" data-lstv="' + l.id + '" data-o="vertical">' + ICON('copy') + ' Em pé</button>' +
-          '<a class="btn btn-ghost btn-sm btn-icon" target="_blank" rel="noopener" title="Abrir" href="' + esc(lsTelaUrl(l.id, 'horizontal')) + '">' + ICON('external') + '</a></div></td></tr>';
+          '<a class="btn btn-ghost btn-sm btn-icon" target="_blank" rel="noopener" title="Abrir" href="' + esc(lsTelaUrl(l.id, 'horizontal') + '&atualizar=1') + '">' + ICON('external') + '</a></div></td></tr>';
       }).join('') + '</tbody></table></div>' : '<div class="empty">Envie o link de edição para o cliente montar a primeira tabela ou cardápio. Você também pode abrir o editor e montar para ele.</div>';
   }
   $('#lsCliente').addEventListener('change', e => { LS.cliente = e.target.value; loadListas(); });

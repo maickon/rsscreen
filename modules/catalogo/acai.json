@@ -4,20 +4,54 @@
   "tipo": "cardapio",
   "categorias": [
     { "nome": "Açaí", "itens": [
-      ["Açaí 300 ml", "un"], ["Açaí 400 ml", "un"], ["Açaí 500 ml", "un"], ["Açaí 700 ml", "un"], ["Açaí 1 litro", "un"],
-      ["Açaí na tigela", "un", "Com granola e banana"], ["Açaí no copo da casa", "un", "Com 3 acompanhamentos"], ["Açaí por quilo", "kg"]
+      ["Açaí 300 ml","un","Copo pequeno, monte do seu jeito"],
+      ["Açaí 400 ml","un","Copo médio, monte do seu jeito"],
+      ["Açaí 500 ml","un","Copo grande, monte do seu jeito"],
+      ["Açaí 700 ml","un","Para quem ama açaí"],
+      ["Açaí 1 litro","un","Para dividir com a galera"],
+      ["Açaí na tigela","un","Com granola e banana"],
+      ["Açaí no copo da casa","un","Com 3 acompanhamentos"],
+      ["Açaí por quilo","kg","Monte com os acompanhamentos que quiser"]
     ] },
     { "nome": "Acompanhamentos", "itens": [
-      ["Leite condensado", "un"], ["Leite em pó", "un"], ["Granola", "un"], ["Paçoca", "un"], ["Banana", "un"], ["Morango", "un"],
-      ["Kiwi", "un"], ["Confete", "un"], ["Granulado", "un"], ["Creme de avelã", "un"], ["Creme de ninho", "un"], ["Mel", "un"],
-      ["Bis", "un"], ["Ovomaltine", "un"], ["Chocoball", "un"], ["Amendoim", "un"]
+      ["Leite condensado","un","Cobertura cremosa"],
+      ["Leite em pó","un","Para polvilhar"],
+      ["Granola","un","Crocante"],
+      ["Paçoca","un","Esfarelada"],
+      ["Banana","un","Fresquinha, em rodelas"],
+      ["Morango","un","Fresco, em pedaços"],
+      ["Kiwi","un","Fresco, em pedaços"],
+      ["Confete","un","Colorido"],
+      ["Granulado","un","Chocolate"],
+      ["Creme de avelã","un","Cremoso"],
+      ["Creme de ninho","un","Feito na casa"],
+      ["Mel","un","Puro"],
+      ["Bis","un","Picadinho"],
+      ["Ovomaltine","un","Crocante"],
+      ["Chocoball","un","Bolinhas de chocolate"],
+      ["Amendoim","un","Torrado e triturado"]
     ] },
     { "nome": "Sorvetes", "itens": [
-      ["Sorvete 1 bola", "un"], ["Sorvete 2 bolas", "un"], ["Sorvete por quilo", "kg"], ["Casquinha", "un"], ["Milkshake 400 ml", "un"],
-      ["Milkshake 500 ml", "un"], ["Picolé", "un"], ["Sundae", "un"], ["Banana split", "un"]
+      ["Sorvete 1 bola","un","Escolha o sabor"],
+      ["Sorvete 2 bolas","un","Escolha dois sabores"],
+      ["Sorvete por quilo","kg","Monte sua taça"],
+      ["Casquinha","un","Crocante, com uma bola"],
+      ["Milkshake 400 ml","un","Cremoso, vários sabores"],
+      ["Milkshake 500 ml","un","Cremoso, vários sabores"],
+      ["Picolé","un","Fruta ou cremoso"],
+      ["Sundae","un","Sorvete com calda e chantili"],
+      ["Banana split","un","Banana, três bolas, caldas e chantili"]
     ] },
     { "nome": "Bebidas", "itens": [
-      ["Água mineral", "un"], ["Refrigerante lata", "un"], ["Suco natural", "un"], ["Vitamina de açaí", "un"]
+      ["Água mineral","un","Sem gás, 500 ml"],
+      ["Refrigerante lata","un","Gelado, 350 ml"],
+      ["Suco natural","un","Feito na hora"],
+      ["Vitamina de açaí","un","Açaí batido com leite e banana"]
     ] }
+  ],
+  "modelos": [
+    {"id":"copos","nome":"Açaí e tamanhos","titulo":"Açaí","subtitulo":"Monte do seu jeito","itens":["Açaí 300 ml","Açaí 400 ml","Açaí 500 ml","Açaí 700 ml","Açaí 1 litro","Açaí na tigela","Açaí no copo da casa","Açaí por quilo"]},
+    {"id":"adicionais","nome":"Acompanhamentos","titulo":"Adicionais","subtitulo":"Capriche no seu","itens":["Leite condensado","Leite em pó","Granola","Paçoca","Banana","Morango","Creme de avelã","Creme de ninho","Ovomaltine","Bis","Mel","Chocoball"]},
+    {"id":"sorvetes","nome":"Sorvetes","titulo":"Sorvetes","subtitulo":"Geladinho","itens":["Sorvete 1 bola","Sorvete 2 bolas","Sorvete por quilo","Casquinha","Milkshake 400 ml","Milkshake 500 ml","Picolé","Sundae","Banana split"]}
   ]
 }

@@ -182,12 +182,13 @@ export default {
     }
 
     if (path === '/api/lista') {
-      const headers = Object.assign({ 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'public, max-age=60' }, CORS);
+      // sem cache no navegador: o cliente edita e a TV precisa ver a versão nova no próximo pedido
+      const headers = Object.assign({ 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' }, CORS);
       if (!env.DB) return new Response(JSON.stringify({ lista: null, banco: false }), { status: 503, headers });
       trackRequest(request, 'lista');
       maybeFlush(env, waitUntil);
       try {
-        const l = await listaPublica(env, url.searchParams.get('id') || '', url.searchParams.get('cliente') || '');
+        const l = await listaPublica(env, url.searchParams.get('id') || '', url.searchParams.get('cliente') || '', url.searchParams.get('novo') === '1');
         return new Response(JSON.stringify({ lista: l }), { status: l ? 200 : 404, headers });
       } catch (e) {
         return new Response(JSON.stringify({ lista: null, erro: 'indisponivel' }), { status: 503, headers });

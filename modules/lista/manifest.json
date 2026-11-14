@@ -7,12 +7,12 @@
   "icone": "tag",
   "assuntoLivre": true,
   "chamada": "O próprio comerciante atualiza os preços pelo celular e a TV muda sozinha.",
-  "descricao": "Tabela de preços para açougue, hortifrúti, padaria e mercado, e cardápio para lanchonete, pizzaria, açaí e cafeteria. O comerciante recebe um link de edição: pesquisa o produto num catálogo pronto, digita o preço e marca a oferta do dia ou o que acabou. Fundos temáticos para cada tipo de comércio e letra que se ajusta à quantidade de itens.",
+  "descricao": "Tabela de preços para açougue, hortifrúti, padaria e mercado, e cardápio para lanchonete, pizzaria, açaí e cafeteria. O comerciante recebe um link de edição: importa um modelo pronto ou pesquisa no catálogo (com descrição de cada produto), digita só o preço e marca a oferta ou o que acabou. Nome do comércio com ícone do tema, fotos de fundo profissionais e letra que se ajusta à quantidade de itens.",
   "beneficios": [
     "Catálogo pronto com mais de 450 produtos",
     "O cliente edita pelo celular, sem login",
     "Oferta do dia em destaque e item esgotado",
-    "Fundos temáticos por tipo de comércio"
+    "Modelos prontos e fotos de fundo por tema"
   ],
   "indicado": ["Açougues", "Hortifrútis", "Lanchonetes e pizzarias", "Padarias e cafeterias"],
   "script": "screen.js",

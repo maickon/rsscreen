@@ -4,26 +4,56 @@
   "tipo": "cardapio",
   "categorias": [
     { "nome": "Pizzas salgadas", "itens": [
-      ["Muçarela", "un", "Molho, muçarela e orégano"], ["Calabresa", "un", "Calabresa fatiada e cebola"],
-      ["Margherita", "un", "Muçarela, tomate e manjericão"], ["Portuguesa", "un", "Presunto, ovo, cebola, ervilha e muçarela"],
-      ["Frango com catupiry", "un", "Frango desfiado e catupiry"], ["Quatro queijos", "un", "Muçarela, provolone, parmesão e catupiry"],
-      ["Napolitana", "un", "Muçarela, tomate e parmesão"], ["Toscana", "un", "Linguiça toscana, cebola e muçarela"],
-      ["Bacon", "un", "Bacon e muçarela"], ["Atum", "un", "Atum, cebola e muçarela"], ["Lombo canadense", "un", "Lombo, catupiry e muçarela"],
-      ["Pepperoni", "un", "Pepperoni e muçarela"], ["Palmito", "un", "Palmito, muçarela e azeitona"], ["Moda da casa", "un"],
-      ["Baiana", "un", "Calabresa moída, pimenta e ovo"], ["Vegetariana", "un", "Legumes da estação e muçarela"]
+      ["Muçarela","un","Molho, muçarela e orégano"],
+      ["Calabresa","un","Calabresa fatiada e cebola"],
+      ["Margherita","un","Muçarela, tomate e manjericão"],
+      ["Portuguesa","un","Presunto, ovo, cebola, ervilha e muçarela"],
+      ["Frango com catupiry","un","Frango desfiado e catupiry"],
+      ["Quatro queijos","un","Muçarela, provolone, parmesão e catupiry"],
+      ["Napolitana","un","Muçarela, tomate e parmesão"],
+      ["Toscana","un","Linguiça toscana, cebola e muçarela"],
+      ["Bacon","un","Bacon e muçarela"],
+      ["Atum","un","Atum, cebola e muçarela"],
+      ["Lombo canadense","un","Lombo, catupiry e muçarela"],
+      ["Pepperoni","un","Pepperoni e muçarela"],
+      ["Palmito","un","Palmito, muçarela e azeitona"],
+      ["Moda da casa","un","Receita especial do pizzaiolo"],
+      ["Baiana","un","Calabresa moída, pimenta e ovo"],
+      ["Vegetariana","un","Legumes da estação e muçarela"]
     ] },
     { "nome": "Pizzas doces", "itens": [
-      ["Chocolate", "un", "Chocolate ao leite"], ["Brigadeiro", "un", "Chocolate e granulado"], ["Prestígio", "un", "Chocolate e coco"],
-      ["Romeu e Julieta", "un", "Goiabada e queijo"], ["Banana com canela", "un"], ["Chocolate com morango", "un"]
+      ["Chocolate","un","Chocolate ao leite"],
+      ["Brigadeiro","un","Chocolate e granulado"],
+      ["Prestígio","un","Chocolate e coco"],
+      ["Romeu e Julieta","un","Goiabada e queijo"],
+      ["Banana com canela","un","Banana, açúcar e canela"],
+      ["Chocolate com morango","un","Chocolate ao leite e morangos frescos"]
     ] },
     { "nome": "Tamanhos", "itens": [
-      ["Broto (4 fatias)", "un"], ["Média (6 fatias)", "un"], ["Grande (8 fatias)", "un"], ["Gigante (12 fatias)", "un"], ["Borda recheada", "un", "Catupiry ou cheddar"]
+      ["Broto (4 fatias)","un","Ideal para uma pessoa"],
+      ["Média (6 fatias)","un","Para duas pessoas"],
+      ["Grande (8 fatias)","un","Para três ou quatro pessoas"],
+      ["Gigante (12 fatias)","un","Para toda a família"],
+      ["Borda recheada","un","Catupiry ou cheddar"]
     ] },
     { "nome": "Esfihas e calzones", "itens": [
-      ["Esfiha de carne", "un"], ["Esfiha de queijo", "un"], ["Esfiha de calabresa", "un"], ["Calzone de frango", "un"], ["Calzone de calabresa", "un"]
+      ["Esfiha de carne","un","Aberta, com carne temperada"],
+      ["Esfiha de queijo","un","Muçarela gratinada"],
+      ["Esfiha de calabresa","un","Calabresa com muçarela"],
+      ["Calzone de frango","un","Frango, catupiry e muçarela"],
+      ["Calzone de calabresa","un","Calabresa, cebola e muçarela"]
     ] },
     { "nome": "Bebidas", "itens": [
-      ["Refrigerante lata", "un"], ["Refrigerante 2 L", "un"], ["Suco natural", "un"], ["Água mineral", "un"], ["Cerveja long neck", "un"]
+      ["Refrigerante lata","un","Gelado, 350 ml"],
+      ["Refrigerante 2 L","un","Para acompanhar a pizza"],
+      ["Suco natural","un","Feito na hora"],
+      ["Água mineral","un","Sem gás, 500 ml"],
+      ["Cerveja long neck","un","Bem gelada"]
     ] }
+  ],
+  "modelos": [
+    {"id":"tradicionais","nome":"Pizzas tradicionais","titulo":"Pizzas","subtitulo":"Sabores tradicionais","itens":["Muçarela","Calabresa","Margherita","Portuguesa","Frango com catupiry","Quatro queijos","Napolitana","Toscana","Bacon","Atum","Lombo canadense","Pepperoni"]},
+    {"id":"doces","nome":"Pizzas doces","titulo":"Pizzas doces","subtitulo":"Para fechar com chave de ouro","itens":["Chocolate","Brigadeiro","Prestígio","Romeu e Julieta","Banana com canela","Chocolate com morango"]},
+    {"id":"tamanhos","nome":"Tamanhos e bebidas","titulo":"Tamanhos","subtitulo":"Escolha o seu","itens":["Broto (4 fatias)","Média (6 fatias)","Grande (8 fatias)","Gigante (12 fatias)","Borda recheada","Refrigerante 2 L","Refrigerante lata","Cerveja long neck"]}
   ]
 }

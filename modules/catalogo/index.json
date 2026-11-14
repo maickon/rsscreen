@@ -1,59 +1,68 @@
 {
- "_comentario": "Catálogo pronto para tabelas de preços e cardápios. Cada arquivo: categorias com itens [nome, unidade, descrição opcional].",
+ "_comentario": "Catálogo pronto para tabelas de preços e cardápios. Cada arquivo: categorias com itens [nome, unidade, descrição] e modelos prontos (listas de nomes do catálogo).",
  "segmentos": [
   {
    "id": "acougue",
    "nome": "Açougue",
    "tipo": "precos",
-   "itens": 69
+   "itens": 69,
+   "modelos": 4
   },
   {
    "id": "hortifruti",
    "nome": "Hortifrúti",
    "tipo": "precos",
-   "itens": 63
+   "itens": 63,
+   "modelos": 3
   },
   {
    "id": "padaria",
    "nome": "Padaria",
    "tipo": "precos",
-   "itens": 56
+   "itens": 56,
+   "modelos": 4
   },
   {
    "id": "mercado",
    "nome": "Mercado e mercearia",
    "tipo": "precos",
-   "itens": 53
+   "itens": 53,
+   "modelos": 3
   },
   {
    "id": "bebidas",
    "nome": "Bebidas e conveniência",
    "tipo": "precos",
-   "itens": 39
+   "itens": 39,
+   "modelos": 3
   },
   {
    "id": "lanchonete",
    "nome": "Lanchonete e hamburgueria",
    "tipo": "cardapio",
-   "itens": 54
+   "itens": 54,
+   "modelos": 4
   },
   {
    "id": "pizzaria",
    "nome": "Pizzaria",
    "tipo": "cardapio",
-   "itens": 37
+   "itens": 37,
+   "modelos": 3
   },
   {
    "id": "acai",
    "nome": "Açaí e sorveteria",
    "tipo": "cardapio",
-   "itens": 37
+   "itens": 37,
+   "modelos": 3
   },
   {
    "id": "cafeteria",
    "nome": "Cafeteria",
    "tipo": "cardapio",
-   "itens": 44
+   "itens": 44,
+   "modelos": 3
   }
  ]
 }

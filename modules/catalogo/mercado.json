@@ -4,23 +4,70 @@
   "tipo": "precos",
   "categorias": [
     { "nome": "Mercearia", "itens": [
-      ["Arroz 5 kg", "un"], ["Arroz 1 kg", "un"], ["Feijão carioca 1 kg", "un"], ["Feijão preto 1 kg", "un"], ["Açúcar 1 kg", "un"],
-      ["Açúcar 5 kg", "un"], ["Café 500 g", "un"], ["Óleo de soja", "un"], ["Azeite", "un"], ["Macarrão 500 g", "un"],
-      ["Farinha de trigo 1 kg", "un"], ["Farinha de mandioca", "un"], ["Fubá", "un"], ["Sal 1 kg", "un"], ["Molho de tomate", "un"],
-      ["Extrato de tomate", "un"], ["Leite em pó", "un"], ["Achocolatado", "un"], ["Biscoito recheado", "un"], ["Biscoito de água e sal", "un"],
-      ["Sardinha em lata", "un"], ["Atum em lata", "un"], ["Milho em lata", "un"], ["Ervilha em lata", "un"], ["Maionese", "un"], ["Ketchup", "un"]
+      ["Arroz 5 kg","un","Tipo 1, agulhinha"],
+      ["Arroz 1 kg","un","Tipo 1, agulhinha"],
+      ["Feijão carioca 1 kg","un","Tipo 1, cozinha rápido"],
+      ["Feijão preto 1 kg","un","Tipo 1, ideal para feijoada"],
+      ["Açúcar 1 kg","un","Refinado"],
+      ["Açúcar 5 kg","un","Cristal, mais economia"],
+      ["Café 500 g","un","Torrado e moído"],
+      ["Óleo de soja","un","Garrafa 900 ml"],
+      ["Azeite","un","Extravirgem, 500 ml"],
+      ["Macarrão 500 g","un","Espaguete ou parafuso"],
+      ["Farinha de trigo 1 kg","un","Tradicional, para pães e bolos"],
+      ["Farinha de mandioca","un","Torrada, pacote 1 kg"],
+      ["Fubá","un","Mimoso, para bolos e polenta"],
+      ["Sal 1 kg","un","Refinado e iodado"],
+      ["Molho de tomate","un","Sachê 340 g"],
+      ["Extrato de tomate","un","Lata ou sachê"],
+      ["Leite em pó","un","Integral, lata 400 g"],
+      ["Achocolatado","un","Em pó, 400 g"],
+      ["Biscoito recheado","un","Vários sabores"],
+      ["Biscoito de água e sal","un","Pacote econômico"],
+      ["Sardinha em lata","un","Em óleo ou molho de tomate"],
+      ["Atum em lata","un","Ralado ou em pedaços"],
+      ["Milho em lata","un","Verde, em conserva"],
+      ["Ervilha em lata","un","Em conserva"],
+      ["Maionese","un","Pote 500 g"],
+      ["Ketchup","un","Tradicional"]
     ] },
     { "nome": "Frios e laticínios", "itens": [
-      ["Leite integral 1 L", "un"], ["Leite desnatado 1 L", "un"], ["Manteiga", "un"], ["Margarina", "un"], ["Iogurte", "un"],
-      ["Requeijão", "un"], ["Queijo muçarela", "kg"], ["Presunto", "kg"], ["Ovos (dúzia)", "un"]
+      ["Leite integral 1 L","un","Caixinha de 1 litro"],
+      ["Leite desnatado 1 L","un","Caixinha de 1 litro"],
+      ["Manteiga","un","Com sal, pote 200 g"],
+      ["Margarina","un","Pote 500 g"],
+      ["Iogurte","un","Vários sabores"],
+      ["Requeijão","un","Cremoso, copo 200 g"],
+      ["Queijo muçarela","kg","Fatiado na hora"],
+      ["Presunto","kg","Fatiado na hora"],
+      ["Ovos (dúzia)","un","Frescos, de granja"]
     ] },
     { "nome": "Limpeza", "itens": [
-      ["Sabão em pó", "un"], ["Sabão líquido", "un"], ["Detergente", "un"], ["Água sanitária", "un"], ["Desinfetante", "un"],
-      ["Amaciante", "un"], ["Esponja (pct)", "un"], ["Saco de lixo", "un"], ["Papel toalha", "un"]
+      ["Sabão em pó","un","Caixa 1,6 kg"],
+      ["Sabão líquido","un","Frasco 3 litros"],
+      ["Detergente","un","Neutro, 500 ml"],
+      ["Água sanitária","un","Frasco 2 litros"],
+      ["Desinfetante","un","Perfumado, 2 litros"],
+      ["Amaciante","un","Concentrado, 2 litros"],
+      ["Esponja (pct)","un","Dupla face, pacote com 4"],
+      ["Saco de lixo","un","Rolo, vários tamanhos"],
+      ["Papel toalha","un","Pacote com 2 rolos"]
     ] },
     { "nome": "Higiene", "itens": [
-      ["Papel higiênico (12 rolos)", "un"], ["Sabonete", "un"], ["Creme dental", "un"], ["Escova de dentes", "un"], ["Xampu", "un"],
-      ["Condicionador", "un"], ["Desodorante", "un"], ["Absorvente", "un"], ["Fralda (pct)", "un"]
+      ["Papel higiênico (12 rolos)","un","Folha dupla"],
+      ["Sabonete","un","Vários aromas"],
+      ["Creme dental","un","Proteção anticáries"],
+      ["Escova de dentes","un","Cerdas macias"],
+      ["Xampu","un","Para todos os tipos de cabelo"],
+      ["Condicionador","un","Para todos os tipos de cabelo"],
+      ["Desodorante","un","Aerossol ou roll-on"],
+      ["Absorvente","un","Com abas"],
+      ["Fralda (pct)","un","Todos os tamanhos"]
     ] }
+  ],
+  "modelos": [
+    {"id":"ofertas","nome":"Ofertas da semana","titulo":"Ofertas da semana","subtitulo":"Aproveite","itens":["Arroz 5 kg","Feijão carioca 1 kg","Açúcar 5 kg","Café 500 g","Óleo de soja","Macarrão 500 g","Leite integral 1 L","Ovos (dúzia)","Sabão em pó","Papel higiênico (12 rolos)"]},
+    {"id":"cesta","nome":"Cesta básica","titulo":"Cesta básica","subtitulo":"O essencial da casa","itens":["Arroz 5 kg","Feijão carioca 1 kg","Açúcar 1 kg","Café 500 g","Óleo de soja","Macarrão 500 g","Farinha de trigo 1 kg","Sal 1 kg","Molho de tomate","Leite em pó","Sardinha em lata","Biscoito de água e sal"]},
+    {"id":"limpeza","nome":"Limpeza e higiene","titulo":"Limpeza e higiene","subtitulo":"Preços baixos","itens":["Sabão em pó","Detergente","Água sanitária","Desinfetante","Amaciante","Saco de lixo","Papel higiênico (12 rolos)","Sabonete","Creme dental","Xampu","Desodorante"]}
   ]
 }
