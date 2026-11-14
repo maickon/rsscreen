@@ -1201,6 +1201,8 @@
   });
 
   /* =================== GUIA DE VENDAS =================== */
+  $('#gPlanosCopy').addEventListener('click', () => copy(RS.ROOT_URL + 'planos/', 'Link da página de planos copiado'));
+
   const PLANO_INCLUI = {
     essencial: ['Notícias: 25 assuntos e mais de 90 sites', 'Previsão do tempo', 'Cotações (dólar, euro, cripto)', 'Relógio, datas comemorativas e frases', 'Todos os modelos, horizontal e vertical', 'Até 3 links por tela'],
     completo: ['Tudo do Essencial', 'Futebol ao vivo, agenda e tabela', 'Resultados e estatísticas de loterias', 'Horóscopo do dia', 'Tela de anúncios dos anunciantes', 'Playlist: a programação inteira da TV num link só', 'Módulos novos sem custo extra', 'Links e trocas ilimitadas', 'Suporte prioritário no WhatsApp'],

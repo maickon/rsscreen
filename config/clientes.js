@@ -3,13 +3,9 @@
    ---------------------------------------------------------------------
    Este é o ÚNICO arquivo que você precisa editar no dia a dia.
 
-   ➜ Para cadastrar um cliente novo: adicione uma linha em "clientes"
-     com o nome dele, salve e suba no Git. O Cloudflare Pages publica
-     sozinho e a chave única do cliente é gerada automaticamente a
-     partir do nome (veja a chave no Painel > Clientes).
-
-   ➜ Para bloquear um cliente: coloque  ativo: false  na linha dele.
-     Todas as telas dele param na hora (após o deploy).
+   ➜ Clientes: cadastre, edite e suspenda pelo Painel > Clientes.
+     Eles ficam no banco de dados da Cloudflare, fora deste arquivo
+     (que é público). A chave e o link de cada cliente nunca mudam.
 
    ➜ Para trocar a senha do painel: no Painel > Clientes use "Trocar
      senha", copie a linha gerada e cole no lugar de senhaHash abaixo.
@@ -56,14 +52,11 @@ window.RSSCREEN_CONFIG = {
   ],
 
   // ------------------------------------------------------------------
-  // CLIENTES — só o nome é obrigatório.
-  // Campos opcionais: whatsapp (para enviar os links direto), ativo
+  // CLIENTES — ficam no banco de dados (Painel > Clientes), não aqui.
+  // Este arquivo é público: NÃO coloque nomes nem telefones de clientes.
+  // Só a "Demonstração" fica aqui, porque a página inicial usa as telas dela.
   // ------------------------------------------------------------------
   clientes: [
-    { nome: 'Demonstração', demo: true },          // usado na landing page (exibe selo "demonstração")
-    { nome: 'Padaria Pão Dourado', whatsapp: '' },
-    { nome: 'Academia Força Total', whatsapp: '' },
-    { nome: 'Clínica Sorriso Lagos', whatsapp: '' },
-    { nome: 'Daniel', whatsapp: '5511997020095' },
+    { nome: 'Demonstração', demo: true }           // usado na landing page (exibe selo "demonstração")
   ]
 };

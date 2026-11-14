@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Página de planos: link enviado pelo WhatsApp. Fora do Google e do menu do site. -->
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Planos rsscreen: conteúdo vivo para as suas telas</title>
+  <meta name="description" content="Planos do rsscreen: notícias, clima, futebol, loterias e anúncios nas suas telas de mídia indoor, a partir de R$ 14,90 por tela." />
+  <meta name="theme-color" content="#0A0A0A" />
+  <meta property="og:title" content="Planos rsscreen: conteúdo vivo para as suas telas" />
+  <meta property="og:description" content="Notícias, clima, futebol, loterias e os anúncios dos seus clientes num link que abre em qualquer TV ou player." />
+  <link rel="icon" href="../assets/img/icon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/brand.css" />
+  <link rel="stylesheet" href="../assets/css/landing.css" />
+  <link rel="stylesheet" href="../assets/css/site.css" />
+  <link rel="stylesheet" href="../assets/css/planos.css" />
+</head>
+<body>
+  <header class="nav" id="nav">
+    <div class="wrap nav-inner">
+      <a href="../" class="logo"><i data-logo></i><span><b>rss</b>creen</span></a>
+      <div class="nav-cta" style="margin-left:auto">
+        <a class="btn btn-primary btn-sm js-wa" data-msg="Olá! Vi os planos do rsscreen e quero tirar uma dúvida." href="#"><i data-icon="whatsapp"></i><span>Tirar dúvida</span></a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===== TOPO ===== -->
+    <section class="pl-hero">
+      <div class="wrap pl-hero-grid">
+        <div>
+          <h1>Um anunciante paga o seu plano. <em>O resto é lucro.</em></h1>
+          <p class="lead">Notícias, previsão do tempo, futebol, loterias e os anúncios dos seus clientes, num link que abre em <strong>qualquer TV, TV Box ou sistema de mídia indoor</strong>. Atualiza sozinho, 24 horas por dia.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary btn-lg" href="#planos"><i data-icon="tag"></i> Ver os planos</a>
+            <a class="btn btn-ghost btn-lg js-wa" data-msg="Olá! Quero testar o rsscreen grátis por 7 dias." href="#"><i data-icon="whatsapp"></i> Testar 7 dias grátis</a>
+          </div>
+          <ul class="hero-proof">
+            <li><i data-icon="check"></i> Sem fidelidade</li>
+            <li><i data-icon="check"></i> Funciona no player que você já usa</li>
+            <li><i data-icon="check"></i> Sem a nossa marca na tela</li>
+          </ul>
+        </div>
+        <div class="pl-screens" aria-label="Telas funcionando agora">
+          <div class="device-tv"><div class="screen"><iframe id="plTv" title="Tela horizontal ao vivo"></iframe></div></div>
+          <div class="pl-screens-row">
+            <div class="device-tv"><div class="screen"><iframe id="plTv2" title="Tela de futebol ao vivo" loading="lazy"></iframe></div></div>
+            <div class="device-tv"><div class="screen"><iframe id="plTv3" title="Tela de loterias ao vivo" loading="lazy"></iframe></div></div>
+          </div>
+          <span class="live-pill"><i></i> Telas reais, funcionando agora</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== A CONTA ===== -->
+    <section class="section section-soft pl-conta">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">Faça a conta</span>
+          <h2>Quanto as suas telas podem render com o rsscreen</h2>
+          <p>Mude os números e veja na hora. Tela com conteúdo que as pessoas olham vende mais anúncio.</p>
+        </div>
+        <div class="pl-calc">
+          <div class="pl-calc-in">
+            <label class="field"><span>Quantas telas</span><input class="input" type="number" min="1" max="500" id="qTelas" value="3"></label>
+            <label class="field"><span>Anunciantes por tela</span><input class="input" type="number" min="0" max="40" id="qAnun" value="6"></label>
+            <label class="field"><span>Valor do anúncio por mês (R$)</span><input class="input" type="number" min="0" step="5" id="qPreco" value="80"></label>
+          </div>
+          <div class="pl-calc-out">
+            <div><small>Você fatura</small><b id="qFat">-</b></div>
+            <div><small>rsscreen Completo</small><b id="qCusto">-</b></div>
+            <div class="hl"><small>Sobra para você</small><b id="qSobra">-</b></div>
+          </div>
+          <p class="pl-calc-note" id="qNota"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PLANOS ===== -->
+    <section class="section" id="planos">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">Planos</span>
+          <h2>Escolha o plano e comece hoje</h2>
+          <p>Preço por tela, por mês. Sem taxa de ativação e sem fidelidade: cancele quando quiser.</p>
+        </div>
+        <div class="pl-telas">
+          <span>Quantas telas você tem?</span>
+          <div class="pl-stepper">
+            <button type="button" id="tMenos" aria-label="Menos telas">−</button>
+            <input type="number" min="1" max="500" id="tQtd" value="3" aria-label="Quantidade de telas">
+            <button type="button" id="tMais" aria-label="Mais telas">+</button>
+          </div>
+        </div>
+        <div class="pl-cards" id="plCards"></div>
+        <p class="hint pl-hint">Teste grátis de 7 dias em qualquer plano. Pagamento mensal por Pix.</p>
+      </div>
+    </section>
+
+    <!-- ===== COMPARAÇÃO ===== -->
+    <section class="section section-soft">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">Compare</span>
+          <h2>Por que o rsscreen sai na frente</h2>
+        </div>
+        <div class="pl-compare">
+          <table>
+            <thead><tr><th></th><th>Pen drive com vídeo</th><th>Sistema de mídia indoor comum</th><th class="us">rsscreen</th></tr></thead>
+            <tbody>
+              <tr><td>Troca de anúncio sem ir ao ponto</td><td class="no">Não</td><td class="ok">Sim</td><td class="us ok">Sim, pelo celular</td></tr>
+              <tr><td>Notícias, clima e cotações ao vivo</td><td class="no">Não</td><td>Básico</td><td class="us ok">120+ fontes, vários modelos</td></tr>
+              <tr><td>Futebol ao vivo, tabela e loterias</td><td class="no">Não</td><td class="no">Raro</td><td class="us ok">Sim</td></tr>
+              <tr><td>Funciona no player que você já tem</td><td>—</td><td class="no">Não, exige o app deles</td><td class="us ok">Sim, é um link</td></tr>
+              <tr><td>Criador de anúncios e playlist</td><td class="no">Não</td><td>Às vezes</td><td class="us ok">Sim</td></tr>
+              <tr><td>Continua sem internet</td><td class="ok">Sim</td><td>Depende</td><td class="us ok">Sim</td></tr>
+              <tr><td>Preço por tela</td><td>R$ 0, mas dá trabalho</td><td>R$ 15 a R$ 50</td><td class="us ok" id="cmpPreco">a partir de R$ 14,90</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== O QUE VEM ===== -->
+    <section class="section">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">O que você recebe</span>
+          <h2>Tudo pronto para colocar no ar</h2>
+        </div>
+        <div class="pl-mods" id="plMods"></div>
+        <ol class="steps pl-steps">
+          <li><span>1</span><h3>Fale no WhatsApp</h3><p>Diga quantas telas tem e em que tipo de ponto.</p></li>
+          <li><span>2</span><h3>Receba os links</h3><p>Montamos as telas certas para os seus pontos, geralmente no mesmo dia.</p></li>
+          <li><span>3</span><h3>Cole no player</h3><p>TV Box, Smart TV, mini PC ou o sistema que você já usa.</p></li>
+          <li><span>4</span><h3>Venda anúncios</h3><p>Com a tela cheia de conteúdo, o anunciante vê valor.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ===== DÚVIDAS ===== -->
+    <section class="section section-soft">
+      <div class="wrap narrow">
+        <div class="section-head"><span class="eyebrow">Dúvidas</span><h2>Antes de fechar</h2></div>
+        <div class="faq">
+          <details><summary>Preciso trocar o meu sistema de mídia indoor?<i data-icon="chevron"></i></summary><p>Não. O rsscreen é um link: você adiciona as telas na programação do sistema que já usa (como conteúdo de URL/página web) ou abre direto no navegador da TV Box.</p></details>
+          <details><summary>Tem fidelidade ou multa?<i data-icon="chevron"></i></summary><p>Não. O pagamento é mês a mês e você cancela quando quiser, pelo WhatsApp.</p></details>
+          <details><summary>Como funciona o teste grátis?<i data-icon="chevron"></i></summary><p>Você recebe os links de um plano completo por 7 dias, sem pagar nada e sem cadastrar cartão. Se gostar, continua; se não, os links param e pronto.</p></details>
+          <details><summary>E se a internet do ponto cair?<i data-icon="chevron"></i></summary><p>A tela guarda o último conteúdo e continua rodando. Quando a internet volta, atualiza sozinha.</p></details>
+          <details><summary>Posso mudar de plano depois?<i data-icon="chevron"></i></summary><p>Pode, a qualquer momento. É só avisar pelo WhatsApp.</p></details>
+          <details><summary>Aparece a marca do rsscreen na tela?<i data-icon="chevron"></i></summary><p>Não. As telas são neutras, para você vender como conteúdo seu.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-final">
+      <div class="wrap cta-inner">
+        <div>
+          <h2>Suas telas com conteúdo vivo ainda hoje</h2>
+          <p>Teste 7 dias grátis. Sem cartão, sem fidelidade.</p>
+        </div>
+        <a class="btn btn-primary btn-lg js-wa" id="ctaFinal" data-msg="Olá! Quero testar o rsscreen grátis por 7 dias." href="#"><i data-icon="whatsapp"></i> Quero testar grátis</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <a href="../" class="logo"><i data-logo></i><span><b>rss</b>creen</span></a>
+      <p><a href="../termos-de-uso/">Termos de uso</a> · <a href="../privacidade/">Privacidade</a> · © <span id="year"></span> rsscreen</p>
+    </div>
+  </footer>
+  <a class="wa-float js-wa" data-msg="Olá! Vi os planos do rsscreen." href="#" aria-label="Falar no WhatsApp"><i data-icon="whatsapp"></i></a>
+
+  <script src="../config/clientes.js"></script>
+  <script src="../assets/js/core.js"></script>
+  <script src="../assets/js/icons.js"></script>
+  <script src="../assets/js/site.js"></script>
+  <script src="../assets/js/planos.js"></script>
+</body>
+</html>

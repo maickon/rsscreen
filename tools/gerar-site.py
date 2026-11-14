@@ -80,7 +80,7 @@ def pagina(p, todas):
     tipo = p.get('tipo', 'artigo')
     e = html.escape
 
-    trilha = [('Início', up), ('Guia', up + 'guia/')]
+    trilha = [('Início', up)] + ([] if tipo == 'legal' else [('Guia', up + 'guia/')])
     if tipo != 'indice':
         trilha.append((p['h1'] if len(p['h1']) < 48 else p['h1'][:45].rsplit(' ', 1)[0] + '…', ''))
     crumbs = ' <span aria-hidden="true">›</span> '.join(
@@ -108,16 +108,18 @@ def pagina(p, todas):
                    '<a class="btn btn-primary btn-sm js-wa" data-msg="Olá! Li o guia do rsscreen e quero conhecer o conteúdo para as minhas telas." href="#">'
                    '<i data-icon="whatsapp"></i> Tirar dúvidas</a></aside>')
         miolo = '<div class="page-grid"><article class="prose">%s</article>%s</div>' % (corpo, lateral)
+    elif tipo == 'legal':
+        miolo = '<article class="prose">%s</article>' % corpo
     else:
         miolo = corpo
 
-    meta = '' if tipo == 'indice' else (
+    meta = '<div class="page-meta"><span><i data-icon="clock"></i> Última atualização: %s</span></div>' % datetime.date.today().strftime('%d/%m/%Y') if tipo == 'legal' else '' if tipo == 'indice' else (
         '<div class="page-meta"><span><i data-icon="clock"></i> Atualizado em %s</span><span><i data-icon="check"></i> Grátis, sem cadastro</span></div>'
         % datetime.date.today().strftime('%d/%m/%Y'))
 
-    rel = [x for x in todas if x['slug'] != p['slug'] and x.get('tipo') != 'indice']
+    rel = [x for x in todas if x['slug'] != p['slug'] and x.get('tipo') in ('artigo', 'ferramenta')]
     rel.sort(key=lambda x: (x.get('tipo') == p.get('tipo'), x['ordem']))
-    rel = rel[:3] if tipo != 'indice' else []
+    rel = rel[:3] if tipo in ('artigo', 'ferramenta') else []
     relacionados = '' if not rel else (
         '<section class="related"><div class="wrap"><h2>Continue lendo</h2><div class="cards">' +
         ''.join(card(x, up) for x in rel) + '</div></div></section>')
@@ -201,7 +203,7 @@ TEMPLATE = '''<!DOCTYPE html>
   <footer class="footer">
     <div class="wrap footer-inner">
       <a href="{up}" class="logo"><i data-logo></i><span><b>rss</b>creen</span></a>
-      <p><a href="{up}guia/">Guia da mídia indoor</a> · <a href="{up}ferramentas/calculadora-midia-indoor/">Calculadora</a> · <a href="{up}ferramentas/proposta-comercial/">Modelo de proposta</a> · <a href="{up}ferramentas/tabela-de-precos/">Tabela de preços</a> · © <span id="year"></span> rsscreen</p>
+      <p><a href="{up}guia/">Guia da mídia indoor</a> · <a href="{up}ferramentas/calculadora-midia-indoor/">Calculadora</a> · <a href="{up}ferramentas/proposta-comercial/">Modelo de proposta</a> · <a href="{up}ferramentas/tabela-de-precos/">Tabela de preços</a> · <a href="{up}termos-de-uso/">Termos de uso</a> · <a href="{up}privacidade/">Privacidade</a> · © <span id="year"></span> rsscreen</p>
     </div>
   </footer>
   <a class="wa-float js-wa" data-msg="Olá! Vim pelo guia do rsscreen." href="#" aria-label="Falar no WhatsApp"><i data-icon="whatsapp"></i></a>
