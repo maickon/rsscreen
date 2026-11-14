@@ -227,14 +227,18 @@
         </div>
         <div class="db-banner" id="dbBanner" hidden></div>
         <div class="mon-kpis client-kpis" id="cKpis" hidden></div>
-        <div class="client-grid">
-          <div class="card">
-            <div class="card-head"><div><h3>Cadastrados</h3><p id="cCount"></p></div></div>
-            <div class="table-wrap"><table class="table" id="cTable"></table></div>
-          </div>
-          <div class="client-col">
-          <form class="card new-client" id="dbForm" hidden autocomplete="off">
+        <div class="card client-list">
+          <div class="card-head"><div><h3>Cadastrados</h3><p id="cCount"></p></div>
+            <button type="button" class="btn btn-primary btn-sm" id="cAdd" hidden><i data-icon="plus"></i> Cadastrar cliente</button></div>
+          <div class="table-wrap"><table class="table" id="cTable"></table></div>
+        </div>
+
+        <!-- cadastro e edição de cliente (modal) -->
+        <div class="modal" id="cModal" hidden role="dialog" aria-modal="true" aria-labelledby="dbFormTitle">
+          <div class="modal-back" data-close></div>
+          <form class="card new-client modal-box" id="dbForm" autocomplete="off">
             <div class="card-head"><div><h3 id="dbFormTitle">Cadastrar cliente</h3><p id="dbFormSub">Salvo no banco de dados: vale na hora, sem commit.</p></div>
+              <button type="button" class="btn btn-ghost btn-sm btn-icon" data-close aria-label="Fechar"><i data-icon="x"></i></button>
               <button type="button" class="btn btn-ghost btn-sm" id="dbNew" hidden><i data-icon="plus"></i> Novo</button></div>
             <label class="field"><span>Nome do cliente</span><input class="input" id="dbNome" required maxlength="80" placeholder="Ex.: Mercado Bom Preço" /></label>
             <div class="kv"><span>Chave (vai no link e nunca muda)</span><code id="dbKey">—</code></div>
@@ -252,9 +256,13 @@
             <label class="check"><input type="checkbox" id="dbAtivo" checked /> Cliente ativo (desmarque para suspender as telas)</label>
             <div class="db-acts">
               <button class="btn btn-primary" type="submit" id="dbSave"><i data-icon="check"></i> Salvar cliente</button>
+              <button class="btn btn-ghost" type="button" data-close>Cancelar</button>
               <button class="btn btn-ghost" type="button" id="dbDelete" hidden><i data-icon="trash"></i> Excluir</button>
             </div>
           </form>
+        </div>
+
+        <div class="client-grid">
           <div class="card new-client" id="fileClientCard">
             <div class="card-head"><div><h3>Cadastrar novo cliente</h3><p>Sem banco de dados: o cadastro é uma linha no arquivo de configuração.</p></div></div>
             <label class="field"><span>Nome do cliente</span><input class="input" id="ncNome" placeholder="Ex.: Mercado Bom Preço" /></label>
@@ -281,7 +289,6 @@
               <li>Em <code>config/clientes.js</code>, troque a linha <code>senhaHash</code> pela gerada</li>
               <li>Faça commit e push. Depois entre de novo com a senha nova.</li>
             </ol>
-          </div>
           </div>
         </div>
       </section>

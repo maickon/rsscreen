@@ -598,7 +598,8 @@
   });
 
   function applyClientMode() {
-    $('#dbForm').hidden = !dbMode;
+    $('#cAdd').hidden = !dbMode;
+    if (!dbMode) fecharModalCliente();
     $('#fileClientCard').hidden = dbMode;
     $('#cIntro').innerHTML = dbMode
       ? 'Clientes salvos no banco de dados da Cloudflare (D1). Cadastrar, editar ou suspender vale nas telas em até 30 minutos, sem commit.'
@@ -711,7 +712,7 @@
     $('#dbDelete').hidden = !!c.demo;
     $('#dbNew').hidden = false;
     planoHint();
-    $('#dbForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    abrirModalCliente();
   }
 
   $('#dbNome').addEventListener('input', () => {
@@ -723,6 +724,20 @@
   $('#dbPlano').addEventListener('change', suggestValor);
   $('#dbTelas').addEventListener('input', suggestValor);
   $('#dbNew').addEventListener('click', resetForm);
+
+  // modal de cadastro e edição
+  function abrirModalCliente() {
+    $('#cModal').hidden = false;
+    document.body.classList.add('modal-open');
+    setTimeout(() => $('#dbNome').focus(), 50);
+  }
+  function fecharModalCliente() {
+    $('#cModal').hidden = true;
+    document.body.classList.remove('modal-open');
+  }
+  $('#cAdd').addEventListener('click', () => { resetForm(); abrirModalCliente(); });
+  $('#cModal').addEventListener('click', e => { if (e.target.closest('[data-close]')) fecharModalCliente(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#cModal').hidden) fecharModalCliente(); });
 
   $('#dbForm').addEventListener('submit', async e => {
     e.preventDefault();
@@ -749,6 +764,7 @@
       await loadClientsDb();
       refreshClientViews();
       resetForm();
+      fecharModalCliente();
     } catch (err) { toast(err.message, 'x'); }
     $('#dbSave').disabled = false;
   });
@@ -763,6 +779,7 @@
       await loadClientsDb();
       refreshClientViews();
       resetForm();
+      fecharModalCliente();
     } catch (err) { toast(err.message, 'x'); }
   });
 
@@ -1650,13 +1667,15 @@
     return { k: 'bad', label: 'Recusado', icon: 'x' };
   }
 
+  // cartão em largura total que abre e fecha (acordeão); o resumo mostra o primeiro da lista
   function topList(title, rows, empty, fmtKey) {
     const max = rows.length ? rows[0].n : 1;
-    return '<div class="card mon-top"><div class="card-head"><div><h3>' + esc(title) + '</h3></div></div>' +
+    const resumo = rows.length ? fmtN(rows.length) + (rows.length === 1 ? ' item' : ' itens') + ' · mais acessado: <b>' + (fmtKey ? fmtKey(rows[0].key) : esc(rows[0].key)) + '</b> (' + fmtN(rows[0].n) + ')' : esc(empty || 'Sem dados no período.');
+    return '<details class="card mon-top mon-acc"><summary><span class="mon-acc-t"><b>' + esc(title) + '</b><small>' + resumo + '</small></span>' + ICON('chevron') + '</summary>' +
       (rows.length ? '<ol>' + rows.map(r =>
         '<li><div class="mt-row"><span class="mt-key">' + (fmtKey ? fmtKey(r.key) : esc(r.key)) + '</span><b>' + fmtN(r.n) + '</b></div>' +
         '<i style="width:' + Math.max(2, Math.round(r.n / max * 100)) + '%"></i></li>').join('') + '</ol>'
-      : '<p class="mon-empty">' + esc(empty || 'Sem dados no período.') + '</p>') + '</div>';
+      : '<p class="mon-empty">' + esc(empty || 'Sem dados no período.') + '</p>') + '</details>';
   }
 
   function clientName(key) {
@@ -1866,7 +1885,7 @@
           '<td><small>' + ago(f.t_ok) + '</small></td></tr>').join('') +
         '</tbody></table></div></div>' +
 
-      '<div class="mon-grid">' +
+      '<div class="mon-stack">' +
         topList('Telas mais usadas', d.telas || [], 'Nenhuma tela enviou sinal ainda.', telaName) +
         topList('Clientes', d.clientes || [], '', clientName) +
         topList('IPs que mais acessam', d.ips || [], '') +
