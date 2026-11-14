@@ -137,6 +137,45 @@
     $('pCopy').addEventListener('click', async () => toast((await RS.copyText(texto)) ? 'Texto copiado: cole no WhatsApp' : 'Não foi possível copiar'));
   }
 
+  /* =================== TESTE DA TV =================== */
+  if ($('testeUrl')) {
+    const u = location.host + '/teste';
+    $('testeUrl').textContent = u;
+    $('copiarTeste').addEventListener('click', async () => toast((await RS.copyText('https://' + u)) ? 'Endereço copiado' : 'Não foi possível copiar'));
+  }
+
+  /* =================== TAMANHO DE TV =================== */
+  const tv = $('tvsize');
+  if (tv) {
+    const TAMANHOS = [24, 32, 40, 43, 50, 55, 58, 65, 70, 75, 85, 98];
+    const POL = 2.54;
+    const DIAG = Math.sqrt(16 * 16 + 9 * 9);
+    // altura da imagem (cm) de uma TV de "pol" polegadas, deitada ou em pé
+    const altura = (pol, v) => pol * POL * (v ? 16 : 9) / DIAG;
+    const largura = (pol, v) => pol * POL * (v ? 9 : 16) / DIAG;
+    const diagonalPara = (alturaCm, v) => alturaCm / ((v ? 16 : 9) / DIAG) / POL;
+    const padrao = pol => TAMANHOS.find(t => t >= pol - 0.5) || TAMANHOS[TAMANHOS.length - 1];
+    const cm = v => v >= 10 ? Math.round(v) + ' cm' : (Math.round(v * 10) / 10).toString().replace('.', ',') + ' cm';
+    $('zTabela').innerHTML = [32, 43, 50, 55, 65, 75].map(t =>
+      '<tr><td>' + t + '"</td><td>' + Math.round(largura(t, false)) + ' × ' + Math.round(altura(t, false)) + ' cm</td><td>' +
+      (Math.round(altura(t, false) * 6 / 100 * 10) / 10).toString().replace('.', ',') + ' m</td></tr>').join('');
+    wire(tv, 'rs_tvsize_v1', () => {
+      const dist = Math.max(0.5, num('zDist')) * 100, v = $('zOrient').value === 'v', k = Number($('zUso').value) || 6;
+      const ideal = diagonalPara(dist / k, v), minimo = diagonalPara(dist / Math.min(10, k + 2), v);
+      const rec = padrao(ideal), min = padrao(minimo);
+      $('zTv').textContent = rec + ' pol.';
+      $('zMin').textContent = min + ' pol.';
+      const letra = dist / 120;
+      $('zLetra').textContent = cm(letra);
+      $('zTitulo').textContent = cm(letra * 2);
+      const pct = Math.round(letra / altura(rec, v) * 1000) / 10;
+      $('zDica').innerHTML = 'Para quem está a <b>' + (dist / 100).toString().replace('.', ',') + ' m</b>, uma TV de <b>' + rec + ' polegadas</b> ' + (v ? 'em pé' : 'deitada') +
+        ' tem cerca de ' + Math.round(largura(rec, v)) + ' × ' + Math.round(altura(rec, v)) + ' cm de imagem. ' +
+        'Nenhum texto do anúncio deve ter menos de <b>' + cm(letra) + '</b> de altura (cerca de ' + String(pct).replace('.', ',') + '% da altura da tela), e o preço ou título deve ter pelo menos <b>' + cm(letra * 2) + '</b>.' +
+        (ideal > 98 ? ' A distância é grande demais para uma TV só: considere duas TVs ou um painel de LED.' : '');
+    });
+  }
+
   /* =================== TABELA DE PREÇOS =================== */
   const tab = $('tab');
   if (tab) {

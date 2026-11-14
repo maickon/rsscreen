@@ -1,0 +1,55 @@
+<!--
+slug: ferramentas/teste-da-tv
+titulo: Teste da TV: sua TV Box roda mídia indoor? (grátis)
+descricao: Abra um endereço curto na TV, TV Box ou Smart TV e descubra em 20 segundos se o aparelho roda telas de mídia indoor: resolução, navegador, internet e desempenho.
+h1: Teste da TV: este aparelho roda mídia indoor?
+lead: Antes de vender ou instalar, descubra se a TV Box, a Smart TV ou o mini PC do ponto roda bem as telas. É só abrir um endereço curto no navegador do aparelho.
+cartao: Abra na TV Box e veja se ela roda as telas: tela, navegador, internet e desempenho.
+icone: monitor
+tipo: ferramenta
+ordem: 13
+script: {raiz}assets/js/ferramentas.js
+-->
+<div class="tool">
+  <div class="tool-form">
+    <h2>Como fazer o teste</h2>
+    <ol class="steps-list" style="padding:0">
+      <li>No aparelho (TV Box, Smart TV ou mini PC), abra o <strong>navegador</strong>. De preferência o Chrome.</li>
+      <li>Digite o endereço abaixo com o controle remoto. Ele é curto de propósito.</li>
+      <li>Espere uns 20 segundos sem apertar nada.</li>
+      <li>Aponte o celular para o QR Code que aparece no fim e o resultado vai para o seu WhatsApp.</li>
+    </ol>
+    <div class="box" style="text-align:center">
+      <p style="font-size:14px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em">Endereço para digitar na TV</p>
+      <p id="testeUrl" style="font-family:var(--font-display);font-size:26px;font-weight:800;letter-spacing:-.02em;margin-top:6px;word-break:break-all"></p>
+    </div>
+    <div class="tool-actions">
+      <a class="btn btn-primary" href="{raiz}teste/" target="_blank" rel="noopener"><i data-icon="play"></i> Testar este aparelho agora</a>
+      <button class="btn btn-ghost" type="button" id="copiarTeste"><i data-icon="copy"></i> Copiar endereço</button>
+    </div>
+  </div>
+  <div class="tool-out">
+    <div class="box"><h3>O que é testado</h3>
+      <ul style="padding-left:20px;display:grid;gap:8px;margin-top:8px;font-size:15px;color:var(--text-2)">
+        <li><strong>Tela:</strong> resolução (HD, Full HD, 4K) e se está em pé ou deitada.</li>
+        <li><strong>Aparelho e navegador:</strong> versão do Android e do navegador.</li>
+        <li><strong>Recursos:</strong> se o navegador tem o que as telas precisam, inclusive para continuar sem internet.</li>
+        <li><strong>Internet:</strong> velocidade e tempo de resposta do Wi-Fi do ponto.</li>
+        <li><strong>Desempenho:</strong> se as animações rodam lisas ou travando.</li>
+        <li><strong>Tela de exemplo:</strong> abre uma tela de notícias de verdade e mede quanto tempo leva.</li>
+      </ul>
+    </div>
+    <div class="note"><b>Resultado:</b> verde é pronto para usar, amarelo funciona com ressalvas e vermelho precisa de ajuste (quase sempre resolvido instalando o Chrome atualizado ou melhorando o Wi-Fi).</div>
+  </div>
+</div>
+<div class="prose" style="margin-top:48px">
+  <h2>Por que testar antes de instalar</h2>
+  <p>TV Box muito barata, Smart TV antiga e Wi-Fi fraco são as causas mais comuns de tela travada, preta ou que não atualiza. Testar antes evita a visita perdida e a má impressão com o dono do ponto e com o anunciante.</p>
+  <h2>Perguntas frequentes</h2>
+  <div class="faq">
+    <details><summary>O teste instala alguma coisa na TV?<i data-icon="chevron"></i></summary><p>Não. É só uma página aberta no navegador. Nada é instalado e nenhum dado pessoal é coletado.</p></details>
+    <details><summary>Deu vermelho em "Recursos". E agora?<i data-icon="chevron"></i></summary><p>O navegador do aparelho é antigo. Instale o Google Chrome pela loja de apps da TV Box (ou atualize o "Android System WebView") e repita o teste.</p></details>
+    <details><summary>Funciona em Smart TV Samsung e LG?<i data-icon="chevron"></i></summary><p>Sim, pelo navegador da própria TV. O teste mostra se ele dá conta. Para uso 24 horas, uma TV Box costuma ser mais estável.</p></details>
+  </div>
+  <p>Leia também: <a href="{raiz}guia/tv-box-para-midia-indoor/">TV Box para mídia indoor: qual comprar e como configurar</a>.</p>
+</div>

@@ -1,0 +1,73 @@
+<!--
+slug: ferramentas/midia-kit
+titulo: Gerador de mídia kit para mídia indoor (grátis, em PDF)
+descricao: Monte grátis o mídia kit do seu ponto de mídia indoor: movimento, público, exibições por dia, fotos do local e investimento. Pronto para imprimir, salvar em PDF ou mandar no WhatsApp.
+h1: Gerador de mídia kit do ponto
+lead: O mídia kit é a apresentação do ponto para o anunciante: quantas pessoas passam, quem são, quantas vezes o anúncio aparece e quanto custa. Preencha e baixe em PDF.
+cartao: Apresentação do ponto para o anunciante: movimento, público, exibições, fotos e preço.
+icone: chart
+tipo: ferramenta
+ordem: 16
+script: {raiz}assets/js/ferr-kit.js
+-->
+<div class="tool" id="kit">
+  <form class="tool-form" autocomplete="off" onsubmit="return false">
+    <h2>Você</h2>
+    <div class="row-2">
+      <label class="field"><span>Sua empresa ou seu nome</span><input class="input" id="kEmpresa" placeholder="Ex.: Lagos Mídia Indoor"></label>
+      <label class="field"><span>Seu WhatsApp</span><input class="input" id="kWhats" placeholder="(22) 99999-0000"></label>
+    </div>
+    <h2>O ponto</h2>
+    <label class="field"><span>Nome do ponto</span><input class="input" id="kPonto" value="Padaria Pão Dourado"></label>
+    <div class="row-2">
+      <label class="field"><span>Tipo de ponto</span><select class="select" id="kTipo">
+        <option value="padaria">Padaria ou cafeteria</option><option value="clinica">Clínica ou consultório</option><option value="salao">Salão de beleza ou barbearia</option>
+        <option value="academia">Academia</option><option value="mercado">Mercado ou farmácia</option><option value="restaurante">Restaurante, bar ou lanchonete</option>
+        <option value="loterica">Lotérica ou banca</option><option value="escola">Escola ou curso</option><option value="loja">Loja</option><option value="outro">Outro</option></select></label>
+      <label class="field"><span>Bairro e cidade</span><input class="input" id="kLocal" value="Centro, Cabo Frio"></label>
+    </div>
+    <div class="row-2">
+      <label class="field"><span>Pessoas por dia (estimativa)</span><input class="input" type="number" min="1" id="kPessoas" value="400"></label>
+      <label class="field"><span>Tempo médio no local (minutos)</span><input class="input" type="number" min="1" id="kTempo" value="8"></label>
+    </div>
+    <div class="row-2">
+      <label class="field"><span>Horas abertas por dia</span><input class="input" type="number" min="1" max="24" id="kHoras" value="12"></label>
+      <label class="field"><span>Dias abertos por mês</span><input class="input" type="number" min="1" max="31" id="kDias" value="28"></label>
+    </div>
+    <div class="field"><span>Público (marque os que mais aparecem)</span><div class="chips" id="kPublico"></div></div>
+    <h2>A tela</h2>
+    <div class="row-2">
+      <label class="field"><span>Quantas TVs</span><input class="input" type="number" min="1" id="kTvs" value="1"></label>
+      <label class="field"><span>Tamanho (polegadas)</span><input class="input" type="number" min="20" id="kPol" value="43"></label>
+    </div>
+    <label class="field"><span>Onde fica a TV</span><input class="input" id="kOnde" value="De frente para a fila do caixa"></label>
+    <div class="row-2">
+      <label class="field"><span>Anunciantes na tela</span><input class="input" type="number" min="1" max="40" id="kAnun" value="8"></label>
+      <label class="field"><span>Tempo de cada anúncio (s)</span><input class="input" type="number" min="5" max="60" id="kSeg" value="15"></label>
+    </div>
+    <h2>Investimento (opcional)</h2>
+    <div class="row-2">
+      <label class="field"><span>Valor por mês (R$)</span><input class="input" type="number" min="0" step="5" id="kValor" value="80"></label>
+      <label class="field"><span>Condição especial</span><input class="input" id="kCond" placeholder="Ex.: arte grátis no 1º mês"></label>
+    </div>
+    <label class="field"><span>Fotos do local (até 3)</span><input class="input" type="file" id="kFotos" accept="image/*" multiple style="padding-top:9px"></label>
+    <p class="hint">As fotos ficam só no seu aparelho. Foto da TV funcionando no local convence mais que qualquer número.</p>
+  </form>
+  <div class="tool-out doc-wrap">
+    <div class="doc kit-doc" id="kDoc"></div>
+    <div class="tool-actions">
+      <button class="btn btn-primary" type="button" id="kPrint"><i data-icon="download"></i> Imprimir ou salvar PDF</button>
+      <button class="btn btn-dark" type="button" id="kCopy"><i data-icon="whatsapp"></i> Copiar resumo para WhatsApp</button>
+      <button class="btn btn-ghost" type="button" id="kFotosDel"><i data-icon="x"></i> Tirar as fotos</button>
+    </div>
+  </div>
+</div>
+<div class="prose" style="margin-top:48px">
+  <h2>Como conseguir os números do ponto</h2>
+  <ul>
+    <li><strong>Pessoas por dia:</strong> pergunte ao dono quantas vendas ou atendimentos faz por dia (o número de cupons fiscais ajuda). Cada venda é pelo menos uma pessoa na frente da TV.</li>
+    <li><strong>Tempo no local:</strong> cronometre a fila ou a sala de espera em dois horários diferentes.</li>
+    <li><strong>Público:</strong> observe por meia hora em horários de pico. É o que o anunciante mais quer saber.</li>
+  </ul>
+  <p>Seja honesto nos números: o anunciante volta a anunciar quando o resultado bate com o que foi prometido. Depois de montar o mídia kit, use o <a href="{raiz}ferramentas/proposta-comercial/">gerador de proposta</a> e as <a href="{raiz}ferramentas/mensagens-de-abordagem/">mensagens de abordagem</a>.</p>
+</div>

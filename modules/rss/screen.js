@@ -26,7 +26,7 @@
   }
 
   // ignora logos, pixels de rastreio e ícones que alguns feeds colocam no lugar da foto
-  const BAD_IMG = /logo|\.svg(\?|$)|ebc\.(png|gif)|pixel|tracking|feedburner|gravatar|emoji|spacer|1x1|blank\.(gif|png)/i;
+  const BAD_IMG = /loading|placeholder|logo|\.svg(\?|$)|ebc\.(png|gif)|pixel|tracking|feedburner|gravatar|emoji|spacer|1x1|blank\.(gif|png)/i;
 
   function imgFromHtml(html) {
     if (!html) return '';
@@ -120,9 +120,14 @@
       let resumo = htmlToText(desc || encoded);
       if (resumo.toLowerCase().indexOf(titulo.toLowerCase().slice(0, 40)) === 0) resumo = resumo.slice(titulo.length).trim();
       if (resumo.length > 240) resumo = resumo.slice(0, 236).replace(/\s+\S*$/, '') + '…';
-      const imagem = upgradeImage(pickImage(node, rawHtml));
+      const link = itemLink(node);
+      let imagem = pickImage(node, rawHtml) || '';
+      // endereço de imagem relativo ("/sites/...") é do site da notícia, não do rsscreen
+      if (imagem && !/^(https?:)?\/\//i.test(imagem)) { try { imagem = link ? new URL(imagem, link).href : ''; } catch (_) { imagem = ''; } }
+      if (BAD_IMG.test(imagem)) imagem = '';
+      imagem = upgradeImage(imagem);
       const ts = parseDate(firstText(node, ['pubDate', 'published', 'updated', 'dc:date']));
-      items.push({ titulo, resumo, imagem, link: itemLink(node), fonte: fonte.nome, data: ts });
+      items.push({ titulo, resumo, imagem, link, fonte: fonte.nome, data: ts });
     });
     items.sort((a, b) => b.data - a.data);
     return items.slice(0, 12);

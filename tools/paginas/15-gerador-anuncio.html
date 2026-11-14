@@ -1,0 +1,67 @@
+<!--
+slug: ferramentas/gerador-de-anuncio
+titulo: Gerador de anúncio para TV com QR Code do WhatsApp (grátis)
+descricao: Crie grátis a arte de um anúncio para TV de mídia indoor, com preço, foto e QR Code do WhatsApp do anunciante. Baixe a imagem pronta em horizontal, vertical ou quadrada.
+h1: Gerador de anúncio para TV com QR Code
+lead: Preencha os campos e baixe a arte pronta para a TV, em horizontal, vertical ou quadrada. O QR Code leva direto ao WhatsApp do anunciante. A foto não sai do seu aparelho.
+cartao: Monte a arte do anúncio com preço, foto e QR Code do WhatsApp e baixe pronta.
+icone: tag
+tipo: ferramenta
+ordem: 15
+script: {raiz}assets/js/ferr-anuncio.js
+-->
+<div class="tool" id="gad">
+  <form class="tool-form" autocomplete="off" onsubmit="return false">
+    <h2>Formato e modelo</h2>
+    <div class="row-2">
+      <label class="field"><span>Formato</span><select class="select" id="aFormato"><option value="h">Horizontal 1920×1080 (TV)</option><option value="v">Vertical 1080×1920 (totem)</option><option value="q">Quadrado 1080×1080 (Instagram)</option></select></label>
+      <label class="field"><span>Modelo</span><select class="select" id="aModelo"><option value="oferta">Oferta com preço</option><option value="servico">Empresa ou serviço</option><option value="aviso">Aviso ou chamada</option></select></label>
+    </div>
+    <h2>Texto</h2>
+    <label class="field"><span>Anunciante</span><input class="input" id="aNome" maxlength="40" value="Açougue do Zé"></label>
+    <label class="field"><span id="aTituloLbl">Produto</span><input class="input" id="aTitulo" maxlength="60" value="Picanha bovina"></label>
+    <label class="field"><span>Descrição curta</span><input class="input" id="aSub" maxlength="80" value="Corte selecionado, pronto para o churrasco"></label>
+    <div class="row-2" id="aPrecos">
+      <label class="field"><span>Preço (por)</span><input class="input" id="aPreco" maxlength="12" value="69,90"></label>
+      <label class="field"><span>Preço antigo (de), opcional</span><input class="input" id="aDe" maxlength="12" value="79,90"></label>
+    </div>
+    <div class="row-2">
+      <label class="field"><span>Unidade (opcional)</span><input class="input" id="aUn" maxlength="8" value="kg"></label>
+      <label class="field"><span>Selo</span><input class="input" id="aSelo" maxlength="18" value="OFERTA"></label>
+    </div>
+    <label class="field" id="aItensWrap"><span>Itens (um por linha, até 4)</span><textarea class="input" rows="3" id="aItens">Corte masculino
+Barba
+Sobrancelha</textarea></label>
+    <label class="field"><span>Chamada</span><input class="input" id="aCta" maxlength="40" value="Só esta semana!"></label>
+    <h2>Contato e QR Code</h2>
+    <div class="row-2">
+      <label class="field"><span>WhatsApp do anunciante</span><input class="input" id="aWhats" maxlength="20" value="(22) 99999-0000"></label>
+      <label class="field"><span>Instagram (opcional)</span><input class="input" id="aInsta" maxlength="30" value="@acouguedoze"></label>
+    </div>
+    <label class="field"><span>O QR Code abre</span><select class="select" id="aQr"><option value="wa">O WhatsApp do anunciante</option><option value="link">Um link (site, cardápio, Instagram)</option><option value="nao">Sem QR Code</option></select></label>
+    <label class="field" id="aLinkWrap"><span>Link do QR Code</span><input class="input" id="aLink" maxlength="200" placeholder="https://..."></label>
+    <h2>Visual</h2>
+    <div class="field"><span>Cor de destaque</span><div class="ad-colors" id="aCores"></div></div>
+    <label class="field"><span>Foto do produto ou do local (opcional)</span><input class="input" type="file" id="aFoto" accept="image/*" style="padding-top:9px"></label>
+    <label class="check" style="display:flex;gap:8px;align-items:center;font-size:14px"><input type="checkbox" id="aMarca" checked> Mostrar "feito com rsscreen" no canto</label>
+  </form>
+  <div class="tool-out">
+    <div class="ga-preview" id="aBox"><canvas id="aCanvas"></canvas></div>
+    <div class="tool-actions">
+      <button class="btn btn-primary" type="button" id="aBaixar"><i data-icon="download"></i> Baixar imagem (PNG)</button>
+      <button class="btn btn-ghost" type="button" id="aFotoDel"><i data-icon="x"></i> Tirar a foto</button>
+    </div>
+    <div class="box"><h3>Quer este anúncio passando numa TV?</h3><p style="font-size:15px;color:var(--text-2)">No rsscreen você cria anúncios assim pelo celular e eles entram na programação da TV com notícias, clima e futebol, trocando sozinhos.</p>
+      <p style="margin-top:12px"><a class="btn btn-dark btn-sm js-wa" data-msg="Olá! Usei o gerador de anúncio do rsscreen e quero colocar anúncios nas minhas TVs." href="#"><i data-icon="whatsapp"></i> Quero na minha TV</a></p></div>
+  </div>
+</div>
+<div class="prose" style="margin-top:48px">
+  <h2>Dicas para um anúncio de TV que funciona</h2>
+  <ul>
+    <li><strong>Pouco texto:</strong> a pessoa olha por 3 a 5 segundos. Produto, preço e contato bastam.</li>
+    <li><strong>Preço grande:</strong> é o que mais chama atenção numa oferta.</li>
+    <li><strong>QR Code:</strong> quem tem interesse aponta o celular e cai direto no WhatsApp do anunciante. Isso ajuda o anunciante a ver o retorno.</li>
+    <li><strong>Contraste:</strong> letra clara em fundo escuro (ou o contrário) se lê de longe.</li>
+  </ul>
+  <p>Para saber o tamanho mínimo de letra para a distância do seu ponto, use a <a href="{raiz}ferramentas/tamanho-de-tv-ideal/">calculadora de tamanho de TV</a>.</p>
+</div>

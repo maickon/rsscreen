@@ -1,6 +1,7 @@
 // Entrada do Cloudflare Worker: arquivos estáticos + API.
 //
 //   /api/rss          proxy de feeds e de fotos (functions/api/rss.js)
+//   /api/velocidade   teste da TV: devolve N KB para medir a internet do ponto
 //   /api/hit          sinal das telas (imagem 1x1) para o monitoramento
 //   /api/stats        relatório do painel          (exige a senha do administrador)
 //   /api/stats/check  testa feeds agora             (exige a senha do administrador)
@@ -134,6 +135,14 @@ export default {
       const res = await onRequestGet({ request, env, waitUntil, trackFeed, trackOg });
       maybeFlush(env, waitUntil);
       return res;
+    }
+
+    if (path === '/api/velocidade') {
+      // teste da TV: devolve N KB de dados aleatórios (sem cache) para medir a internet do ponto
+      const kb = Math.max(0, Math.min(2000, parseInt(url.searchParams.get('kb'), 10) || 0));
+      const buf = new Uint8Array(kb * 1024);
+      for (let i = 0; i < buf.length; i += 65536) crypto.getRandomValues(buf.subarray(i, Math.min(buf.length, i + 65536)));
+      return new Response(buf, { headers: { 'Content-Type': 'application/octet-stream', 'Cache-Control': 'no-store', 'Access-Control-Allow-Origin': '*' } });
     }
 
     if (path === '/api/hit') {

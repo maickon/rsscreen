@@ -1,0 +1,45 @@
+<!--
+slug: ferramentas/tamanho-de-tv-ideal
+titulo: Calculadora de tamanho de TV para mídia indoor e propaganda
+descricao: Descubra o tamanho de TV ideal para o seu ponto pela distância de quem assiste, em horizontal e vertical, e o tamanho mínimo de letra para o anúncio ser lido.
+h1: Calculadora de tamanho de TV para mídia indoor
+lead: Informe a distância entre a TV e as pessoas e veja o tamanho de TV certo para chamar atenção e para os textos e preços serem lidos.
+cartao: Tamanho de TV ideal pela distância e tamanho mínimo de letra do anúncio.
+icone: monitor
+tipo: ferramenta
+ordem: 14
+script: {raiz}assets/js/ferramentas.js
+-->
+<div class="tool" id="tvsize">
+  <form class="tool-form" autocomplete="off" onsubmit="return false">
+    <h2>O ponto</h2>
+    <label class="field"><span>Distância da pessoa mais longe até a TV (metros)</span><input class="input" type="number" min="0.5" max="40" step="0.5" id="zDist" value="4"></label>
+    <p class="hint">Meça do lugar mais distante onde alguém costuma ficar parado olhando (fila, cadeira da sala de espera, balcão).</p>
+    <label class="field"><span>Posição da TV</span><select class="select" id="zOrient"><option value="h">Horizontal (deitada)</option><option value="v">Vertical (em pé, tipo totem)</option></select></label>
+    <label class="field"><span>O que mais vai passar na tela</span><select class="select" id="zUso"><option value="8">Imagens e chamadas rápidas (olhar de passagem)</option><option value="6" selected>Notícias, preços e anúncios com texto</option><option value="4">Tabelas com muitos itens (cardápio, preços)</option></select></label>
+  </form>
+  <div class="tool-out">
+    <div class="kpi-grid">
+      <div class="kpi hl"><small>TV recomendada</small><b id="zTv">-</b></div>
+      <div class="kpi"><small>Mínimo aceitável</small><b id="zMin">-</b></div>
+      <div class="kpi"><small>Letra do título</small><b id="zTitulo">-</b></div>
+      <div class="kpi"><small>Menor letra legível</small><b id="zLetra">-</b></div>
+    </div>
+    <div class="box"><h3>Na prática</h3><p id="zDica">-</p></div>
+  </div>
+</div>
+<div class="prose" style="margin-top:48px">
+  <h2>Como a conta é feita</h2>
+  <p>A calculadora usa a regra de visualização mais usada em sinalização digital (conhecida como regra 4-6-8): a <strong>altura da imagem</strong> deve ser de pelo menos 1/8 da distância para quem só passa o olho, 1/6 para ler textos e preços e 1/4 para tabelas cheias de informação. A partir da altura, calcula a diagonal da TV em polegadas (16:9), deitada ou em pé.</p>
+  <p>Para as letras, a referência é cerca de <strong>1 cm de altura de letra para cada 1,2 m de distância</strong> para leitura confortável, com o título em pelo menos o dobro disso.</p>
+  <h2>Tamanhos comuns de TV</h2>
+  <table>
+    <thead><tr><th>TV</th><th>Deitada (largura × altura da imagem)</th><th>Bom para leitura até</th></tr></thead>
+    <tbody id="zTabela"></tbody>
+  </table>
+  <h2>Perguntas frequentes</h2>
+  <div class="faq">
+    <details><summary>TV maior é sempre melhor?<i data-icon="chevron"></i></summary><p>Não. Perto demais, uma TV muito grande cansa e as pessoas não conseguem ver tudo de uma vez. O ideal é a faixa que a calculadora mostra.</p></details>
+    <details><summary>E se a TV ficar alta, perto do teto?<i data-icon="chevron"></i></summary><p>Some a diferença de altura à distância. A leitura fica mais difícil quando a pessoa precisa olhar muito para cima, então prefira a TV um pouco acima da altura dos olhos.</p></details>
+  </div>
+</div>

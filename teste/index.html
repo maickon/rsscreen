@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teste da TV | rsscreen</title>
+  <meta name="description" content="Abra na TV, TV Box ou Smart TV e descubra se o aparelho roda telas de mídia indoor: resolução, navegador, internet e desempenho." />
+  <meta name="theme-color" content="#0A0A0A" />
+  <link rel="icon" href="../assets/img/icon.svg" type="image/svg+xml" />
+  <!-- Teste da TV: escrito em JavaScript antigo (ES5) de propósito, para rodar até em aparelhos velhos
+       e conseguir dizer "navegador antigo" em vez de travar. -->
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body { background: #0a0a0a; color: #f5f5f5; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; font-size: 1.6vw; line-height: 1.35; overflow-x: hidden; }
+    .wrap { max-width: 1600px; margin: 0 auto; padding: 2.2vw 3vw; }
+    .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.6vw; }
+    .logo { font-weight: 800; font-size: 2.2vw; letter-spacing: -.03em; }
+    .logo b { color: #fe982a; }
+    .top small { color: #a3a3a3; font-size: 1.2vw; }
+    h1 { font-size: 3.2vw; letter-spacing: -.03em; line-height: 1.1; margin-bottom: .6vw; }
+    .sub { color: #a3a3a3; font-size: 1.5vw; margin-bottom: 1.8vw; }
+    .grid { display: table; width: 100%; }
+    .col { display: table-cell; vertical-align: top; width: 58%; padding-right: 2vw; }
+    .col + .col { width: 42%; padding-right: 0; }
+    .row { background: #141414; border: 1px solid #2a2a2a; border-radius: 1vw; padding: 1.1vw 1.4vw; margin-bottom: .8vw; overflow: hidden; }
+    .row .ic { float: left; width: 3vw; height: 3vw; border-radius: 50%; background: #2a2a2a; color: #0a0a0a; font-weight: 900; text-align: center; line-height: 3vw; font-size: 1.7vw; margin-right: 1.2vw; }
+    .row.ok .ic { background: #22c55e; }
+    .row.warn .ic { background: #facc15; }
+    .row.bad .ic { background: #ef4444; color: #fff; }
+    .row.run .ic { background: #fe982a; }
+    .row b { display: block; font-size: 1.7vw; }
+    .row span { display: block; color: #a3a3a3; font-size: 1.3vw; margin-left: 4.2vw; }
+    .row b { margin-left: 4.2vw; }
+    .verdict { border-radius: 1.2vw; padding: 1.6vw 1.8vw; background: #141414; border: 2px solid #2a2a2a; margin-bottom: 1vw; }
+    .verdict.ok { border-color: #22c55e; }
+    .verdict.warn { border-color: #facc15; }
+    .verdict.bad { border-color: #ef4444; }
+    .verdict h2 { font-size: 2.4vw; letter-spacing: -.02em; margin-bottom: .5vw; }
+    .verdict p { color: #d4d4d4; font-size: 1.4vw; }
+    .frame { position: relative; width: 100%; padding-top: 56.25%; background: #000; border-radius: 1vw; overflow: hidden; border: 1px solid #2a2a2a; margin-bottom: 1vw; }
+    .frame iframe { position: absolute; left: 0; top: 0; width: 100%; height: 100%; border: 0; }
+    .qr { overflow: hidden; background: #141414; border: 1px solid #2a2a2a; border-radius: 1vw; padding: 1.2vw; }
+    .qr #qr { float: left; width: 11vw; height: 11vw; background: #fff; border-radius: .6vw; padding: .5vw; margin-right: 1.2vw; }
+    .qr #qr img, .qr #qr svg { width: 100%; height: 100%; display: block; }
+    .qr b { display: block; font-size: 1.6vw; margin-bottom: .4vw; }
+    .qr p { color: #a3a3a3; font-size: 1.25vw; }
+    .cta { margin-top: 1vw; color: #a3a3a3; font-size: 1.25vw; }
+    .cta b { color: #fe982a; }
+    .bar { position: relative; height: .6vw; background: #2a2a2a; border-radius: 1vw; overflow: hidden; margin-top: .6vw; margin-left: 4.2vw; }
+    .bar i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: #fe982a; }
+    #anim { position: absolute; left: -9999px; top: 0; width: 10px; height: 10px; }
+    @media (max-aspect-ratio: 1/1) {
+      body { font-size: 3.6vw; }
+      .grid, .col { display: block; width: 100% !important; padding: 0 !important; }
+      h1 { font-size: 6.4vw; } .sub { font-size: 3.4vw; } .logo { font-size: 5vw; } .top small { font-size: 2.8vw; }
+      .row b { font-size: 3.6vw; margin-left: 9vw; } .row span { font-size: 2.9vw; margin-left: 9vw; } .bar { margin-left: 9vw; height: 1.2vw; }
+      .row .ic { width: 6.6vw; height: 6.6vw; line-height: 6.6vw; font-size: 3.6vw; }
+      .verdict h2 { font-size: 5vw; } .verdict p, .qr p, .cta { font-size: 3vw; } .qr b { font-size: 3.6vw; }
+      .qr #qr { width: 26vw; height: 26vw; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top"><div class="logo"><b>rss</b>creen</div><small>Teste da TV · grátis</small></div>
+    <h1>Esta TV roda telas de mídia indoor?</h1>
+    <p class="sub" id="sub">Testando o aparelho… leva cerca de 20 segundos. Não precisa apertar nada.</p>
+    <div class="grid">
+      <div class="col" id="rows"></div>
+      <div class="col">
+        <div class="verdict" id="verdict"><h2>Testando…</h2><p>O resultado aparece aqui.</p></div>
+        <div class="frame"><iframe id="demo" title="Tela de exemplo"></iframe></div>
+        <div class="qr" id="qrBox" style="display:none"><div id="qr"></div><b>Aponte o celular para o código</b><p>O resultado do teste abre no seu WhatsApp, pronto para enviar para quem você quiser.</p></div>
+        <p class="cta">Quer conteúdo vivo nesta TV? Notícias, clima, futebol e anúncios: <b>rsscreen</b>.</p>
+      </div>
+    </div>
+  </div>
+  <div id="anim"></div>
+
+  <script src="../config/clientes.js"></script>
+  <script src="../assets/js/core.js"></script>
+  <script>
+  (function () {
+    var rows = document.getElementById('rows');
+    var resultado = [];
+    var nivel = 0; // 0 ok, 1 ressalva, 2 problema
+
+    function el(id) { return document.getElementById(id); }
+    function addRow(id, titulo) {
+      var d = document.createElement('div');
+      d.className = 'row run';
+      d.id = 'r-' + id;
+      d.innerHTML = '<div class="ic">…</div><b>' + titulo + '</b><span>testando…</span>';
+      rows.appendChild(d);
+      return d;
+    }
+    function setRow(id, estado, texto, resumo) {
+      var d = el('r-' + id);
+      d.className = 'row ' + estado;
+      d.firstChild.innerHTML = estado === 'ok' ? '✓' : estado === 'warn' ? '!' : '✗';
+      d.lastChild.innerHTML = texto;
+      if (estado === 'warn' && nivel < 1) nivel = 1;
+      if (estado === 'bad') nivel = 2;
+      resultado.push((estado === 'ok' ? '✅ ' : estado === 'warn' ? '⚠️ ' : '❌ ') + resumo);
+    }
+
+    /* 1. tela */
+    function testeTela() {
+      addRow('tela', 'Tela');
+      var dpr = window.devicePixelRatio || 1;
+      var w = Math.round((window.innerWidth || document.documentElement.clientWidth) * dpr);
+      var h = Math.round((window.innerHeight || document.documentElement.clientHeight) * dpr);
+      var lado = Math.max(w, h);
+      var nome = lado >= 3800 ? '4K' : lado >= 1900 ? 'Full HD' : lado >= 1270 ? 'HD' : 'baixa resolução';
+      var orient = h > w ? 'vertical' : 'horizontal';
+      var txt = w + ' × ' + h + ' pixels (' + nome + '), ' + orient + '.';
+      if (lado >= 1270) setRow('tela', 'ok', txt, 'Tela: ' + w + 'x' + h + ' (' + nome + ', ' + orient + ')');
+      else setRow('tela', 'warn', txt + ' Funciona, mas textos pequenos podem ficar menos nítidos.', 'Tela: ' + w + 'x' + h + ' (' + nome + ')');
+    }
+
+    /* 2. navegador */
+    function testeNavegador() {
+      addRow('nav', 'Aparelho e navegador');
+      var ua = navigator.userAgent || '';
+      var m, partes = [];
+      if ((m = ua.match(/Android ([\d.]+)/))) partes.push('Android ' + m[1]);
+      if (/Tizen/i.test(ua)) partes.push('Smart TV Samsung (Tizen)');
+      if (/Web0S|webOS/i.test(ua)) partes.push('Smart TV LG (webOS)');
+      if (/AFT[A-Z]/.test(ua)) partes.push('Fire TV');
+      if (/CrKey/.test(ua)) partes.push('Chromecast');
+      if (/Windows/.test(ua)) partes.push('Windows');
+      var chrome = (m = ua.match(/Chrome\/(\d+)/)) ? parseInt(m[1], 10) : 0;
+      if (chrome) partes.push('Chrome ' + chrome);
+      else if ((m = ua.match(/Firefox\/(\d+)/))) partes.push('Firefox ' + m[1]);
+      else if ((m = ua.match(/Version\/([\d.]+).*Safari/))) partes.push('Safari ' + m[1]);
+      var nome = partes.join(' · ') || 'Navegador não identificado';
+      if (chrome && chrome < 70) setRow('nav', 'warn', nome + '. Navegador antigo: atualize o Chrome ou o WebView da TV Box, se der.', 'Navegador: ' + nome + ' (antigo)');
+      else setRow('nav', 'ok', nome + '.', 'Navegador: ' + nome);
+    }
+
+    /* 3. recursos */
+    function testeRecursos() {
+      addRow('rec', 'Recursos necessários');
+      var falta = [];
+      try { new Function('return (async () => { await 1; })')(); } catch (e) { falta.push('JavaScript moderno'); }
+      if (!window.fetch) falta.push('fetch');
+      if (!window.Promise) falta.push('Promise');
+      var cssVar = window.CSS && CSS.supports && CSS.supports('--a', '0');
+      if (!cssVar) falta.push('variáveis de CSS');
+      var store = false;
+      try { localStorage.setItem('rs_t', '1'); localStorage.removeItem('rs_t'); store = true; } catch (e) {}
+      if (falta.length) setRow('rec', 'bad', 'Faltam: ' + falta.join(', ') + '. As telas não vão abrir neste navegador. Instale ou atualize o Chrome no aparelho.', 'Recursos: faltam ' + falta.join(', '));
+      else if (!store) setRow('rec', 'warn', 'Tudo certo, mas o aparelho não deixa guardar dados: a tela não vai continuar sem internet.', 'Recursos: sem armazenamento offline');
+      else setRow('rec', 'ok', 'Tudo o que as telas precisam, inclusive guardar o conteúdo para quando a internet cair.', 'Recursos: completos');
+      return !falta.length;
+    }
+
+    /* 4. internet */
+    function baixar(kb, cb) {
+      var x = new XMLHttpRequest();
+      var t0 = Date.now();
+      x.open('GET', '../api/velocidade?kb=' + kb + '&_=' + t0 + Math.random(), true);
+      x.responseType = 'arraybuffer';
+      x.timeout = 20000;
+      x.onload = function () { cb(x.status === 200 ? Date.now() - t0 : -1, x.response ? x.response.byteLength : 0); };
+      x.onerror = x.ontimeout = function () { cb(-1, 0); };
+      x.send();
+    }
+    function testeInternet(fim) {
+      var d = addRow('net', 'Internet');
+      var pings = [];
+      (function ping(n) {
+        if (n === 0) {
+          pings.sort(function (a, b) { return a - b; });
+          var lat = pings.length ? pings[0] : -1;
+          if (lat < 0) { setRow('net', 'bad', 'Sem conexão com o servidor. Verifique o Wi-Fi do aparelho.', 'Internet: sem conexão'); return fim(); }
+          d.lastChild.innerHTML = 'Resposta em ' + lat + ' ms. Medindo a velocidade…';
+          baixar(1000, function (ms, bytes) {
+            if (ms <= 0 || !bytes) { setRow('net', 'warn', 'Conectado (resposta em ' + lat + ' ms), mas não foi possível medir a velocidade.', 'Internet: ' + lat + ' ms'); return fim(); }
+            var mbps = Math.round(bytes * 8 / (ms / 1000) / 1e6 * 10) / 10;
+            var txt = mbps + ' Mbps, resposta em ' + lat + ' ms.';
+            if (mbps >= 3) setRow('net', 'ok', txt + ' Ótimo para as telas.', 'Internet: ' + mbps + ' Mbps, ' + lat + ' ms');
+            else if (mbps >= 0.8) setRow('net', 'warn', txt + ' Funciona: as telas são leves, mas fotos e vídeos podem demorar para aparecer.', 'Internet: ' + mbps + ' Mbps (lenta)');
+            else setRow('net', 'bad', txt + ' Muito lenta. Aproxime a TV Box do roteador ou use cabo de rede.', 'Internet: ' + mbps + ' Mbps (muito lenta)');
+            fim();
+          });
+          return;
+        }
+        baixar(0, function (ms) { if (ms > 0) pings.push(ms); ping(n - 1); });
+      })(3);
+    }
+
+    /* 5. desempenho */
+    function testeDesempenho(fim) {
+      addRow('fps', 'Desempenho (animações)');
+      var raf = window.requestAnimationFrame || function (f) { return setTimeout(function () { f(Date.now()); }, 16); };
+      var box = el('anim'), quadros = 0, t0 = 0;
+      function passo(t) {
+        if (!t0) t0 = t || Date.now();
+        quadros++;
+        box.style.transform = 'translateX(' + (quadros % 200) + 'px)';
+        if ((t || Date.now()) - t0 < 3000) raf(passo);
+        else {
+          var fps = Math.round(quadros / (((t || Date.now()) - t0) / 1000));
+          if (fps >= 45) setRow('fps', 'ok', fps + ' quadros por segundo. Transições suaves.', 'Desempenho: ' + fps + ' fps');
+          else if (fps >= 25) setRow('fps', 'warn', fps + ' quadros por segundo. Funciona, com transições um pouco travadas.', 'Desempenho: ' + fps + ' fps (médio)');
+          else setRow('fps', 'bad', fps + ' quadros por segundo. Aparelho fraco: prefira modelos de tela sem foto (texto, relógio, cotações).', 'Desempenho: ' + fps + ' fps (fraco)');
+          fim();
+        }
+      }
+      raf(passo);
+    }
+
+    /* 6. tela de exemplo */
+    function testeExemplo(fim) {
+      addRow('demo', 'Tela de exemplo');
+      var frame = el('demo');
+      var demo = window.RS && RS.demoClient && RS.demoClient();
+      if (!demo) { setRow('demo', 'warn', 'Não foi possível abrir a tela de exemplo.', 'Exemplo: não testado'); return fim(); }
+      frame.src = RS.buildScreenUrl({ cliente: demo.chave, modulo: 'rss', assunto: 'ultimas', layout: 'destaque', tempo: 8 });
+      var t0 = Date.now();
+      (function olhar() {
+        var ok = false;
+        try { ok = !!frame.contentWindow.document.querySelector('.slide.show'); } catch (e) {}
+        if (ok) { var s = Math.round((Date.now() - t0) / 100) / 10; setRow('demo', 'ok', 'Uma tela de notícias abriu em ' + s + ' segundos.', 'Tela de exemplo: abriu em ' + s + ' s'); return fim(); }
+        if (Date.now() - t0 > 25000) { setRow('demo', 'bad', 'A tela de exemplo não abriu em 25 segundos.', 'Tela de exemplo: não abriu'); return fim(); }
+        setTimeout(olhar, 500);
+      })();
+    }
+
+    function final() {
+      var v = el('verdict');
+      var titulos = ['Esta TV está pronta para as telas do rsscreen', 'Esta TV funciona, com ressalvas', 'Esta TV precisa de ajustes'];
+      var textos = ['Pode colocar o link na TV: as telas vão rodar bem neste aparelho.',
+        'As telas funcionam. Veja os itens em amarelo para deixar tudo perfeito.',
+        'Veja os itens em vermelho. Na maioria das vezes, instalar o Chrome atualizado ou melhorar o Wi-Fi resolve.'];
+      v.className = 'verdict ' + ['ok', 'warn', 'bad'][nivel];
+      v.innerHTML = '<h2>' + titulos[nivel] + '</h2><p>' + textos[nivel] + '</p>';
+      el('sub').innerHTML = 'Teste concluído. Para repetir, recarregue a página.';
+      var texto = 'Teste da TV (rsscreen)\n' + titulos[nivel] + '\n\n' + resultado.join('\n') + '\n\nTeste grátis: ' + location.origin + '/teste';
+      mostrarQr('https://wa.me/?text=' + encodeURIComponent(texto));
+    }
+
+    // QR Code: biblioteca carregada do cdnjs só no fim do teste
+    function mostrarQr(link) {
+      var s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js';
+      s.onload = function () {
+        try {
+          var q = qrcode(0, 'L');
+          q.addData(unescape(encodeURIComponent(link)));
+          q.make();
+          el('qr').innerHTML = q.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+          el('qrBox').style.display = '';
+        } catch (e) {}
+      };
+      document.head.appendChild(s);
+    }
+
+    testeTela();
+    testeNavegador();
+    var podeRodar = testeRecursos();
+    testeInternet(function () {
+      testeDesempenho(function () {
+        if (podeRodar) testeExemplo(final); else final();
+      });
+    });
+  })();
+  </script>
+</body>
+</html>
