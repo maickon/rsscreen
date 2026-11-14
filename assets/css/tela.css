@@ -43,6 +43,7 @@ body.hide-cursor, body.hide-cursor * { cursor: none !important; }
 /* ---------- slides e transição ---------- */
 .slide {
   position: absolute;
+  isolation: isolate; /* mantém o fundo com brilho (z-index: -1) dentro do slide depois da transição */
   inset: 0;
   opacity: 0;
   transition: opacity .9s ease;
