@@ -14,7 +14,7 @@ const KEEP_DAYS = 35;
 let buf = newBuf();
 let lastFlush = 0;
 
-function newBuf() { return { counts: {}, feeds: {}, devices: {}, errors: [] }; }
+function newBuf() { return { counts: {}, feeds: {}, devices: {}, devReq: {}, errors: [] }; }
 
 export function day(t) { return new Date(t || Date.now()).toISOString().slice(0, 10); }
 
@@ -24,13 +24,32 @@ function inc(dim, key, n) {
   buf.counts[k] = (buf.counts[k] || 0) + (n || 1);
 }
 
-// Uma requisição qualquer da API (rss, og, hit)
+const limpa = v => String(v || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 60);
+
+// Uma requisição qualquer da API. As telas mandam rc (cliente) e rd (aparelho) em todo pedido,
+// para o painel mostrar o consumo de cada cliente e de cada aparelho.
 export function trackRequest(request, kind) {
   inc('total', 'all');
   inc('api', kind);
-  inc('ip', request.headers.get('CF-Connecting-IP') || '?');
+  const ip = request.headers.get('CF-Connecting-IP') || '?';
+  inc('ip', ip);
   const cf = request.cf || {};
   if (cf.country) inc('pais', cf.country + (cf.city ? ' · ' + cf.city : ''));
+  let p;
+  try { p = new URL(request.url).searchParams; } catch (_) { return; }
+  const cli = limpa(p.get('rc') || p.get('cliente') || p.get('chave'));
+  inc('cli-req', cli || '(sem identificação)');
+  if (cli) inc('cli-api', cli + '|' + kind);
+  const dev = String(p.get('rd') || p.get('d') || '').slice(0, 120);
+  if (dev) {
+    const ua = request.headers.get('User-Agent') || '';
+    const v = buf.devReq[dev] || (buf.devReq[dev] = { n: 0 });
+    v.n++;
+    v.cliente = cli || v.cliente || '';
+    v.ip = ip; v.ua = ua.slice(0, 250); v.player = player(ua);
+    v.local = [cf.city, cf.region, cf.country].filter(Boolean).join(', ');
+    v.t = Date.now();
+  }
 }
 
 // Resultado de um feed RSS: cache | ok | falha | antigo (falhou, mas serviu a última cópia boa)
@@ -93,7 +112,7 @@ export function maybeFlush(env, waitUntil, force) {
   const now = Date.now();
   if (!force && now - lastFlush < FLUSH_MS) return;
   const b = buf;
-  if (!Object.keys(b.counts).length && !Object.keys(b.feeds).length && !Object.keys(b.devices).length) return;
+  if (!Object.keys(b.counts).length && !Object.keys(b.feeds).length && !Object.keys(b.devices).length && !Object.keys(b.devReq).length) return;
   buf = newBuf();
   lastFlush = now;
   const stub = env.STATS.get(env.STATS.idFromName('global'));
@@ -119,6 +138,8 @@ export class Stats extends DurableObject {
       CREATE TABLE IF NOT EXISTS meta (k TEXT PRIMARY KEY, v TEXT);
       CREATE TABLE IF NOT EXISTS loterias (jogo TEXT PRIMARY KEY, dados TEXT, atualizado INTEGER);
     `);
+    // pedidos de cada aparelho (coluna nova; tabelas antigas ganham a coluna aqui)
+    try { this.sql.exec('ALTER TABLE devices ADD COLUMN reqs INTEGER DEFAULT 0'); } catch (_) {}
   }
 
   /* ---------- resultados de loterias (worker/loterias.js) ---------- */
@@ -170,6 +191,14 @@ export class Stats extends DurableObject {
         ON CONFLICT (id) DO UPDATE SET cliente = excluded.cliente, tela = excluded.tela, ip = excluded.ip, ua = excluded.ua,
         player = excluded.player, local = excluded.local, ok = excluded.ok, last = excluded.last, beats = beats + excluded.beats`,
         id, v.cliente, v.tela, v.ip, v.ua, v.player, v.local, v.ok, v.t, v.t, v.beats);
+    }
+    for (const id in (b.devReq || {})) {
+      const v = b.devReq[id];
+      sql.exec(`INSERT INTO devices (id, cliente, tela, ip, ua, player, local, ok, first, last, beats, reqs) VALUES (?, ?, '', ?, ?, ?, ?, 1, ?, ?, 0, ?)
+        ON CONFLICT (id) DO UPDATE SET reqs = IFNULL(reqs, 0) + excluded.reqs, last = MAX(last, excluded.last), ip = excluded.ip,
+        ua = excluded.ua, player = excluded.player, local = excluded.local,
+        cliente = CASE WHEN excluded.cliente <> '' THEN excluded.cliente ELSE cliente END`,
+        id, v.cliente, v.ip, v.ua, v.player, v.local, v.t, v.t, v.n);
     }
     for (const e of b.errors) sql.exec('INSERT INTO errors (t, url, status, msg) VALUES (?, ?, ?, ?)', e.t, e.url, e.status, e.msg);
     this.cleanup();
@@ -225,8 +254,47 @@ export class Stats extends DurableObject {
       feeds: sql.exec('SELECT * FROM feeds').toArray(),
       dispositivos: sql.exec('SELECT * FROM devices WHERE last >= ? ORDER BY last DESC LIMIT 300', now - n * 86400000).toArray(),
       ativosAgora: sql.exec('SELECT COUNT(*) AS c FROM devices WHERE last >= ?', now - 40 * 60000).toArray()[0].c,
-      erros: sql.exec('SELECT * FROM errors ORDER BY t DESC LIMIT 60').toArray()
+      erros: sql.exec('SELECT * FROM errors ORDER BY t DESC LIMIT 60').toArray(),
+      porCliente: this.porCliente(n)
     };
+  }
+
+  // Resumo de consumo de cada cliente no período
+  porCliente(n) {
+    const sql = this.sql, now = Date.now();
+    const from = day(now - (n - 1) * 86400000);
+    const out = {};
+    const get = c => out[c] || (out[c] = { cliente: c, aparelhos: 0, ligados: 0, cidades: 0, ips: 0, reqs: 0, tipos: {}, dias: {} });
+    sql.exec(`SELECT cliente, COUNT(*) AS aparelhos, SUM(CASE WHEN last >= ? THEN 1 ELSE 0 END) AS ligados,
+      COUNT(DISTINCT local) AS cidades, COUNT(DISTINCT ip) AS ips FROM devices WHERE last >= ? AND cliente <> '' GROUP BY cliente`,
+      now - 40 * 60000, now - n * 86400000).toArray().forEach(r => Object.assign(get(r.cliente), { aparelhos: r.aparelhos, ligados: r.ligados, cidades: r.cidades, ips: r.ips }));
+    sql.exec("SELECT day, key, n FROM counts WHERE dim = 'cli-req' AND day >= ?", from).toArray().forEach(r => {
+      const c = get(r.key); c.reqs += r.n; c.dias[r.day] = (c.dias[r.day] || 0) + r.n;
+    });
+    sql.exec("SELECT key, SUM(n) AS n FROM counts WHERE dim = 'cli-api' AND day >= ? GROUP BY key", from).toArray().forEach(r => {
+      const i = r.key.lastIndexOf('|');
+      get(r.key.slice(0, i)).tipos[r.key.slice(i + 1)] = r.n;
+    });
+    return Object.values(out).sort((a, b) => b.reqs - a.reqs || b.aparelhos - a.aparelhos);
+  }
+
+  // Tudo sobre um cliente: aparelhos, cidades, telas (links), players e pedidos por dia
+  cliente(c, days) {
+    const sql = this.sql, now = Date.now();
+    const n = Math.max(1, Math.min(KEEP_DAYS, Number(days) || 7));
+    const desde = now - n * 86400000, from = day(now - (n - 1) * 86400000), on = now - 40 * 60000;
+    const devices = sql.exec('SELECT * FROM devices WHERE cliente = ? AND last >= ? ORDER BY last DESC LIMIT 3000', c, desde).toArray();
+    const cidades = sql.exec(`SELECT local, COUNT(*) AS aparelhos, SUM(CASE WHEN last >= ? THEN 1 ELSE 0 END) AS ligados, SUM(IFNULL(reqs, 0)) AS reqs
+      FROM devices WHERE cliente = ? AND last >= ? GROUP BY local ORDER BY aparelhos DESC`, on, c, desde).toArray();
+    const players = sql.exec('SELECT player, COUNT(*) AS aparelhos FROM devices WHERE cliente = ? AND last >= ? GROUP BY player ORDER BY aparelhos DESC', c, desde).toArray();
+    const telas = sql.exec("SELECT key, SUM(n) AS n FROM counts WHERE dim = 'tela' AND day >= ? AND key LIKE ? GROUP BY key ORDER BY n DESC LIMIT 50", from, c + ' · %').toArray()
+      .map(r => ({ tela: r.key.slice(c.length + 3), sinais: r.n, aparelhos: devices.filter(d => d.tela === r.key.slice(c.length + 3)).length }));
+    const dias = sql.exec("SELECT day, SUM(n) AS n FROM counts WHERE dim = 'cli-req' AND key = ? AND day >= ? GROUP BY day ORDER BY day", c, from).toArray();
+    const tipos = sql.exec("SELECT key, SUM(n) AS n FROM counts WHERE dim = 'cli-api' AND key LIKE ? AND day >= ? GROUP BY key ORDER BY n DESC", c + '|%', from).toArray()
+      .map(r => ({ tipo: r.key.slice(c.length + 1), n: r.n }));
+    const aberturas = (sql.exec("SELECT SUM(n) AS n FROM counts WHERE dim = 'aberturas' AND key = ? AND day >= ?", c, from).toArray()[0] || {}).n || 0;
+    return { cliente: c, dias: n, gerado: now, devices, cidades, players, telas, porDia: dias, tipos, aberturas,
+      ligados: devices.filter(d => d.last >= on).length };
   }
 
   reset() {

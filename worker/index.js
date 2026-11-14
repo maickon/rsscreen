@@ -233,6 +233,8 @@ export default {
     }
 
     if (path === '/api/cliente') {
+      trackRequest(request, 'cliente');
+      maybeFlush(env, waitUntil);
       // Resposta: { banco: true|false, cliente: {...}|null }. Sem banco (ou banco vazio) a tela usa o config/clientes.js
       const chave = (url.searchParams.get('chave') || '').toLowerCase().slice(0, 60);
       const headers = Object.assign({ 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'public, max-age=60' }, CORS);
@@ -359,6 +361,10 @@ export default {
         }));
         await stub.saveCheck(results);
         return json({ total: all.length, proximo: from + part.length < all.length ? from + part.length : null, resultados: results });
+      }
+      if (path === '/api/stats/cliente') {
+        const c = (url.searchParams.get('c') || '').toLowerCase().replace(/[^a-z0-9-()çãéíóú ]/g, '').slice(0, 60);
+        return json(await stub.cliente(c, url.searchParams.get('dias')));
       }
       if (path === '/api/stats/reset' && request.method === 'POST') {
         await stub.reset();

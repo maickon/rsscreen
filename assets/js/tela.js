@@ -54,7 +54,16 @@
     return pad(dt.getDate()) + '/' + pad(dt.getMonth() + 1);
   }
 
+  // pedidos ao próprio servidor levam o cliente (rc) e o aparelho (rd): o painel mostra o consumo de cada um
+  function identificar(url) {
+    if (typeof url !== 'string' || url.indexOf(RS.ROOT_URL + 'api/') !== 0 || /[?&]rc=/.test(url)) return url;
+    const c = (ctx.client && ctx.client.chave) || state.cliente;
+    if (!c) return url;
+    return url + (url.indexOf('?') < 0 ? '?' : '&') + 'rc=' + encodeURIComponent(c) + '&rd=' + encodeURIComponent(deviceId());
+  }
+
   function fetchWithTimeout(url, ms) {
+    url = identificar(url);
     const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
     const t = setTimeout(() => ctrl && ctrl.abort(), ms || 15000);
     return fetch(url, ctrl ? { signal: ctrl.signal } : {}).then(

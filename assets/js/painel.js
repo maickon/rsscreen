@@ -1601,6 +1601,147 @@
     return '<b>' + esc(c ? c.nome : key.slice(0, i)) + '</b> <small>' + esc(parts.filter(p => p && p !== '-').join(' · ')) + '</small>';
   }
 
+  /* ----- consumo por cliente, detalhes e relatório em PDF ----- */
+  const TIPO_NOME = {
+    noticias: 'Notícias', rss: 'Notícias (versão antiga, fonte por fonte)', og: 'Fotos de notícias', hit: 'Sinal da tela',
+    cliente: 'Conferência do cliente', anuncios: 'Anúncios', playlist: 'Playlist', futebol: 'Futebol', loterias: 'Loterias',
+    agro: 'Cotações do agro', lista: 'Tabelas e cardápios'
+  };
+  const SEM_ID = '(sem identificação)';
+  let cliDet = null, cliSel = '';
+
+  function nomeCliente(key) {
+    if (key === SEM_ID) return 'Sem identificação';
+    const c = clients.find(x => x.chave === key);
+    return c ? c.nome : key;
+  }
+  const pct = (a, b) => b ? (Math.round(a / b * 1000) / 10).toLocaleString('pt-BR') + '%' : '—';
+  const porAparelhoDia = (reqs, ap, dias) => { if (!ap) return '—'; const v = reqs / ap / dias; return v < 10 ? (Math.round(v * 10) / 10).toLocaleString('pt-BR') : fmtN(Math.round(v)); };
+  const plural = (n, um, varios) => fmtN(n) + ' ' + (n === 1 ? um : varios);
+  const dataHora = t => t ? new Date(t).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—';
+  const telaTxt = t => (t || '').split('/').filter(p => p && p !== '-').join(' · ') || '—';
+
+  function cardClientes(d) {
+    const lista = d.porCliente || [];
+    const total = lista.reduce((s, c) => s + c.reqs, 0);
+    if (!lista.length) return '<div class="card"><div class="card-head"><div><h3>Consumo por cliente</h3></div></div><p class="mon-empty">Ainda sem dados por cliente. As telas passam a se identificar depois que abrirem a versão nova.</p></div>';
+    return '<div class="card"><div class="card-head"><div><h3>Consumo por cliente</h3><p>Quantos aparelhos cada cliente tem, de onde acessam e quantos pedidos fazem ao servidor. Clique em um cliente para ver tudo.</p></div>' +
+      '<button class="btn btn-dark btn-sm" data-print="geral">' + ICON('download') + ' Relatório geral em PDF</button></div>' +
+      '<div class="table-wrap"><table class="table mon-cli"><thead><tr><th>Cliente</th><th>Ligados agora</th><th>Aparelhos</th><th>Cidades</th><th>Pedidos</th><th>% do total</th><th>Por aparelho/dia</th><th></th></tr></thead><tbody>' +
+      lista.map(c => '<tr class="' + (c.cliente === cliSel ? 'on' : '') + '">' +
+        '<td><b>' + esc(nomeCliente(c.cliente)) + '</b>' + (c.cliente === SEM_ID ? '<br><small>telas ainda na versão antiga</small>' : '<br><small class="mono">' + esc(c.cliente) + '</small>') + '</td>' +
+        '<td>' + (c.ligados ? '<span class="st st-ok">' + ICON('check') + fmtN(c.ligados) + '</span>' : '0') + '</td>' +
+        '<td><b>' + fmtN(c.aparelhos) + '</b></td><td>' + fmtN(c.cidades) + '</td>' +
+        '<td><b>' + fmtN(c.reqs) + '</b><div class="mc-mini"><i style="width:' + Math.max(2, Math.round(c.reqs / Math.max(1, lista[0].reqs) * 100)) + '%"></i></div></td>' +
+        '<td>' + pct(c.reqs, total) + '</td><td>' + porAparelhoDia(c.reqs, c.aparelhos, d.dias) + '</td>' +
+        '<td>' + (c.cliente === SEM_ID ? '' : '<button class="btn btn-ghost btn-sm" data-cli="' + esc(c.cliente) + '">Detalhes</button>') + '</td></tr>').join('') +
+      '</tbody></table></div><div id="monCliDet"></div></div>';
+  }
+
+  function detalheHtml(x) {
+    const devs = x.devices || [];
+    const reqs = (x.porDia || []).reduce((s, r) => s + r.n, 0);
+    const maxD = Math.max.apply(null, (x.porDia || []).map(r => r.n).concat([1]));
+    const tabela = (cab, linhas) => '<div class="table-wrap"><table class="table"><thead><tr>' + cab.map(h => '<th>' + h + '</th>').join('') + '</tr></thead><tbody>' + linhas.join('') + '</tbody></table></div>';
+    return '<div class="mon-det">' +
+      '<div class="mon-det-head"><div><h3>' + esc(nomeCliente(x.cliente)) + '</h3><small class="mono">' + esc(x.cliente) + '</small></div>' +
+        '<div class="acts"><button class="btn btn-primary btn-sm" data-print="cliente">' + ICON('download') + ' Relatório deste cliente em PDF</button>' +
+        '<button class="btn btn-ghost btn-sm" data-cli-close>' + ICON('x') + ' Fechar</button></div></div>' +
+      '<div class="mon-kpis">' +
+        '<div class="card kpi"><span>Ligados agora</span><b>' + fmtN(x.ligados) + '</b><small>sinal nos últimos 40 min</small></div>' +
+        '<div class="card kpi"><span>Aparelhos no período</span><b>' + fmtN(devs.length) + '</b><small>' + plural((x.cidades || []).length, 'cidade', 'cidades') + '</small></div>' +
+        '<div class="card kpi"><span>Pedidos ao servidor</span><b>' + fmtN(reqs) + '</b><small>' + porAparelhoDia(reqs, devs.length, x.dias) + ' por aparelho/dia</small></div>' +
+        '<div class="card kpi"><span>Aberturas do link</span><b>' + fmtN(x.aberturas) + '</b><small>no período</small></div>' +
+      '</div>' +
+      '<div class="mon-grid">' +
+        '<div class="card"><h4>Cidades</h4>' + (x.cidades.length ? tabela(['Cidade', 'Aparelhos', 'Ligados', 'Pedidos'], x.cidades.map(r => '<tr><td>' + esc(r.local || 'Não identificada') + '</td><td><b>' + fmtN(r.aparelhos) + '</b></td><td>' + fmtN(r.ligados) + '</td><td>' + fmtN(r.reqs) + '</td></tr>')) : '<p class="mon-empty">Sem dados.</p>') + '</div>' +
+        '<div class="card"><h4>Pedidos por tipo</h4>' + (x.tipos.length ? tabela(['Tipo', 'Pedidos', '%'], x.tipos.map(r => '<tr><td>' + esc(TIPO_NOME[r.tipo] || r.tipo) + '</td><td><b>' + fmtN(r.n) + '</b></td><td>' + pct(r.n, reqs) + '</td></tr>')) : '<p class="mon-empty">Sem dados.</p>') +
+          '<h4 style="margin-top:16px">Pedidos por dia</h4><div class="mon-days">' + (x.porDia || []).map(r => '<div><span>' + r.day.split('-').reverse().slice(0, 2).join('/') + '</span><i style="width:' + Math.max(2, r.n / maxD * 100) + '%"></i><b>' + fmtN(r.n) + '</b></div>').join('') + '</div></div>' +
+        '<div class="card mon-span"><h4>Telas (links) usadas</h4>' + (x.telas.length ? tabela(['Tela', 'Aparelhos', 'Sinais'], x.telas.map(r => '<tr><td>' + esc(telaTxt(r.tela)) + '</td><td><b>' + fmtN(r.aparelhos) + '</b></td><td>' + fmtN(r.sinais) + '</td></tr>')) : '<p class="mon-empty">Sem dados.</p>') +
+          '<h4 style="margin-top:16px">Tipos de aparelho</h4>' + tabela(['Player', 'Aparelhos'], x.players.map(r => '<tr><td>' + esc(r.player || '—') + '</td><td><b>' + fmtN(r.aparelhos) + '</b></td></tr>')) + '</div>' +
+      '</div>' +
+      '<div class="card"><div class="card-head"><div><h4>Aparelhos (' + fmtN(devs.length) + ')</h4><p>Cada TV ou player que abriu um link deste cliente no período.</p></div>' +
+        '<input class="input input-sm mon-busca" placeholder="Filtrar por cidade, IP ou player" data-busca></div>' +
+        tabela(['Status', 'Cidade', 'Player', 'IP', 'Tela', 'Primeiro acesso', 'Último sinal', 'Pedidos'], devs.map(v => {
+          const on = Date.now() - v.last < 40 * 60000;
+          return '<tr data-txt="' + esc(((v.local || '') + ' ' + v.ip + ' ' + v.player).toLowerCase()) + '"><td><span class="st ' + (on ? 'st-ok' : 'st-idle') + '">' + ICON(on ? 'check' : 'clock') + (on ? 'Ligado' : 'Desligado') + '</span></td>' +
+            '<td>' + esc(v.local || '—') + '</td><td><small title="' + esc(v.ua) + '">' + esc(v.player) + '</small></td><td><small class="mono">' + esc(v.ip) + '</small></td>' +
+            '<td><small>' + esc(telaTxt(v.tela)) + '</small></td><td><small>' + dataHora(v.first) + '</small></td><td><small>' + ago(v.last) + '</small></td><td>' + fmtN(v.reqs || 0) + '</td></tr>';
+        })) + '</div></div>';
+  }
+
+  async function abrirCliente(c) {
+    cliSel = c;
+    $$('.mon-cli tbody tr').forEach(tr => tr.classList.toggle('on', !!tr.querySelector('[data-cli="' + c + '"]')));
+    const box = $('#monCliDet');
+    box.innerHTML = '<div class="empty">Carregando aparelhos…</div>';
+    try {
+      cliDet = await api('api/stats/cliente?c=' + encodeURIComponent(c) + '&dias=' + $('#monDias').value);
+      box.innerHTML = detalheHtml(cliDet);
+      hydrateIcons(box);
+      box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (e) { box.innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; }
+  }
+
+  /* ----- relatório para imprimir / salvar em PDF ----- */
+  function periodoTxt(dias) { return dias === 1 ? 'hoje' : 'últimos ' + dias + ' dias'; }
+  function imprimir(html, titulo) {
+    let area = $('#printArea');
+    if (!area) { area = document.createElement('div'); area.id = 'printArea'; document.body.appendChild(area); }
+    area.innerHTML = '<div class="rp"><div class="rp-top"><div><b class="rp-logo">rss<span>creen</span></b><h1>' + esc(titulo) + '</h1></div>' +
+      '<div class="rp-meta">Gerado em ' + new Date().toLocaleString('pt-BR') + '</div></div>' + html +
+      '<p class="rp-foot">Números aproximados, contados pelo servidor do rsscreen. Aparelhos e IPs ficam guardados por 35 dias.</p></div>';
+    const t = document.title;
+    document.title = titulo;
+    document.body.classList.add('printing');
+    setTimeout(() => {
+      window.print();
+      document.body.classList.remove('printing');
+      document.title = t;
+    }, 50);
+  }
+  const rpTabela = (cab, linhas) => '<table class="rp-t"><thead><tr>' + cab.map(h => '<th>' + h + '</th>').join('') + '</tr></thead><tbody>' + linhas.join('') + '</tbody></table>';
+
+  function relatorioGeral() {
+    const d = monData, lista = d.porCliente || [];
+    const total = lista.reduce((s, c) => s + c.reqs, 0);
+    const aparelhos = lista.reduce((s, c) => s + c.aparelhos, 0), ligados = lista.reduce((s, c) => s + c.ligados, 0);
+    const col = t => c => fmtN((c.tipos || {})[t] || 0);
+    imprimir(
+      '<p class="rp-sub">Período: ' + periodoTxt(d.dias) + '</p>' +
+      '<div class="rp-kpis"><div><b>' + fmtN(lista.filter(c => c.cliente !== SEM_ID).length) + '</b><span>clientes com telas</span></div><div><b>' + fmtN(aparelhos) + '</b><span>aparelhos no período</span></div>' +
+        '<div><b>' + fmtN(ligados) + '</b><span>ligados agora</span></div><div><b>' + fmtN(total) + '</b><span>pedidos ao servidor</span></div></div>' +
+      '<h2>Consumo por cliente</h2>' +
+      rpTabela(['Cliente', 'Aparelhos', 'Ligados', 'Cidades', 'Pedidos', '% do total', 'Por aparelho/dia', 'Notícias', 'Sinais', 'Fotos'],
+        lista.map(c => '<tr><td><b>' + esc(nomeCliente(c.cliente)) + '</b></td><td>' + fmtN(c.aparelhos) + '</td><td>' + fmtN(c.ligados) + '</td><td>' + fmtN(c.cidades) + '</td>' +
+          '<td><b>' + fmtN(c.reqs) + '</b></td><td>' + pct(c.reqs, total) + '</td><td>' + porAparelhoDia(c.reqs, c.aparelhos, d.dias) + '</td>' +
+          '<td>' + fmtN(((c.tipos || {}).noticias || 0) + ((c.tipos || {}).rss || 0)) + '</td><td>' + col('hit')(c) + '</td><td>' + col('og')(c) + '</td></tr>')),
+      'Relatório de uso das telas'
+    );
+  }
+
+  function relatorioCliente() {
+    const x = cliDet;
+    if (!x) return;
+    const devs = x.devices || [];
+    const reqs = (x.porDia || []).reduce((s, r) => s + r.n, 0);
+    imprimir(
+      '<p class="rp-sub">Cliente: <b>' + esc(nomeCliente(x.cliente)) + '</b> (' + esc(x.cliente) + ') · período: ' + periodoTxt(x.dias) + '</p>' +
+      '<div class="rp-kpis"><div><b>' + fmtN(devs.length) + '</b><span>aparelhos no período</span></div><div><b>' + fmtN(x.ligados) + '</b><span>ligados agora</span></div>' +
+        '<div><b>' + fmtN((x.cidades || []).length) + '</b><span>cidades</span></div><div><b>' + fmtN(reqs) + '</b><span>pedidos ao servidor</span></div></div>' +
+      '<h2>Cidades</h2>' + rpTabela(['Cidade', 'Aparelhos', 'Ligados agora', 'Pedidos'], x.cidades.map(r => '<tr><td>' + esc(r.local || 'Não identificada') + '</td><td><b>' + fmtN(r.aparelhos) + '</b></td><td>' + fmtN(r.ligados) + '</td><td>' + fmtN(r.reqs) + '</td></tr>')) +
+      '<h2>Telas (links) usadas</h2>' + rpTabela(['Tela', 'Aparelhos', 'Sinais'], x.telas.map(r => '<tr><td>' + esc(telaTxt(r.tela)) + '</td><td>' + fmtN(r.aparelhos) + '</td><td>' + fmtN(r.sinais) + '</td></tr>')) +
+      '<h2>Pedidos por dia e por tipo</h2>' +
+      '<div class="rp-2">' + rpTabela(['Dia', 'Pedidos'], (x.porDia || []).map(r => '<tr><td>' + r.day.split('-').reverse().join('/') + '</td><td>' + fmtN(r.n) + '</td></tr>')) +
+        rpTabela(['Tipo', 'Pedidos'], x.tipos.map(r => '<tr><td>' + esc(TIPO_NOME[r.tipo] || r.tipo) + '</td><td>' + fmtN(r.n) + '</td></tr>')) + '</div>' +
+      '<h2>Aparelhos (' + fmtN(devs.length) + ')</h2>' +
+      rpTabela(['#', 'Cidade', 'Player', 'IP', 'Tela', 'Primeiro acesso', 'Último sinal', 'Pedidos'], devs.map((v, i) =>
+        '<tr><td>' + (i + 1) + '</td><td>' + esc(v.local || '—') + '</td><td>' + esc(v.player) + '</td><td>' + esc(v.ip) + '</td><td>' + esc(telaTxt(v.tela)) + '</td>' +
+        '<td>' + dataHora(v.first) + '</td><td>' + dataHora(v.last) + '</td><td>' + fmtN(v.reqs || 0) + '</td></tr>')),
+      'Relatório de uso: ' + nomeCliente(x.cliente)
+    );
+  }
+
   function renderMonitor() {
     const d = monData;
     const body = $('#monBody');
@@ -1632,11 +1773,12 @@
 
     body.innerHTML =
       '<div class="mon-kpis">' +
-        '<div class="card kpi"><span>Telas ligadas agora</span><b>' + fmtN(d.ativosAgora) + '</b><small>sinal nos últimos 12 min</small></div>' +
+        '<div class="card kpi"><span>Telas ligadas agora</span><b>' + fmtN(d.ativosAgora) + '</b><small>sinal nos últimos 40 min</small></div>' +
         '<div class="card kpi"><span>Telas no período</span><b>' + fmtN(devs.length) + '</b><small>aparelhos diferentes</small></div>' +
         '<div class="card kpi"><span>Requisições</span><b>' + fmtN(tot) + '</b><small>' + (d.dias === 1 ? 'hoje' : 'últimos ' + d.dias + ' dias') + '</small></div>' +
         '<div class="card kpi' + (bad ? ' kpi-bad' : '') + '"><span>Feeds com problema</span><b>' + fmtN(bad + warn) + '</b><small>' + okN + ' ativos · ' + feeds.length + ' cadastrados</small></div>' +
       '</div>' +
+      cardClientes(d) +
       '<div id="monLot"></div>' +
       '<div class="card"><div class="card-head"><div><h3>Requisições por dia</h3><p>Sinais das telas (a cada 30 min), leituras de feed e buscas de foto.</p></div></div>' + chart + '</div>' +
 
@@ -1681,6 +1823,7 @@
       '<p class="mon-foot">Atualizado ' + new Date(d.gerado).toLocaleTimeString('pt-BR') + '. Os IPs e aparelhos ficam guardados por 35 dias.</p>';
     hydrateIcons(body);
     renderLot();
+    if (cliSel && (d.porCliente || []).some(c => c.cliente === cliSel)) abrirCliente(cliSel);
   }
 
   /* ----- loterias: status e atualização manual ----- */
@@ -1723,7 +1866,17 @@
 
   $('#monDias').addEventListener('change', () => { monData = null; loadMonitor(); });
   $('#monRefresh').addEventListener('click', loadMonitor);
+  $('#monBody').addEventListener('input', e => {
+    if (!e.target.matches('[data-busca]')) return;
+    const q = e.target.value.trim().toLowerCase();
+    e.target.closest('.card').querySelectorAll('tbody tr').forEach(tr => { tr.hidden = q && tr.dataset.txt.indexOf(q) < 0; });
+  });
   $('#monBody').addEventListener('click', async e => {
+    const cli = e.target.closest('[data-cli]');
+    if (cli) return abrirCliente(cli.dataset.cli);
+    if (e.target.closest('[data-cli-close]')) { cliSel = ''; cliDet = null; $('#monCliDet').innerHTML = ''; $$('.mon-cli tbody tr').forEach(tr => tr.classList.remove('on')); return; }
+    const pr = e.target.closest('[data-print]');
+    if (pr) return pr.dataset.print === 'cliente' ? relatorioCliente() : relatorioGeral();
     const chip = e.target.closest('#monFeedFilter .chip');
     if (chip) {
       $$('#monFeedFilter .chip').forEach(c => c.classList.toggle('on', c === chip));
