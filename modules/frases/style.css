@@ -1,0 +1,33 @@
+/* Módulo Frases e Mensagens */
+.m-frases { padding: 4rem 6rem; display: flex; flex-direction: column; }
+.m-frases > * { position: relative; }
+.m-frases .fr-bg {
+  position: absolute; inset: 0; z-index: -1;
+  background: radial-gradient(circle at 15% 10%, var(--accent-a35) 0, transparent 45%), radial-gradient(circle at 95% 95%, var(--accent-a15) 0, transparent 45%), var(--bg);
+}
+.m-frases .fr-kicker { font-size: 1.6rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
+.m-frases .fr-quote { font-size: 6.4rem; font-weight: 800; line-height: 1.12; letter-spacing: -.025em; text-wrap: balance; }
+.m-frases .fr-quote.short { font-size: 8rem; }
+.m-frases .fr-quote.long { font-size: 5rem; }
+
+.l-citacao .fr-center { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; max-width: 120rem; margin: 0 auto; }
+.l-citacao .fr-quote { margin-top: 2rem; }
+.l-citacao .fr-mark { display: block; font-size: 14rem; line-height: .6; height: 6rem; color: var(--accent); font-family: Georgia, serif; }
+.l-citacao .fr-line { width: 9rem; height: .5rem; border-radius: 1rem; background: var(--accent); margin-top: 3.4rem; }
+
+.l-cartao .fr-top { display: flex; justify-content: space-between; align-items: center; }
+.l-cartao .fr-week { font-size: 2.4rem; font-weight: 800; }
+.l-cartao .fr-date { font-size: 1.7rem; color: var(--muted); font-weight: 600; }
+.l-cartao .fr-clock { font-size: 4rem; }
+.l-cartao .fr-card {
+  flex: 1; margin-top: 2.6rem; border-radius: 2.4rem; padding: 5rem 6rem;
+  background: linear-gradient(135deg, var(--accent), var(--accent-a55)); color: var(--accent-text);
+  display: flex; flex-direction: column; justify-content: center; gap: 2rem;
+}
+.l-cartao .fr-card .fr-kicker { color: var(--accent-text); opacity: .8; }
+
+.o-v .m-frases { padding: 4rem 3.4rem; }
+.o-v .m-frases .fr-quote { font-size: 5.4rem; }
+.o-v .m-frases .fr-quote.short { font-size: 6.6rem; }
+.o-v .m-frases .fr-quote.long { font-size: 4.4rem; }
+.o-v .l-cartao .fr-card { padding: 4rem 3.6rem; }

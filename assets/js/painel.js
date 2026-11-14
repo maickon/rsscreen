@@ -1181,8 +1181,8 @@
 
   /* =================== GUIA DE VENDAS =================== */
   const PLANO_INCLUI = {
-    essencial: ['Notícias: 25 assuntos e mais de 90 sites', 'Previsão do tempo', 'Cotações (dólar, euro, cripto)', 'Todos os modelos, horizontal e vertical', 'Até 3 links por tela'],
-    completo: ['Tudo do Essencial', 'Resultados e estatísticas de loterias', 'Tela de anúncios dos anunciantes', 'Playlist: a programação inteira da TV num link só', 'Módulos novos sem custo extra', 'Links e trocas ilimitadas', 'Suporte prioritário no WhatsApp'],
+    essencial: ['Notícias: 25 assuntos e mais de 90 sites', 'Previsão do tempo', 'Cotações (dólar, euro, cripto)', 'Relógio, datas comemorativas e frases', 'Todos os modelos, horizontal e vertical', 'Até 3 links por tela'],
+    completo: ['Tudo do Essencial', 'Futebol ao vivo, agenda e tabela', 'Resultados e estatísticas de loterias', 'Horóscopo do dia', 'Tela de anúncios dos anunciantes', 'Playlist: a programação inteira da TV num link só', 'Módulos novos sem custo extra', 'Links e trocas ilimitadas', 'Suporte prioritário no WhatsApp'],
     rede: ['Tudo do Completo', 'Preço por tela a partir de 10 telas', 'Pacotes prontos por segmento', 'Ideal para operadores de mídia indoor'],
     gerenciado: ['Tudo do Completo', 'Você cria os anúncios do estabelecimento', 'Você configura o player do cliente', 'Você monta a programação da TV', 'Ajustes mensais inclusos'],
     cortesia: ['Acesso completo temporário', 'Para teste de 7 dias, permuta ou demonstração']

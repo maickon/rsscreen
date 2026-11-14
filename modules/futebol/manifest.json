@@ -1,0 +1,37 @@
+{
+  "id": "futebol",
+  "ordem": 5,
+  "status": "ativo",
+  "nome": "Futebol: Jogos e Tabela",
+  "tag": "Novo",
+  "icone": "zap",
+  "chamada": "Placar ao vivo, resultados, próximos jogos e a tabela do Brasileirão com os escudos dos times.",
+  "descricao": "O assunto que mais prende a atenção em bares, padarias, barbearias e academias. Mostra os jogos rolando com o placar e o minuto, os últimos resultados, a agenda da rodada com dia e horário de Brasília e a classificação. Atualiza a cada minuto durante os jogos.",
+  "beneficios": [
+    "Brasileirão A e B, Copa do Brasil, Libertadores, Sul-Americana e Europa",
+    "Placar ao vivo com o minuto do jogo",
+    "Tabela de classificação com escudos",
+    "Horizontal e vertical"
+  ],
+  "indicado": ["Bares e restaurantes", "Barbearias", "Padarias", "Academias"],
+  "script": "screen.js",
+  "estilo": "style.css",
+  "rotuloAssunto": "Campeonato",
+  "padrao": { "assunto": "brasileirao-a", "layout": "placar", "tema": "floresta", "tempo": 15 },
+  "layouts": [
+    { "id": "placar", "nome": "Resultados e ao vivo", "descricao": "Jogos rolando agora e os últimos resultados, com escudos." },
+    { "id": "agenda", "nome": "Próximos jogos", "descricao": "Agenda da rodada com dia e horário de Brasília." },
+    { "id": "tabela", "nome": "Tabela de classificação", "descricao": "Pontos, jogos, vitórias e saldo (campeonatos de pontos corridos)." },
+    { "id": "destaque", "nome": "Um jogo por vez", "descricao": "Cada jogo em destaque com escudos grandes: ao vivo, resultados e próximos." }
+  ],
+  "assuntos": [
+    { "id": "brasileirao-a", "nome": "Brasileirão Série A", "liga": "bra.1", "tabela": true },
+    { "id": "brasileirao-b", "nome": "Brasileirão Série B", "liga": "bra.2", "tabela": true },
+    { "id": "copa-do-brasil", "nome": "Copa do Brasil", "liga": "bra.copa_do_brazil" },
+    { "id": "libertadores", "nome": "Libertadores", "liga": "conmebol.libertadores" },
+    { "id": "sul-americana", "nome": "Sul-Americana", "liga": "conmebol.sudamericana" },
+    { "id": "champions", "nome": "Champions League", "liga": "uefa.champions" },
+    { "id": "premier-league", "nome": "Premier League (Inglaterra)", "liga": "eng.1", "tabela": true },
+    { "id": "la-liga", "nome": "La Liga (Espanha)", "liga": "esp.1", "tabela": true }
+  ]
+}

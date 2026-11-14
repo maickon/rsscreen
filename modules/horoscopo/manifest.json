@@ -1,0 +1,40 @@
+{
+  "id": "horoscopo",
+  "ordem": 9,
+  "status": "ativo",
+  "nome": "Horóscopo do Dia",
+  "tag": "Novo",
+  "icone": "sparkles",
+  "chamada": "Previsão do dia para os 12 signos: amor, trabalho, saúde, cor e número da sorte.",
+  "descricao": "Um dos conteúdos mais procurados em salões de beleza, clínicas de estética e salas de espera. Mostra os 12 signos com mensagens para amor, trabalho e saúde, cor e número do dia. Texto próprio do rsscreen, renovado todos os dias e igual em todas as telas. Funciona sem internet.",
+  "beneficios": [
+    "12 signos ou só um signo",
+    "Amor, trabalho, saúde, cor e número do dia",
+    "Muda todo dia, sozinho",
+    "Funciona sem internet"
+  ],
+  "indicado": ["Salões de beleza", "Clínicas de estética", "Salas de espera", "Lojas de roupa"],
+  "script": "screen.js",
+  "estilo": "style.css",
+  "rotuloAssunto": "Signo",
+  "padrao": { "assunto": "todos", "layout": "signo", "tema": "royal", "tempo": 12 },
+  "layouts": [
+    { "id": "signo", "nome": "Um signo por vez", "descricao": "Cada signo com amor, trabalho, saúde, cor e número da sorte." },
+    { "id": "grade", "nome": "Todos os signos", "descricao": "Os 12 signos na mesma tela, com a mensagem do dia." }
+  ],
+  "assuntos": [
+    { "id": "todos", "nome": "Todos os signos" },
+    { "id": "aries", "nome": "Áries" },
+    { "id": "touro", "nome": "Touro" },
+    { "id": "gemeos", "nome": "Gêmeos" },
+    { "id": "cancer", "nome": "Câncer" },
+    { "id": "leao", "nome": "Leão" },
+    { "id": "virgem", "nome": "Virgem" },
+    { "id": "libra", "nome": "Libra" },
+    { "id": "escorpiao", "nome": "Escorpião" },
+    { "id": "sagitario", "nome": "Sagitário" },
+    { "id": "capricornio", "nome": "Capricórnio" },
+    { "id": "aquario", "nome": "Aquário" },
+    { "id": "peixes", "nome": "Peixes" }
+  ]
+}

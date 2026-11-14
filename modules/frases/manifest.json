@@ -1,0 +1,32 @@
+{
+  "id": "frases",
+  "ordem": 8,
+  "status": "ativo",
+  "nome": "Frases e Mensagens",
+  "tag": "Novo",
+  "icone": "sparkles",
+  "chamada": "Frases de motivação, reflexão, ditados populares e dicas de saúde para deixar a TV mais leve.",
+  "descricao": "Mensagens curtas que se leem de longe: motivação para academias e escritórios, reflexão para salas de espera, ditados populares e dicas de bem-estar para clínicas. A ordem muda todo dia. Funciona sem internet.",
+  "beneficios": [
+    "Motivação, reflexão, ditados e dicas de saúde",
+    "A ordem muda a cada dia",
+    "Texto grande, fácil de ler de longe",
+    "Funciona sem internet"
+  ],
+  "indicado": ["Academias", "Clínicas", "Salões de beleza", "Escritórios"],
+  "script": "screen.js",
+  "estilo": "style.css",
+  "rotuloAssunto": "Tipo",
+  "padrao": { "assunto": "motivacao", "layout": "citacao", "tema": "royal", "tempo": 12 },
+  "layouts": [
+    { "id": "citacao", "nome": "Frase em destaque", "descricao": "Frase grande no centro, com aspas e o tipo de mensagem." },
+    { "id": "cartao", "nome": "Cartão com relógio", "descricao": "Frase num cartão colorido, com hora e data no topo." }
+  ],
+  "assuntos": [
+    { "id": "motivacao", "nome": "Motivação" },
+    { "id": "reflexao", "nome": "Reflexão" },
+    { "id": "proverbios", "nome": "Ditados populares" },
+    { "id": "saude", "nome": "Dicas de saúde e bem-estar" },
+    { "id": "todas", "nome": "Todas misturadas" }
+  ]
+}

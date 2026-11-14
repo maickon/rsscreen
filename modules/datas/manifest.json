@@ -1,0 +1,31 @@
+{
+  "id": "datas",
+  "ordem": 7,
+  "status": "ativo",
+  "nome": "Datas Comemorativas",
+  "tag": "Novo",
+  "icone": "sparkles",
+  "chamada": "Contagem regressiva para o Natal, Dia das Mães, Black Friday e as campanhas de saúde do mês.",
+  "descricao": "Mostra a data comemorativa de hoje, a contagem regressiva para as próximas e a campanha de saúde do mês (Outubro Rosa, Novembro Azul…). As datas móveis (Carnaval, Páscoa, Dia das Mães, Dia dos Pais, Black Friday) são calculadas sozinhas todo ano. Funciona sem internet.",
+  "beneficios": [
+    "Datas do comércio, feriados e campanhas de saúde",
+    "Contagem regressiva automática",
+    "Datas móveis calculadas todo ano",
+    "Funciona sem internet"
+  ],
+  "indicado": ["Lojas e comércio", "Clínicas", "Escolas", "Restaurantes"],
+  "script": "screen.js",
+  "estilo": "style.css",
+  "rotuloAssunto": "Datas",
+  "padrao": { "assunto": "todas", "layout": "hoje", "tema": "royal", "tempo": 12 },
+  "layouts": [
+    { "id": "hoje", "nome": "Hoje e próxima data", "descricao": "A data de hoje (ou a próxima, com contagem) e a campanha do mês." },
+    { "id": "contagem", "nome": "Contagem regressiva", "descricao": "Um número gigante de dias para cada uma das próximas datas." },
+    { "id": "proximas", "nome": "Próximas datas", "descricao": "Lista das próximas 6 datas com quantos dias faltam." }
+  ],
+  "assuntos": [
+    { "id": "todas", "nome": "Todas (comércio, feriados e saúde)" },
+    { "id": "comercio", "nome": "Datas do comércio e feriados" },
+    { "id": "saude", "nome": "Saúde (campanhas e dias mundiais)" }
+  ]
+}

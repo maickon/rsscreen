@@ -1,0 +1,30 @@
+{
+  "id": "relogio",
+  "ordem": 6,
+  "status": "ativo",
+  "nome": "Relógio e Data",
+  "tag": "Novo",
+  "icone": "clock",
+  "chamada": "Relógio grande, data e saudação: o conteúdo mais simples e mais olhado de qualquer TV.",
+  "descricao": "Hora certa em tamanho grande, dia da semana, data e uma saudação que muda sozinha (bom dia, boa tarde, boa noite). Ótimo para intercalar entre anúncios e para recepções, academias e salas de espera. Funciona até sem internet.",
+  "beneficios": [
+    "Digital, analógico ou com calendário do mês",
+    "Saudação automática pelo horário",
+    "Funciona sem internet",
+    "Horizontal e vertical"
+  ],
+  "indicado": ["Recepções", "Academias", "Salas de espera", "Lojas"],
+  "script": "screen.js",
+  "estilo": "style.css",
+  "rotuloAssunto": "Mensagem",
+  "padrao": { "assunto": "saudacao", "layout": "digital", "tema": "noite", "tempo": 30 },
+  "layouts": [
+    { "id": "digital", "nome": "Digital grande", "descricao": "Hora enorme com segundos, data completa e saudação." },
+    { "id": "analogico", "nome": "Analógico", "descricao": "Relógio de ponteiros com a data ao lado." },
+    { "id": "calendario", "nome": "Calendário do mês", "descricao": "Hora, data e o calendário do mês com o dia de hoje marcado." }
+  ],
+  "assuntos": [
+    { "id": "saudacao", "nome": "Com saudação (bom dia, boa tarde…)" },
+    { "id": "simples", "nome": "Só hora e data" }
+  ]
+}

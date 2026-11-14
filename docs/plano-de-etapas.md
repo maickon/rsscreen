@@ -131,7 +131,7 @@ de vídeo guardados no aparelho.
 | 2 ✅ | **Loterias** (apiloterias + reserva Caixa, 5 layouts) | Conteúdo muito pedido, rápido de entregar | — | Médio |
 | 3 ✅ | **Anúncios / Criador de anúncios** (o operador cria a arte do anunciante a partir de templates ou envia imagem/vídeo para o R2) | A maior dor do público e o que gera a renda dele | 1 | Médio |
 | 4 ✅ | **Playlist em um link** (intercala anúncios + notícias + clima + loterias, com tempo de cada um) | Transforma o rsscreen em "a programação inteira da TV" | 3 | Médio |
-| 5 | **Conteúdo extra** (relógio grande, datas comemorativas, frases, horóscopo, futebol) | Completa a lista do que mais se procura | — | Pequeno a médio |
+| 5 ✅ | **Conteúdo extra** (relógio grande, datas comemorativas, frases, horóscopo, futebol) | Completa a lista do que mais se procura | — | Pequeno a médio |
 | 6 | **Site para a busca** (páginas dos termos da seção 1.2, guias, calculadora "quanto posso ganhar", modelo de proposta e tabela de preços) | Atrai o iniciante pelo Google | — (contínuo) | Contínuo |
 | 7 | **App Android (Capacitor)** com início automático, tela cheia e vídeos guardados no aparelho | Fecha o "player grátis para quem não tem sistema" | 4 | Médio |
 | 8 | **Pareamento por QR Code** (a TV mostra um código, o operador vincula pelo celular e troca a programação remotamente) | Facilita a vida de quem tem várias TVs | 1 e 7 | Médio |

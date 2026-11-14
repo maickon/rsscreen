@@ -1,0 +1,45 @@
+/* Módulo Relógio e Data */
+.m-relogio { display: flex; align-items: center; justify-content: center; padding: 4rem; }
+.m-relogio > * { position: relative; }
+.m-relogio .rl-bg {
+  position: absolute; inset: 0; z-index: -1;
+  background: radial-gradient(circle at 50% 120%, var(--accent-a35) 0, transparent 55%), var(--bg);
+}
+.m-relogio .rl-center { text-align: center; display: flex; flex-direction: column; align-items: center; }
+.m-relogio .rl-greet { font-size: 3.4rem; font-weight: 800; color: var(--accent); letter-spacing: -.01em; margin-bottom: .5rem; }
+.m-relogio .rl-time { font-size: 19rem; line-height: .95; font-weight: 900; letter-spacing: -.05em; font-variant-numeric: tabular-nums; display: flex; align-items: flex-start; }
+.m-relogio .rl-time .clock-time { font-weight: 900; letter-spacing: -.05em; }
+.m-relogio .rl-sec { font-size: 5rem; font-weight: 800; color: var(--muted); margin: 2.2rem 0 0 1.2rem; letter-spacing: 0; min-width: 6.5rem; text-align: left; }
+.m-relogio .rl-time.sm { font-size: 10rem; margin: .4rem 0 1rem; }
+.m-relogio .rl-line { width: 9rem; height: .5rem; border-radius: 1rem; background: var(--accent); margin: 2.4rem 0 2rem; }
+.m-relogio .rl-week { font-size: 3.4rem; font-weight: 800; }
+.m-relogio .rl-date { font-size: 2.4rem; font-weight: 600; color: var(--muted); margin-top: .3rem; }
+
+.m-relogio .rl-split { display: flex; align-items: center; justify-content: center; gap: 6rem; width: 100%; }
+.m-relogio .rl-clockwrap { width: 36rem; height: 36rem; flex: none; }
+.m-relogio .rl-svg { width: 100%; height: 100%; display: block; }
+.m-relogio .rl-face { fill: var(--surface); stroke: var(--accent-a35); stroke-width: 2; }
+.m-relogio .mk { stroke: var(--muted); stroke-width: 1; opacity: .5; }
+.m-relogio .mk-b { stroke: var(--text); stroke-width: 3; stroke-linecap: round; }
+.m-relogio .rl-hand-h { stroke: var(--text); stroke-width: 7; stroke-linecap: round; }
+.m-relogio .rl-hand-m { stroke: var(--text); stroke-width: 4.5; stroke-linecap: round; }
+.m-relogio .rl-hand-s { stroke: var(--accent); stroke-width: 2; stroke-linecap: round; }
+.m-relogio .rl-pin { fill: var(--accent); }
+
+.m-relogio .rl-cal { background: var(--surface); border-radius: 2rem; padding: 2.6rem 3rem; width: 44rem; }
+.m-relogio .rl-cal-title { font-size: 2.6rem; font-weight: 800; text-transform: capitalize; margin-bottom: 1.4rem; }
+.m-relogio .rl-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: .5rem; text-align: center; }
+.m-relogio .rl-cal-grid b { font-size: 1.3rem; color: var(--muted); font-weight: 800; padding-bottom: .5rem; }
+.m-relogio .rl-cal-grid span { font-size: 1.9rem; font-weight: 700; height: 4.4rem; display: flex; align-items: center; justify-content: center; border-radius: 1rem; font-variant-numeric: tabular-nums; }
+.m-relogio .rl-cal-grid span.past { color: var(--muted); opacity: .6; }
+.m-relogio .rl-cal-grid span.sun { color: var(--accent); }
+.m-relogio .rl-cal-grid span.today { background: var(--accent); color: var(--accent-text); opacity: 1; }
+
+/* vertical */
+.o-v .m-relogio .rl-time { font-size: 13rem; }
+.o-v .m-relogio .rl-sec { font-size: 3.6rem; margin-top: 1.4rem; min-width: 4.6rem; }
+.o-v .m-relogio .rl-time.sm { font-size: 9rem; }
+.o-v .m-relogio .rl-split { flex-direction: column; gap: 4rem; text-align: center; }
+.o-v .m-relogio .rl-side { display: flex; flex-direction: column; align-items: center; }
+.o-v .m-relogio .rl-clockwrap { width: 34rem; height: 34rem; }
+.o-v .m-relogio .rl-cal { width: 40rem; }

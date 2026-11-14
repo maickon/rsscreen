@@ -26,6 +26,11 @@
           "modulo": "rss",
           "assunto": "esportes",
           "layout": "faixa"
+        },
+        {
+          "modulo": "relogio",
+          "assunto": "saudacao",
+          "layout": "digital"
         }
       ]
     },
@@ -54,6 +59,16 @@
           "modulo": "clima",
           "assunto": "cabo-frio-rj",
           "layout": "semana"
+        },
+        {
+          "modulo": "datas",
+          "assunto": "saude",
+          "layout": "hoje"
+        },
+        {
+          "modulo": "frases",
+          "assunto": "saude",
+          "layout": "cartao"
         }
       ]
     },
@@ -82,6 +97,11 @@
           "modulo": "rss",
           "assunto": "esportes",
           "layout": "faixa"
+        },
+        {
+          "modulo": "futebol",
+          "assunto": "brasileirao-a",
+          "layout": "placar"
         }
       ]
     },
@@ -105,6 +125,16 @@
           "modulo": "rss",
           "assunto": "saude",
           "layout": "faixa"
+        },
+        {
+          "modulo": "frases",
+          "assunto": "motivacao",
+          "layout": "citacao"
+        },
+        {
+          "modulo": "futebol",
+          "assunto": "brasileirao-a",
+          "layout": "tabela"
         }
       ]
     },
@@ -128,6 +158,16 @@
           "modulo": "rss",
           "assunto": "casa-decoracao",
           "layout": "manchetes"
+        },
+        {
+          "modulo": "horoscopo",
+          "assunto": "todos",
+          "layout": "signo"
+        },
+        {
+          "modulo": "frases",
+          "assunto": "reflexao",
+          "layout": "cartao"
         }
       ]
     },
@@ -179,6 +219,11 @@
           "modulo": "clima",
           "assunto": "cabo-frio-rj",
           "layout": "agora"
+        },
+        {
+          "modulo": "datas",
+          "assunto": "comercio",
+          "layout": "contagem"
         }
       ]
     },
@@ -207,6 +252,11 @@
           "modulo": "rss",
           "assunto": "tecnologia",
           "layout": "manchetes"
+        },
+        {
+          "modulo": "relogio",
+          "assunto": "simples",
+          "layout": "calendario"
         }
       ]
     },
@@ -258,6 +308,11 @@
           "modulo": "rss",
           "assunto": "ultimas",
           "layout": "faixa"
+        },
+        {
+          "modulo": "futebol",
+          "assunto": "brasileirao-a",
+          "layout": "agenda"
         }
       ]
     },
@@ -281,6 +336,16 @@
           "modulo": "rss",
           "assunto": "curiosidades",
           "layout": "texto"
+        },
+        {
+          "modulo": "datas",
+          "assunto": "todas",
+          "layout": "proximas"
+        },
+        {
+          "modulo": "frases",
+          "assunto": "motivacao",
+          "layout": "cartao"
         }
       ]
     },
@@ -304,6 +369,16 @@
           "modulo": "rss",
           "assunto": "gastronomia",
           "layout": "revista"
+        },
+        {
+          "modulo": "futebol",
+          "assunto": "brasileirao-a",
+          "layout": "placar"
+        },
+        {
+          "modulo": "futebol",
+          "assunto": "brasileirao-a",
+          "layout": "agenda"
         }
       ]
     },
@@ -322,6 +397,39 @@
           "modulo": "rss",
           "assunto": "fe",
           "layout": "texto"
+        },
+        {
+          "modulo": "frases",
+          "assunto": "reflexao",
+          "layout": "citacao"
+        }
+      ]
+    },
+    {
+      "id": "barbearia",
+      "nome": "Barbearia",
+      "tema": "grafite",
+      "porque": "Cliente espera a vez conversando sobre futebol. Placar, tabela e agenda dos jogos puxam assunto e prendem o olhar entre um anúncio e outro.",
+      "telas": [
+        {
+          "modulo": "futebol",
+          "assunto": "brasileirao-a",
+          "layout": "placar"
+        },
+        {
+          "modulo": "futebol",
+          "assunto": "brasileirao-a",
+          "layout": "tabela"
+        },
+        {
+          "modulo": "rss",
+          "assunto": "esportes",
+          "layout": "destaque"
+        },
+        {
+          "modulo": "horoscopo",
+          "assunto": "todos",
+          "layout": "grade"
         }
       ]
     }

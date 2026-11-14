@@ -11,6 +11,7 @@
 //   /api/anuncios     anúncios ativos do cliente; /api/midia/<id> fotos dos anúncios
 //   /api/admin/anuncios[/ordem], /api/admin/midia  cadastro de anúncios (exige a senha)
 //   /api/admin/loterias  status e "atualizar agora" (exige a senha)
+//   /api/futebol      jogos, resultados e tabela (?liga=bra.1), dados da ESPN com cache
 //   /api/playlist     playlist do cliente (a tela com &playlist=<id> lê daqui)
 //   /api/admin/playlists  cadastro de playlists (exige a senha)
 //
@@ -22,6 +23,7 @@ import { Stats, trackRequest, trackFeed, trackOg, trackHit, maybeFlush, statsStu
 import { listClientes, countClientes, getCliente, saveCliente, deleteCliente, importClientes } from './clientes.js';
 import { listAds, publicAds, saveAd, setAdsOrder, deleteAd, saveMedia, mediaResponse } from './anuncios.js';
 import { listPlaylists, getPlaylist, savePlaylist, deletePlaylist, playlistCacheKey } from './playlists.js';
+import { futebolResponse } from './futebol.js';
 import { loteriasResponse, updateAll, updateStats, JOGOS, STATS_JOGOS } from './loterias.js';
 
 export { Stats };
@@ -158,6 +160,12 @@ export default {
       } catch (e) {
         return new Response(JSON.stringify({ anuncios: [], erro: 'indisponivel' }), { status: 503, headers });
       }
+    }
+
+    if (path === '/api/futebol') {
+      trackRequest(request, 'futebol');
+      maybeFlush(env, waitUntil);
+      return futebolResponse((url.searchParams.get('liga') || 'bra.1').toLowerCase().replace(/[^a-z0-9._]/g, ''), waitUntil, CORS);
     }
 
     if (path === '/api/playlist') {

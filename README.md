@@ -131,7 +131,19 @@ Cada tipo de tela é um módulo em `modules/<id>/`:
 Para incluir um módulo, crie a pasta e adicione o id em `modules/registry.json`.
 Módulos com `"status": "em-breve"` aparecem na landing como "Em breve".
 
-`modules/pacotes.json` traz os pacotes prontos por segmento (padaria, clínica, academia…).
+`modules/pacotes.json` traz os pacotes prontos por segmento (padaria, clínica, academia, barbearia…).
+
+Módulos ativos: notícias (`rss`), anúncios, clima, cotações, loterias, **futebol**, **relógio**,
+**datas comemorativas**, **frases** e **horóscopo**.
+
+- **Futebol** lê `/api/futebol?liga=bra.1` (Worker). Os dados são públicos da ESPN, sem chave, com
+  cache de 1 minuto durante os jogos e 10 minutos no resto do tempo; se a ESPN falhar, a última
+  resposta boa continua valendo por até 2 dias. Brasileirão A e B, Copa do Brasil, Libertadores,
+  Sul-Americana, Champions, Premier League e La Liga.
+- **Relógio, datas, frases e horóscopo** são calculados no aparelho e funcionam sem internet. As
+  datas móveis (Carnaval, Páscoa, Dia das Mães/Pais, Black Friday) são calculadas todo ano. Os
+  textos das frases e do horóscopo são próprios do rsscreen (nada copiado de outros sites) e mudam
+  todo dia, iguais em todas as telas.
 
 ## Comportamento das telas
 

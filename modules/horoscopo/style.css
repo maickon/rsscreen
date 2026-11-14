@@ -1,0 +1,40 @@
+/* Módulo Horóscopo do Dia */
+.m-horoscopo { padding: 3.2rem 4rem; display: flex; flex-direction: column; gap: 2.4rem; }
+.m-horoscopo > * { position: relative; }
+.m-horoscopo .hs-bg {
+  position: absolute; inset: 0; z-index: -1;
+  background:
+    radial-gradient(1px 1px at 12% 20%, var(--text) 50%, transparent 51%), radial-gradient(1px 1px at 72% 12%, var(--text) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 88% 64%, var(--text) 50%, transparent 51%), radial-gradient(1px 1px at 32% 82%, var(--text) 50%, transparent 51%),
+    radial-gradient(circle at 20% 40%, var(--accent-a35) 0, transparent 45%), var(--bg);
+}
+.m-horoscopo .hs-head { display: flex; justify-content: space-between; align-items: center; }
+.m-horoscopo .hs-kicker { font-size: 1.5rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+.m-horoscopo .hs-clock { font-size: 3rem; }
+
+.m-horoscopo .hs-main { flex: 1; display: grid; grid-template-columns: 30rem 1fr; gap: 4rem; align-items: center; }
+.m-horoscopo .hs-sign { text-align: center; }
+.m-horoscopo .hs-glyph { width: 22rem; height: 22rem; margin: 0 auto; border-radius: 50%; background: var(--accent-a15); border: .3rem solid var(--accent-a55); color: var(--accent); font-size: 12rem; line-height: 22rem; font-family: "Segoe UI Symbol", "DejaVu Sans", "Noto Sans Symbols", sans-serif; }
+.m-horoscopo .hs-name { font-size: 5rem; font-weight: 900; letter-spacing: -.03em; margin-top: 2rem; }
+.m-horoscopo .hs-per { font-size: 1.7rem; color: var(--muted); font-weight: 700; }
+.m-horoscopo .hs-geral { font-size: 3rem; font-weight: 600; line-height: 1.3; margin: 0 0 2.4rem; }
+.m-horoscopo .hs-areas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
+.m-horoscopo .hs-areas div { background: var(--surface); border-radius: 1.4rem; padding: 1.6rem 1.8rem; display: flex; flex-direction: column; gap: .6rem; }
+.m-horoscopo .hs-areas b { font-size: 1.3rem; text-transform: uppercase; letter-spacing: .1em; color: var(--accent); }
+.m-horoscopo .hs-areas span { font-size: 1.8rem; font-weight: 600; line-height: 1.3; }
+.m-horoscopo .hs-lucky { display: flex; gap: 3rem; margin-top: 2rem; font-size: 1.9rem; color: var(--muted); font-weight: 600; }
+.m-horoscopo .hs-lucky b { color: var(--text); }
+.m-horoscopo .hs-lucky i { display: inline-block; width: 1.6rem; height: 1.6rem; border-radius: 50%; margin-right: .7rem; vertical-align: -.15rem; box-shadow: 0 0 0 .2rem var(--text-a12); }
+
+.m-horoscopo .hs-grid { flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 1fr; gap: 1.2rem; }
+.m-horoscopo .hs-cell { background: var(--surface); border-radius: 1.4rem; padding: 1.4rem 1.6rem; display: flex; gap: 1.2rem; align-items: center; min-height: 0; }
+.m-horoscopo .hs-cg { width: 5.6rem; height: 5.6rem; flex: none; border-radius: 50%; background: var(--accent-a15); color: var(--accent); font-size: 3rem; line-height: 5.6rem; text-align: center; font-family: "Segoe UI Symbol", "DejaVu Sans", "Noto Sans Symbols", sans-serif; }
+.m-horoscopo .hs-cell b { display: block; font-size: 1.9rem; font-weight: 900; }
+.m-horoscopo .hs-cell span { font-size: 1.45rem; font-weight: 600; color: var(--muted); line-height: 1.25; }
+
+.o-v .m-horoscopo { padding: 3rem 2.8rem; }
+.o-v .m-horoscopo .hs-main { grid-template-columns: 1fr; gap: 2.4rem; align-content: center; }
+.o-v .m-horoscopo .hs-glyph { width: 16rem; height: 16rem; font-size: 9rem; line-height: 16rem; }
+.o-v .m-horoscopo .hs-areas { grid-template-columns: 1fr; }
+.o-v .m-horoscopo .hs-geral { font-size: 2.6rem; }
+.o-v .m-horoscopo .hs-grid { grid-template-columns: repeat(2, 1fr); }
