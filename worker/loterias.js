@@ -205,11 +205,29 @@ async function readStats(env, request, rows) {
 /* ---------------- leitura para as telas ---------------- */
 const lastKick = {};
 
+// Sem Durable Object (site publicado como Cloudflare Pages): guarda na memória do servidor.
+// Os resultados vêm da Caixa na hora e ficam guardados enquanto a instância estiver viva.
+const mem = new Map();
+export const memoryStub = {
+  semArmazenamento: true,
+  async lotGetOne(k) { return mem.get(k) || null; },
+  async lotGetAll() { const o = {}; mem.forEach((v, k) => { if (!k.startsWith('uso:')) o[k] = v; }); return o; },
+  async lotPut(k, v) { mem.set(k, v); },
+  async lotUsage(mes, inc) { const k = 'uso:' + mes; const n = (mem.get(k) || 0) + (inc || 0); mem.set(k, n); return n; }
+};
+
 export async function loteriasResponse(env, stub, waitUntil, request) {
   const cache = caches.default;
   const key = new Request('https://loterias-cache.rsscreen/v2');
   const hit = await cache.match(key);
   if (hit) return hit;
+  if (stub.semArmazenamento) {
+    // sem armazenamento fixo: busca agora (em paralelo) os jogos que ainda não estão na memória
+    const atual = await stub.lotGetAll();
+    const faltam = JOGOS.filter(j => !atual[j.id] || (isDue(atual[j.id]) && Date.now() - (lastKick[j.id] || 0) > 10 * 60 * 1000));
+    faltam.forEach(j => { lastKick[j.id] = Date.now(); });
+    await Promise.all(faltam.map(j => updateJogo(env, stub, j.id, false).catch(() => {})));
+  }
   const rows = await stub.lotGetAll();
   const jogos = {};
   const estatisticas = await readStats(env, request, rows);

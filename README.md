@@ -11,18 +11,34 @@ em layouts horizontais e verticais. Só HTML, CSS e JS, hospedado no Cloudflare 
 | Painel | `/painel/` (ou `/admin`) | Gera, copia e envia links por WhatsApp. Instalável como app (PWA). |
 | Tela | `/tela/?cliente=...` | O que roda na TV. Sem logo e sem as cores do rsscreen. |
 
-## Publicar no Cloudflare Pages
+## Publicar na Cloudflare (como Worker)
 
-1. Suba esta pasta para um repositório no GitHub.
-2. Cloudflare → Workers & Pages → Create → Pages → conecte o repositório.
-3. **Framework preset:** None · **Build command:** (vazio) · **Output directory:** `/`
-4. Pronto. A pasta `functions/` vira automaticamente o endpoint `/api/rss` (leitor de feeds sem bloqueio de CORS).
+O rsscreen precisa ser publicado como **Worker** (não como Pages). Só o Worker cria sozinho o banco
+D1 (clientes, anúncios, playlists), o monitoramento e a busca automática das loterias.
+
+1. Cloudflare → **Workers & Pages** → **Create** → aba **Workers** → **Import a repository**.
+2. Escolha o repositório `rsscreen` no GitHub.
+3. **Project name:** `rsscreen` (precisa ser igual ao `name` em `wrangler.jsonc`; se a Cloudflare
+   não aceitar esse nome, use outro e troque o `name` em `wrangler.jsonc` para o mesmo).
+   **Build command:** (vazio) · **Deploy command:** `npx wrangler deploy` (padrão).
+4. Clique em **Deploy**. O banco D1 e o monitoramento são criados nesse primeiro deploy.
+5. O endereço novo fica `https://rsscreen.<sua-conta>.workers.dev`.
+6. (Opcional) Chave paga da apiloterias: Worker → **Settings → Variables and Secrets** →
+   **Add** → tipo *Secret*, nome `APILOTERIAS_KEY`.
 
 Cada `git push` publica uma versão nova.
 
-**Criou como Worker em vez de Pages?** Também funciona: o repositório tem `wrangler.jsonc` e
-`worker/index.js`. No projeto Worker, o comando de deploy é `npx wrangler deploy` (padrão).
-O nome em `wrangler.jsonc` (`rsscreen`) deve ser igual ao nome do Worker no Cloudflare.
+### Os links antigos (rsscreen.pages.dev) continuam funcionando
+
+Se o site já estava publicado como Pages, não apague o projeto Pages. Nele, vá em
+**Settings → Variables and Secrets** → **Add** → nome `WORKER_URL`, valor
+`https://rsscreen.<sua-conta>.workers.dev` → salve e clique em **Retry deployment** (ou faça
+qualquer push). A partir daí, todo acesso ao endereço antigo é levado para o Worker com os mesmos
+parâmetros (`functions/_middleware.js`), então as TVs dos clientes não precisam de link novo.
+
+Enquanto isso não for feito, o Pages funciona em modo reduzido (`functions/api/[[path]].js`):
+notícias, clima, cotações, futebol e loterias funcionam; anúncios aparecem como "Anuncie aqui";
+clientes ficam no `config/clientes.js`; playlists e monitoramento ficam indisponíveis.
 
 ## Cadastrar cliente (banco D1)
 

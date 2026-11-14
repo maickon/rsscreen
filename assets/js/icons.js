@@ -37,7 +37,7 @@
     send: '<path d="M14.54 21.69a.5.5 0 0 0 .94-.03l6.5-19a.5.5 0 0 0-.64-.64l-19 6.5a.5.5 0 0 0-.03.94l7.93 3.18a2 2 0 0 1 1.11 1.11z"/><path d="m21.85 2.15-10.94 10.94"/>',
     chevron: '<path d="m6 9 6 6 6-6"/>',
     arrow: '<path d="M5 12h14M12 5l7 7-7 7"/>',
-    whatsapp: '<path d="M3 21l1.65-4.8A9 9 0 1 1 7.8 19.35z"/><path fill="currentColor" stroke="none" d="M9.3 8.2c.3-.6.9-.6 1.2 0l.6 1.4c.1.3 0 .6-.2.8l-.5.5c.5 1 1.3 1.8 2.3 2.3l.5-.5c.2-.2.5-.3.8-.2l1.4.6c.6.3.6.9 0 1.2-.8.6-1.8.8-2.7.4a8 8 0 0 1-3.9-3.9c-.4-.9-.2-1.9.5-2.6z"/>'
+    whatsapp: '<path d="M3 21l1.65-4.8A9 9 0 1 1 7.8 19.35z"/><path fill="currentColor" stroke="none" transform="translate(7.1 6.7) scale(.43)" d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>'
   };
   window.ICON = function (name, cls) {
     return '<svg class="ico ' + (cls || '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (P[name] || P.sparkles) + '</svg>';
