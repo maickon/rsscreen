@@ -42,7 +42,7 @@
 
 .hero-visual { position: relative; padding: 0 70px 40px 0; }
 .hero-tv { transform: perspective(1600px) rotateY(-6deg); transform-origin: left center; }
-.hero-totem { position: absolute; right: 0; bottom: 0; width: 34%; transform: perspective(1600px) rotateY(-6deg); }
+.hero-totem { position: absolute; right: 0; bottom: 0; width: 34%; transform: perspective(1400px) rotateY(16deg); transform-origin: right center; }
 .live-pill {
   position: absolute; left: 18px; top: -14px;
   background: var(--ink); color: #fff; font-size: 12px; font-weight: 700;

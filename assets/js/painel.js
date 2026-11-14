@@ -30,6 +30,21 @@
     set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) { toast('Armazenamento do navegador indisponível', 'x'); } }
   };
 
+  // "Meus links" vindos do endereço antigo (rsscreen.pages.dev), trazidos pelo redirecionamento
+  (function importarLinks() {
+    const m = location.hash.match(/^#importar-links=(.+)$/);
+    if (!m) return;
+    try {
+      const vindos = JSON.parse(decodeURIComponent(m[1]));
+      const atuais = store.get(LINKS_KEY, []);
+      const ids = new Set(atuais.map(r => r.id));
+      const novos = (Array.isArray(vindos) ? vindos : []).filter(r => r && r.id && !ids.has(r.id));
+      if (novos.length) store.set(LINKS_KEY, atuais.concat(novos));
+      setTimeout(() => toast(novos.length + ' links trazidos do endereço antigo'), 800);
+    } catch (_) {}
+    try { history.replaceState(null, '', location.pathname + '#links'); } catch (_) { location.hash = '#links'; }
+  })();
+
   let clients = RS.clients();
   let activeClients = clients.filter(c => c.ativo);
   let dbMode = false;          // true = clientes vêm do banco D1
@@ -120,7 +135,13 @@
   $('#sideBackdrop').addEventListener('click', () => $('#app').classList.remove('menu-open'));
 
   /* =================== links salvos =================== */
-  function getLinks() { return store.get(LINKS_KEY, []); }
+  // os links guardados apontam para o endereço onde foram criados: mostra sempre com o endereço atual
+  function getLinks() {
+    return store.get(LINKS_KEY, []).map(r => {
+      if (r && r.url) r.url = r.url.replace(/^https?:\/\/[^/]+\/(?:[^?]*\/)?tela\/\?/, RS.ROOT_URL + 'tela/?');
+      return r;
+    });
+  }
   function saveLinks(list) { store.set(LINKS_KEY, list); updateLinksCount(); }
   function updateLinksCount() { const n = getLinks().length; $('#navLinksCount').textContent = n ? String(n) : ''; }
 
