@@ -278,6 +278,13 @@ export class Stats extends DurableObject {
     return Object.values(out).sort((a, b) => b.reqs - a.reqs || b.aparelhos - a.aparelhos);
   }
 
+  // Pedidos de hoje (dia UTC, o mesmo da cota da Cloudflare) de cada cliente: { chave: n }
+  pedidosHoje() {
+    const out = {};
+    this.sql.exec("SELECT key, n FROM counts WHERE dim = 'cli-req' AND day = ?", day()).toArray().forEach(r => { out[r.key] = (out[r.key] || 0) + r.n; });
+    return out;
+  }
+
   // Posição do aparelho entre os do cliente, pela data em que apareceu pela primeira vez (0 = o mais antigo).
   // Só conta aparelhos vistos nos últimos 7 dias. Aparelho ainda não registrado: -1 (fica dentro do plano).
   posicao(c, dev) {

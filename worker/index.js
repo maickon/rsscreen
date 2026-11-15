@@ -143,6 +143,40 @@ function pedidosDemais(path, url) {
   return ++e.n > LIMITE.max;
 }
 
+/* ---------- limite diário por cliente ----------
+   Um cliente sozinho não pode gastar a cota do dia de todos (100 mil pedidos no plano grátis).
+   Passou do limite dele, as TVs dele recebem 429 com pausa de 1 hora: continuam mostrando o que já
+   têm guardado e tentam de novo depois. O limite de cada cliente fica no cadastro (0 = automático).
+   A lista de quem passou é recalculada a cada 5 minutos (1 consulta ao contador e 1 ao banco). */
+const LIMITE_DIA_PADRAO = 40000;
+const PAUSA_LIMITE_S = 3600;
+const limiteDia = { t: 0, acima: new Set(), buscando: null };
+async function clientesAcimaDoLimite(env) {
+  if (Date.now() - limiteDia.t < 5 * 60000) return limiteDia.acima;
+  if (!limiteDia.buscando) limiteDia.buscando = (async () => {
+    try {
+      const stub = statsStub(env);
+      if (stub) {
+        const [hoje, cs] = await Promise.all([stub.pedidosHoje(), env.DB ? listClientes(env) : null]);
+        const lim = {};
+        (cs || []).forEach(c => { lim[c.chave] = Number(c.limite) || LIMITE_DIA_PADRAO; });
+        const acima = new Set();
+        Object.keys(hoje).forEach(k => { if (hoje[k] > (lim[k] || LIMITE_DIA_PADRAO) && k !== '(sem identificação)') acima.add(k); });
+        limiteDia.acima = acima;
+      }
+    } catch (_) {}
+    limiteDia.t = Date.now();
+    limiteDia.buscando = null;
+  })();
+  await limiteDia.buscando;
+  return limiteDia.acima;
+}
+function clienteDoPedido(path, url) {
+  // a conferência do cliente fica de fora: sem ela uma TV nova mostraria "tela não autorizada"
+  if (path === '/api/cliente' || path.startsWith('/api/admin/') || path.startsWith('/api/stats') || LIVRES.some(p => path.startsWith(p)) || url.searchParams.get('og')) return '';
+  return String(url.searchParams.get('rc') || url.searchParams.get('cliente') || url.searchParams.get('chave') || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 60);
+}
+
 /* ---------- rotas ---------- */
 export default {
   // Cron: resultados de loterias (só busca os jogos cujo sorteio já aconteceu)
@@ -163,6 +197,13 @@ export default {
       maybeFlush(env, waitUntil);
       return new Response(JSON.stringify({ erro: 'pedidos-demais', pausa: LIMITE.pausaS }),
         { status: 429, headers: Object.assign({ 'Content-Type': 'application/json; charset=utf-8', 'Retry-After': String(LIMITE.pausaS), 'Cache-Control': 'no-store' }, CORS) });
+    }
+    const cliPedido = clienteDoPedido(path, url);
+    if (cliPedido && (await clientesAcimaDoLimite(env)).has(cliPedido)) {
+      trackRequest(request, 'limitado');
+      maybeFlush(env, waitUntil);
+      return new Response(JSON.stringify({ erro: 'limite-diario', pausa: PAUSA_LIMITE_S }),
+        { status: 429, headers: Object.assign({ 'Content-Type': 'application/json; charset=utf-8', 'Retry-After': String(PAUSA_LIMITE_S), 'Cache-Control': 'no-store' }, CORS) });
     }
 
     if (path === '/api/rss') {

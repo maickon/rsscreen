@@ -25,11 +25,13 @@ export async function ensureSchema(env) {
   ]);
   // coluna nova: mostrar o aviso discreto nas telas que passam do plano (ligado pelo operador)
   try { await env.DB.prepare('ALTER TABLE clientes ADD COLUMN aviso INTEGER DEFAULT 0').run(); } catch (_) {}
+  // coluna nova: limite diário de pedidos do cliente (0 = automático)
+  try { await env.DB.prepare('ALTER TABLE clientes ADD COLUMN limite INTEGER DEFAULT 0').run(); } catch (_) {}
   schemaOk = true;
   return true;
 }
 
-const FIELDS = ['chave', 'nome', 'whatsapp', 'plano', 'valor', 'telas', 'vencimento', 'ativo', 'demo', 'obs', 'aviso'];
+const FIELDS = ['chave', 'nome', 'whatsapp', 'plano', 'valor', 'telas', 'vencimento', 'ativo', 'demo', 'obs', 'aviso', 'limite'];
 
 function clean(c) {
   const out = {
@@ -43,7 +45,8 @@ function clean(c) {
     ativo: c.ativo === false || c.ativo === 0 || c.ativo === '0' ? 0 : 1,
     demo: c.demo ? 1 : 0,
     obs: String(c.obs || '').slice(0, 500),
-    aviso: c.aviso ? 1 : 0
+    aviso: c.aviso ? 1 : 0,
+    limite: Math.max(0, Math.min(10000000, parseInt(c.limite, 10) || 0))
   };
   return out;
 }

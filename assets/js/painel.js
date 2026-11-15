@@ -541,7 +541,7 @@
   /* =================== CLIENTES =================== */
   const fromDb = r => ({
     nome: r.nome, chave: r.chave, whatsapp: r.whatsapp || '', ativo: !!r.ativo, demo: !!r.demo,
-    plano: r.plano || '', valor: Number(r.valor) || 0, telas: Number(r.telas) || 0, vencimento: Number(r.vencimento) || 0, obs: r.obs || '', aviso: !!r.aviso
+    plano: r.plano || '', valor: Number(r.valor) || 0, telas: Number(r.telas) || 0, vencimento: Number(r.vencimento) || 0, obs: r.obs || '', aviso: !!r.aviso, limite: Number(r.limite) || 0
   });
 
   // Tenta o banco D1; sem ele (ou fora da Cloudflare) continua com o config/clientes.js
@@ -687,6 +687,7 @@
     $('#dbTelas').value = 1;
     $('#dbAtivo').checked = true;
     $('#dbAviso').checked = false;
+    $('#dbLimite').value = '';
     suggestValor();
     $('#dbKey').textContent = '—';
     $('#dbFormTitle').textContent = 'Cadastrar cliente';
@@ -708,6 +709,7 @@
     $('#dbObs').value = c.obs;
     $('#dbAtivo').checked = c.ativo;
     $('#dbAviso').checked = !!c.aviso;
+    $('#dbLimite').value = c.limite || '';
     $('#dbKey').textContent = c.chave;
     $('#dbFormTitle').textContent = 'Editar cliente';
     $('#dbFormSub').textContent = 'A chave não muda ao trocar o nome: os links continuam valendo.';
@@ -758,6 +760,7 @@
       obs: $('#dbObs').value,
       ativo: $('#dbAtivo').checked,
       aviso: $('#dbAviso').checked,
+      limite: $('#dbLimite').value,
       demo: cur ? cur.demo : false
     };
     $('#dbSave').disabled = true;
@@ -1736,7 +1739,7 @@
   const TIPO_NOME = {
     noticias: 'Notícias', rss: 'Notícias (versão antiga, fonte por fonte)', og: 'Fotos de notícias', hit: 'Sinal da tela',
     cliente: 'Conferência do cliente', anuncios: 'Anúncios', playlist: 'Playlist', futebol: 'Futebol', loterias: 'Loterias',
-    agro: 'Cotações do agro', lista: 'Tabelas e cardápios', pausado: 'Recusados (aparelho com pedidos demais)'
+    agro: 'Cotações do agro', lista: 'Tabelas e cardápios', pausado: 'Recusados (aparelho com pedidos demais)', limitado: 'Recusados (cliente passou do limite do dia)'
   };
   const SEM_ID = '(sem identificação)';
   let cliDet = null, cliSel = '';
@@ -1760,6 +1763,17 @@
     if (!t) return '<small>sem limite cadastrado</small>';
     const acima = c.aparelhos > t;
     return '<span class="st ' + (acima ? 'st-bad' : 'st-ok') + '">' + fmtN(c.aparelhos) + ' / ' + fmtN(t) + '</span>' + (acima ? '<br><small>' + fmtN(c.aparelhos - t) + ' acima do plano</small>' : '');
+  }
+  // pedidos de hoje (dia UTC, o mesmo da cota da Cloudflare) x limite diário do cadastro
+  const LIMITE_DIA = 40000;
+  const limiteDe = key => { const c = clients.find(x => x.chave === key); return (c && c.limite) || LIMITE_DIA; };
+  function alertaLimite(d) {
+    const hoje = new Date().toISOString().slice(0, 10);
+    const perto = (d.porCliente || []).filter(c => c.cliente !== SEM_ID && (c.dias[hoje] || 0) >= limiteDe(c.cliente) * 0.8);
+    if (!perto.length) return '';
+    return '<div class="card mon-alerta">' + ICON('zap') + '<div><b>Limite de pedidos do dia</b><p>' +
+      perto.map(c => { const n = c.dias[hoje] || 0, l = limiteDe(c.cliente); return esc(nomeCliente(c.cliente)) + ': ' + fmtN(n) + ' de ' + fmtN(l) + (n > l ? ' (passou: as TVs seguem com o conteúdo guardado e tentam de novo a cada hora)' : ' (perto do limite)'); }).join(' · ') +
+      '. O limite volta a zero à meia-noite (horário de Brasília: 21h). Para mudar, edite o cadastro do cliente.</p></div></div>';
   }
   function alertaPlanos(d) {
     const acima = (d.porCliente || []).filter(c => c.cliente !== SEM_ID && contratadas(c.cliente) && c.aparelhos > contratadas(c.cliente));
@@ -1926,7 +1940,7 @@
         '<div class="card kpi"><span>Requisições</span><b>' + fmtN(tot) + '</b><small>' + (d.dias === 1 ? 'hoje' : 'últimos ' + d.dias + ' dias') + '</small></div>' +
         '<div class="card kpi' + (bad ? ' kpi-bad' : '') + '"><span>Feeds com problema</span><b>' + fmtN(bad + warn) + '</b><small>' + okN + ' ativos · ' + feeds.length + ' cadastrados</small></div>' +
       '</div>' +
-      alertaPlanos(d) + cardClientes(d) +
+      alertaLimite(d) + alertaPlanos(d) + cardClientes(d) +
       '<div id="monLot"></div>' +
       '<div class="card"><div class="card-head"><div><h3>Requisições por dia</h3><p>Sinais das telas (a cada 30 min), leituras de feed e buscas de foto.</p></div></div>' + chart + '</div>' +
 
