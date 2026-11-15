@@ -32,6 +32,8 @@ function cleanDados(d) {
   keys.forEach(k => { if (d && d[k] != null && d[k] !== '') out[k] = String(d[k]).slice(0, k === 'texto' || k === 'itens' ? 600 : k === 'video' ? 500 : 160); });
   if (out.video && !/^https:\/\//i.test(out.video)) delete out.video;
   if (out.cor && !/^#[0-9a-f]{6}$/i.test(out.cor)) delete out.cor;
+  // foto de um modelo pronto: só o número de uma foto do Pexels, nunca um endereço livre
+  if (d && /^\d{3,12}$/.test(String(d.foto || ''))) out.foto = String(d.foto);
   return out;
 }
 

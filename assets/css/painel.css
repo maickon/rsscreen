@@ -504,3 +504,19 @@ body.modal-open { overflow: hidden; }
 #cModal #dbNew { display: none !important; }
 #cModal .card-head > [data-close] { position: absolute; top: 14px; right: 14px; }
 #cModal .card-head > div { padding-right: 44px; }
+
+/* anúncios prontos por nicho */
+.ad-prontos-wrap { gap: 8px; }
+.ad-prontos { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
+.ad-prontos:empty { display: none; }
+.ad-pronto { display: flex; align-items: center; gap: 10px; text-align: left; padding: 6px; border: 1px solid var(--line-strong); border-left: 4px solid var(--pc, var(--brand)); border-radius: 10px; background: var(--bg); font: inherit; cursor: pointer; min-width: 0; }
+.ad-pronto:hover { box-shadow: 0 0 0 1px var(--pc, var(--brand)); }
+.ad-pronto img, .ad-pronto i { flex: none; width: 46px; height: 46px; border-radius: 8px; object-fit: cover; display: grid; place-items: center; background: var(--bg-soft); color: var(--pc); }
+.ad-pronto span { min-width: 0; }
+.ad-pronto b { display: block; font-size: 13px; }
+.ad-pronto small { display: block; font-size: 11.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* alerta de clientes acima do plano (monitoramento) */
+.mon-alerta { display: flex; gap: 12px; align-items: flex-start; border-color: var(--warning, #f59e0b); background: color-mix(in srgb, var(--warning, #f59e0b) 10%, var(--bg)); }
+.mon-alerta > .ico, .mon-alerta > svg { flex: none; width: 22px; height: 22px; color: var(--warning, #f59e0b); margin-top: 2px; }
+.mon-alerta p { font-size: 13.5px; color: var(--text-2); margin-top: 4px; }

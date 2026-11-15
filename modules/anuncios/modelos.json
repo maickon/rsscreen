@@ -1,0 +1,664 @@
+{
+ "_comentario": "Anúncios prontos por nicho para o operador usar como base no painel. foto = número de uma foto do Pexels (uso livre, conferida).",
+ "nichos": [
+  "Açougue",
+  "Hortifrúti",
+  "Padaria",
+  "Mercado",
+  "Lanchonete",
+  "Pizzaria",
+  "Açaí",
+  "Cafeteria",
+  "Adega e bebidas",
+  "Restaurante",
+  "Farmácia",
+  "Pet shop",
+  "Barbearia e salão",
+  "Academia",
+  "Clínica e odontologia",
+  "Oficina e autopeças",
+  "Loja de roupas e calçados",
+  "Ótica",
+  "Material de construção",
+  "Imobiliária",
+  "Escola e cursos",
+  "Avisos gerais",
+  "Eventos"
+ ],
+ "modelos": [
+  {
+   "id": "m1",
+   "nicho": "Açougue",
+   "nome": "Oferta de carne",
+   "modelo": "oferta",
+   "cor": "#E11D48",
+   "duracao": 12,
+   "dados": {
+    "selo": "OFERTA",
+    "titulo": "Picanha bovina",
+    "subtitulo": "Corte nobre, ideal para o churrasco do fim de semana",
+    "preco": "69,90",
+    "precoDe": "79,90",
+    "cta": "Só neste fim de semana!",
+    "texto": "Preço do quilo. Enquanto durar o estoque."
+   },
+   "foto": "8444102"
+  },
+  {
+   "id": "m2",
+   "nicho": "Açougue",
+   "nome": "Kit churrasco",
+   "modelo": "oferta",
+   "cor": "#F97316",
+   "duracao": 12,
+   "dados": {
+    "selo": "KIT CHURRASCO",
+    "titulo": "Kit churrasco completo",
+    "subtitulo": "Picanha, linguiça, frango e pão de alho",
+    "preco": "89,90",
+    "cta": "Encomende pelo WhatsApp"
+   },
+   "foto": "3997609"
+  },
+  {
+   "id": "m3",
+   "nicho": "Açougue",
+   "nome": "Apresentação do açougue",
+   "modelo": "servico",
+   "cor": "#E11D48",
+   "duracao": 12,
+   "dados": {
+    "selo": "AÇOUGUE",
+    "titulo": "Açougue do Bairro",
+    "subtitulo": "Carne fresca todos os dias",
+    "itens": "Cortes bovinos e suínos\nFrango resfriado\nLinguiças da casa\nCortes sob encomenda",
+    "cta": "Peça pelo WhatsApp e retire sem fila"
+   },
+   "foto": "618773"
+  },
+  {
+   "id": "m4",
+   "nicho": "Hortifrúti",
+   "nome": "Oferta da feira",
+   "modelo": "oferta",
+   "cor": "#16A34A",
+   "duracao": 12,
+   "dados": {
+    "selo": "FEIRA DA SEMANA",
+    "titulo": "Tomate selecionado",
+    "subtitulo": "Firme e fresquinho, direto do produtor",
+    "preco": "4,99",
+    "precoDe": "6,99",
+    "cta": "Terça e quarta verde",
+    "texto": "Preço do quilo."
+   },
+   "foto": "30893233"
+  },
+  {
+   "id": "m5",
+   "nicho": "Hortifrúti",
+   "nome": "Apresentação do hortifrúti",
+   "modelo": "servico",
+   "cor": "#16A34A",
+   "duracao": 12,
+   "dados": {
+    "selo": "HORTIFRÚTI",
+    "titulo": "Hortifrúti da Praça",
+    "subtitulo": "Frutas, legumes e verduras fresquinhos",
+    "itens": "Chegada de mercadoria todo dia\nProdutos selecionados\nCestas para empresas\nEntrega no bairro",
+    "cta": "Faça sua lista pelo WhatsApp"
+   },
+   "foto": "17302468"
+  },
+  {
+   "id": "m6",
+   "nicho": "Padaria",
+   "nome": "Pão quentinho",
+   "modelo": "aviso",
+   "cor": "#C2621F",
+   "duracao": 12,
+   "dados": {
+    "selo": "SAINDO DO FORNO",
+    "titulo": "Pão francês quentinho a toda hora",
+    "texto": "Fornadas às 6h, 10h, 16h e 18h.",
+    "cta": "Passe aqui e leve o seu!"
+   }
+  },
+  {
+   "id": "m7",
+   "nicho": "Padaria",
+   "nome": "Café da manhã",
+   "modelo": "oferta",
+   "cor": "#C2621F",
+   "duracao": 12,
+   "dados": {
+    "selo": "COMBO",
+    "titulo": "Café da manhã completo",
+    "subtitulo": "Café com leite, pão na chapa e suco natural",
+    "preco": "14,90",
+    "cta": "Todos os dias até as 10h"
+   },
+   "foto": "1287278"
+  },
+  {
+   "id": "m8",
+   "nicho": "Padaria",
+   "nome": "Encomendas de festa",
+   "modelo": "servico",
+   "cor": "#DB2777",
+   "duracao": 12,
+   "dados": {
+    "selo": "ENCOMENDAS",
+    "titulo": "Bolos e salgados para festas",
+    "subtitulo": "Faça sua encomenda com 48h de antecedência",
+    "itens": "Bolos decorados\nCento de salgados\nDocinhos\nTortas doces e salgadas",
+    "cta": "Encomende pelo WhatsApp"
+   },
+   "foto": "2245293"
+  },
+  {
+   "id": "m9",
+   "nicho": "Mercado",
+   "nome": "Oferta de mercado",
+   "modelo": "oferta",
+   "cor": "#2563EB",
+   "duracao": 12,
+   "dados": {
+    "selo": "OFERTA",
+    "titulo": "Arroz tipo 1 – 5 kg",
+    "subtitulo": "Agulhinha, qualidade garantida",
+    "preco": "24,90",
+    "precoDe": "29,90",
+    "cta": "Limite de 3 por cliente"
+   },
+   "foto": "32550092"
+  },
+  {
+   "id": "m10",
+   "nicho": "Mercado",
+   "nome": "Dia de ofertas",
+   "modelo": "aviso",
+   "cor": "#EAB308",
+   "duracao": 12,
+   "dados": {
+    "selo": "QUARTA DA ECONOMIA",
+    "titulo": "Toda quarta-feira, preços baixos em todo o mercado",
+    "texto": "Hortifrúti, carnes e mercearia com descontos especiais.",
+    "cta": "Aproveite!"
+   }
+  },
+  {
+   "id": "m11",
+   "nicho": "Lanchonete",
+   "nome": "Lanche em destaque",
+   "modelo": "oferta",
+   "cor": "#F97316",
+   "duracao": 12,
+   "dados": {
+    "selo": "NOVIDADE",
+    "titulo": "Hambúrguer artesanal",
+    "subtitulo": "Blend 180 g, cheddar, bacon e molho da casa",
+    "preco": "32,90",
+    "cta": "Peça já no balcão"
+   },
+   "foto": "12034622"
+  },
+  {
+   "id": "m12",
+   "nicho": "Lanchonete",
+   "nome": "Combo do dia",
+   "modelo": "oferta",
+   "cor": "#E11D48",
+   "duracao": 12,
+   "dados": {
+    "selo": "COMBO",
+    "titulo": "X-Tudo + batata + refri",
+    "subtitulo": "O combo mais pedido da casa",
+    "preco": "34,90",
+    "precoDe": "42,90",
+    "cta": "Só hoje!"
+   },
+   "foto": "3219547"
+  },
+  {
+   "id": "m13",
+   "nicho": "Lanchonete",
+   "nome": "Delivery",
+   "modelo": "servico",
+   "cor": "#16A34A",
+   "duracao": 12,
+   "dados": {
+    "selo": "DELIVERY",
+    "titulo": "Agora entregamos na sua casa",
+    "subtitulo": "Lanches, porções e bebidas",
+    "itens": "Pedido pelo WhatsApp\nEntrega rápida no bairro\nPix ou cartão na entrega",
+    "cta": "Chame no WhatsApp"
+   },
+   "foto": "70497"
+  },
+  {
+   "id": "m14",
+   "nicho": "Pizzaria",
+   "nome": "Promoção de pizza",
+   "modelo": "oferta",
+   "cor": "#E11D48",
+   "duracao": 12,
+   "dados": {
+    "selo": "TERÇA DA PIZZA",
+    "titulo": "Pizza grande de qualquer sabor",
+    "subtitulo": "Massa fina, molho artesanal e muito recheio",
+    "preco": "49,90",
+    "precoDe": "64,90",
+    "cta": "Toda terça-feira"
+   },
+   "foto": "2762938"
+  },
+  {
+   "id": "m15",
+   "nicho": "Pizzaria",
+   "nome": "Rodízio",
+   "modelo": "aviso",
+   "cor": "#F97316",
+   "duracao": 12,
+   "dados": {
+    "selo": "RODÍZIO",
+    "titulo": "Rodízio de pizza às sextas e sábados",
+    "texto": "Mais de 30 sabores doces e salgados à vontade.",
+    "cta": "Reserve sua mesa"
+   }
+  },
+  {
+   "id": "m16",
+   "nicho": "Açaí",
+   "nome": "Açaí em oferta",
+   "modelo": "oferta",
+   "cor": "#7C3AED",
+   "duracao": 12,
+   "dados": {
+    "selo": "PROMOÇÃO",
+    "titulo": "Açaí 500 ml",
+    "subtitulo": "Com 3 acompanhamentos à sua escolha",
+    "preco": "16,90",
+    "precoDe": "19,90",
+    "cta": "Refresque seu dia!"
+   },
+   "foto": "8230032"
+  },
+  {
+   "id": "m17",
+   "nicho": "Cafeteria",
+   "nome": "Café especial",
+   "modelo": "oferta",
+   "cor": "#92400E",
+   "duracao": 12,
+   "dados": {
+    "selo": "CAFÉ ESPECIAL",
+    "titulo": "Cappuccino + pão de queijo",
+    "subtitulo": "A pausa perfeita da tarde",
+    "preco": "12,90",
+    "cta": "Das 14h às 18h"
+   },
+   "foto": "585754"
+  },
+  {
+   "id": "m18",
+   "nicho": "Adega e bebidas",
+   "nome": "Cerveja gelada",
+   "modelo": "oferta",
+   "cor": "#0EA5E9",
+   "duracao": 12,
+   "dados": {
+    "selo": "BEM GELADA",
+    "titulo": "Pack 12 latas",
+    "subtitulo": "Cerveja 350 ml trincando de gelada",
+    "preco": "39,90",
+    "precoDe": "47,90",
+    "cta": "Retire ou peça pelo WhatsApp"
+   },
+   "foto": "14356408"
+  },
+  {
+   "id": "m19",
+   "nicho": "Restaurante",
+   "nome": "Prato do dia",
+   "modelo": "oferta",
+   "cor": "#EA580C",
+   "duracao": 12,
+   "dados": {
+    "selo": "PRATO DO DIA",
+    "titulo": "Feijoada completa",
+    "subtitulo": "Com arroz, couve, farofa, torresmo e laranja",
+    "preco": "29,90",
+    "cta": "Todo sábado no almoço"
+   }
+  },
+  {
+   "id": "m20",
+   "nicho": "Restaurante",
+   "nome": "Almoço executivo",
+   "modelo": "servico",
+   "cor": "#16A34A",
+   "duracao": 12,
+   "dados": {
+    "selo": "ALMOÇO",
+    "titulo": "Almoço executivo",
+    "subtitulo": "De segunda a sexta, das 11h às 15h",
+    "itens": "Arroz, feijão e salada\nCarne do dia\nSuco natural\nSobremesa",
+    "cta": "Comida caseira de verdade"
+   }
+  },
+  {
+   "id": "m21",
+   "nicho": "Farmácia",
+   "nome": "Oferta de farmácia",
+   "modelo": "oferta",
+   "cor": "#16A34A",
+   "duracao": 12,
+   "dados": {
+    "selo": "OFERTA",
+    "titulo": "Protetor solar FPS 50",
+    "subtitulo": "200 ml – proteção UVA e UVB",
+    "preco": "49,90",
+    "precoDe": "62,90",
+    "cta": "Válido enquanto durar o estoque"
+   }
+  },
+  {
+   "id": "m22",
+   "nicho": "Farmácia",
+   "nome": "Serviços da farmácia",
+   "modelo": "servico",
+   "cor": "#0EA5E9",
+   "duracao": 12,
+   "dados": {
+    "selo": "SAÚDE",
+    "titulo": "Cuidamos de você",
+    "subtitulo": "Serviços farmacêuticos sem agendamento",
+    "itens": "Aferição de pressão\nTeste de glicemia\nAplicação de injetáveis\nEntrega em domicílio",
+    "cta": "Pergunte ao nosso farmacêutico"
+   }
+  },
+  {
+   "id": "m23",
+   "nicho": "Pet shop",
+   "nome": "Banho e tosa",
+   "modelo": "servico",
+   "cor": "#0EA5E9",
+   "duracao": 12,
+   "dados": {
+    "selo": "BANHO E TOSA",
+    "titulo": "Seu pet cheiroso e feliz",
+    "subtitulo": "Agende banho e tosa com quem entende",
+    "itens": "Banho com produtos neutros\nTosa higiênica e na tesoura\nTaxi dog\nHidratação de pelos",
+    "cta": "Agende pelo WhatsApp"
+   }
+  },
+  {
+   "id": "m24",
+   "nicho": "Pet shop",
+   "nome": "Ração em oferta",
+   "modelo": "oferta",
+   "cor": "#F97316",
+   "duracao": 12,
+   "dados": {
+    "selo": "OFERTA",
+    "titulo": "Ração premium 15 kg",
+    "subtitulo": "Cães adultos, todas as raças",
+    "preco": "149,90",
+    "precoDe": "179,90",
+    "cta": "Entregamos no bairro"
+   }
+  },
+  {
+   "id": "m25",
+   "nicho": "Barbearia e salão",
+   "nome": "Barbearia",
+   "modelo": "servico",
+   "cor": "#111827",
+   "duracao": 12,
+   "dados": {
+    "selo": "BARBEARIA",
+    "titulo": "Corte e barba com estilo",
+    "subtitulo": "Atendimento com hora marcada",
+    "itens": "Corte masculino\nBarba completa\nSobrancelha\nPigmentação",
+    "cta": "Agende pelo WhatsApp"
+   }
+  },
+  {
+   "id": "m26",
+   "nicho": "Barbearia e salão",
+   "nome": "Promoção de salão",
+   "modelo": "oferta",
+   "cor": "#DB2777",
+   "duracao": 12,
+   "dados": {
+    "selo": "PROMOÇÃO",
+    "titulo": "Escova + hidratação",
+    "subtitulo": "Cabelos brilhantes e saudáveis",
+    "preco": "59,90",
+    "precoDe": "80,00",
+    "cta": "Terças e quartas"
+   }
+  },
+  {
+   "id": "m27",
+   "nicho": "Academia",
+   "nome": "Matrícula",
+   "modelo": "oferta",
+   "cor": "#E11D48",
+   "duracao": 12,
+   "dados": {
+    "selo": "MATRÍCULA GRÁTIS",
+    "titulo": "Plano mensal de musculação",
+    "subtitulo": "Com avaliação física e acompanhamento",
+    "preco": "89,90",
+    "cta": "Comece hoje mesmo!"
+   }
+  },
+  {
+   "id": "m28",
+   "nicho": "Academia",
+   "nome": "Modalidades",
+   "modelo": "servico",
+   "cor": "#F97316",
+   "duracao": 12,
+   "dados": {
+    "selo": "ACADEMIA",
+    "titulo": "Treine com a gente",
+    "subtitulo": "Aberto de segunda a sábado",
+    "itens": "Musculação\nFuncional\nDança e ritmos\nAulas de lutas",
+    "cta": "Faça uma aula experimental grátis"
+   }
+  },
+  {
+   "id": "m29",
+   "nicho": "Clínica e odontologia",
+   "nome": "Clínica odontológica",
+   "modelo": "servico",
+   "cor": "#0EA5E9",
+   "duracao": 12,
+   "dados": {
+    "selo": "ODONTOLOGIA",
+    "titulo": "Seu sorriso em boas mãos",
+    "subtitulo": "Avaliação sem compromisso",
+    "itens": "Limpeza e clareamento\nAparelho ortodôntico\nImplantes\nAtendimento infantil",
+    "cta": "Agende sua avaliação"
+   }
+  },
+  {
+   "id": "m30",
+   "nicho": "Clínica e odontologia",
+   "nome": "Campanha de saúde",
+   "modelo": "aviso",
+   "cor": "#16A34A",
+   "duracao": 12,
+   "dados": {
+    "selo": "CAMPANHA",
+    "titulo": "Cuide da sua saúde: faça seus exames de rotina",
+    "texto": "Check-up anual ajuda a prevenir doenças. Converse com seu médico.",
+    "cta": "Agende sua consulta"
+   }
+  },
+  {
+   "id": "m31",
+   "nicho": "Oficina e autopeças",
+   "nome": "Oficina mecânica",
+   "modelo": "servico",
+   "cor": "#111827",
+   "duracao": 12,
+   "dados": {
+    "selo": "OFICINA",
+    "titulo": "Seu carro em boas mãos",
+    "subtitulo": "Mecânica geral com garantia",
+    "itens": "Troca de óleo e filtros\nFreios e suspensão\nAlinhamento e balanceamento\nAr-condicionado",
+    "cta": "Orçamento sem compromisso"
+   }
+  },
+  {
+   "id": "m32",
+   "nicho": "Oficina e autopeças",
+   "nome": "Troca de óleo",
+   "modelo": "oferta",
+   "cor": "#EAB308",
+   "duracao": 12,
+   "dados": {
+    "selo": "PROMOÇÃO",
+    "titulo": "Troca de óleo + filtro",
+    "subtitulo": "Óleo sintético, mão de obra inclusa",
+    "preco": "149,90",
+    "cta": "Sem agendamento"
+   }
+  },
+  {
+   "id": "m33",
+   "nicho": "Loja de roupas e calçados",
+   "nome": "Liquidação",
+   "modelo": "aviso",
+   "cor": "#E11D48",
+   "duracao": 12,
+   "dados": {
+    "selo": "LIQUIDAÇÃO",
+    "titulo": "Até 50% de desconto em toda a loja",
+    "texto": "Roupas, calçados e acessórios. Peças selecionadas.",
+    "cta": "Só até domingo!"
+   }
+  },
+  {
+   "id": "m34",
+   "nicho": "Ótica",
+   "nome": "Óculos de grau",
+   "modelo": "oferta",
+   "cor": "#2563EB",
+   "duracao": 12,
+   "dados": {
+    "selo": "ÓTICA",
+    "titulo": "Óculos completo de grau",
+    "subtitulo": "Armação + lentes antirreflexo",
+    "preco": "199,90",
+    "cta": "Exame de vista no local"
+   }
+  },
+  {
+   "id": "m35",
+   "nicho": "Material de construção",
+   "nome": "Oferta de construção",
+   "modelo": "oferta",
+   "cor": "#F97316",
+   "duracao": 12,
+   "dados": {
+    "selo": "OFERTA",
+    "titulo": "Cimento 50 kg",
+    "subtitulo": "Entrega rápida na sua obra",
+    "preco": "34,90",
+    "cta": "Faça seu orçamento"
+   }
+  },
+  {
+   "id": "m36",
+   "nicho": "Imobiliária",
+   "nome": "Imóvel em destaque",
+   "modelo": "oferta",
+   "cor": "#16A34A",
+   "duracao": 12,
+   "dados": {
+    "selo": "À VENDA",
+    "titulo": "Casa com 3 quartos",
+    "subtitulo": "2 vagas, quintal e área gourmet",
+    "preco": "380.000,00",
+    "cta": "Agende uma visita"
+   }
+  },
+  {
+   "id": "m37",
+   "nicho": "Escola e cursos",
+   "nome": "Matrículas abertas",
+   "modelo": "aviso",
+   "cor": "#7C3AED",
+   "duracao": 12,
+   "dados": {
+    "selo": "MATRÍCULAS ABERTAS",
+    "titulo": "Cursos profissionalizantes com certificado",
+    "texto": "Informática, administração, inglês e muito mais.",
+    "cta": "Garanta sua vaga"
+   }
+  },
+  {
+   "id": "m38",
+   "nicho": "Avisos gerais",
+   "nome": "Horário de funcionamento",
+   "modelo": "aviso",
+   "cor": "#2563EB",
+   "duracao": 12,
+   "dados": {
+    "selo": "AVISO",
+    "titulo": "Novo horário de funcionamento",
+    "texto": "Segunda a sexta: 8h às 19h\nSábado: 8h às 13h",
+    "cta": "Esperamos por você!"
+   }
+  },
+  {
+   "id": "m39",
+   "nicho": "Avisos gerais",
+   "nome": "Formas de pagamento",
+   "modelo": "servico",
+   "cor": "#16A34A",
+   "duracao": 12,
+   "dados": {
+    "selo": "PAGAMENTO",
+    "titulo": "Facilidade para você pagar",
+    "subtitulo": "Aceitamos todas as formas",
+    "itens": "Pix\nCartão de crédito e débito\nVale-alimentação\nDinheiro",
+    "cta": "Parcelamos no cartão"
+   }
+  },
+  {
+   "id": "m40",
+   "nicho": "Avisos gerais",
+   "nome": "Siga no Instagram",
+   "modelo": "aviso",
+   "cor": "#DB2777",
+   "duracao": 12,
+   "dados": {
+    "selo": "REDES SOCIAIS",
+    "titulo": "Siga a gente no Instagram e fique por dentro das novidades",
+    "cta": "Promoções exclusivas para seguidores"
+   }
+  },
+  {
+   "id": "m41",
+   "nicho": "Eventos",
+   "nome": "Evento / festa",
+   "modelo": "evento",
+   "cor": "#7C3AED",
+   "duracao": 12,
+   "dados": {
+    "selo": "EVENTO",
+    "titulo": "Arraiá da comunidade",
+    "hora": "18h",
+    "local": "Praça central",
+    "texto": "Comidas típicas, quadrilha e música ao vivo.",
+    "cta": "Entrada gratuita"
+   }
+  }
+ ]
+}

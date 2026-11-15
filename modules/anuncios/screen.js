@@ -25,6 +25,13 @@
       if (!previa) await new Promise(r => { previaWait = r; });
       return previa.length ? previa : VAZIO;
     }
+    if (ctx.assunto && ctx.assunto.id === 'exemplo') {
+      // vitrine: alguns modelos prontos de nichos diferentes (página inicial e galeria de modelos)
+      const m = (await S.fetchJson(RS.ROOT_URL + 'modules/anuncios/modelos.json')).modelos || [];
+      const vistos = {};
+      return m.filter(x => !vistos[x.nicho] && (vistos[x.nicho] = 1)).slice(0, 10)
+        .map(x => ({ id: x.id, modelo: x.modelo, anunciante: '', duracao: x.duracao, dados: Object.assign({ cor: x.cor }, x.dados, x.foto ? { foto: x.foto } : {}) }));
+    }
     const d = await S.fetchJson(RS.ROOT_URL + 'api/anuncios?cliente=' + encodeURIComponent(ctx.client.chave) + '&_=' + Math.floor(Date.now() / 60000));
     return d.anuncios && d.anuncios.length ? d.anuncios : VAZIO;
   }
@@ -32,7 +39,9 @@
   /* ---------- peças ---------- */
   function imgUrl(a) {
     if (a.dados && a.dados.imagemUrl) return a.dados.imagemUrl;
-    return a.midia ? RS.ROOT_URL + 'api/midia/' + a.midia : '';
+    if (a.midia) return RS.ROOT_URL + 'api/midia/' + a.midia;
+    const f = a.dados && a.dados.foto;
+    return /^\d+$/.test(String(f || '')) ? 'https://images.pexels.com/photos/' + f + '/pexels-photo-' + f + '.jpeg?auto=compress&cs=tinysrgb&w=1920' : '';
   }
 
   function photo(a, cls) {

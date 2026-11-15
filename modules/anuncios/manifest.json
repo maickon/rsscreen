@@ -8,7 +8,7 @@
   "chamada": "Crie o anúncio do comerciante em 2 minutos, pelo celular, e ele aparece na TV em minutos.",
   "descricao": "O operador cadastra os anúncios dos seus anunciantes direto no painel: oferta com preço de/por, divulgação de serviço, aviso, evento, arte pronta ou vídeo. Cada anúncio tem período de exibição e tempo de tela, e o link do cliente mostra todos em sequência, sempre atualizado.",
   "beneficios": [
-    "6 modelos prontos: oferta, serviço, aviso, evento, arte pronta e vídeo",
+    "Mais de 40 anúncios prontos para 23 nichos, é só trocar os textos",
     "Foto enviada pelo celular, já otimizada para a TV",
     "Período de exibição: o anúncio entra e sai sozinho",
     "Prévia ao vivo antes de publicar",
@@ -24,6 +24,7 @@
     { "id": "moldura", "nome": "Com relógio e data", "descricao": "Os anúncios com uma faixa de relógio e data na parte de baixo." }
   ],
   "assuntos": [
-    { "id": "todos", "nome": "Todos os anúncios ativos do cliente" }
+    { "id": "todos", "nome": "Todos os anúncios ativos do cliente" },
+    { "id": "exemplo", "nome": "Exemplos prontos (vitrine)" }
   ]
 }

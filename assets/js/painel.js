@@ -915,6 +915,34 @@
   let adTimer;
 
   const adModelo = id => AD_MODELOS.find(m => m.id === id) || AD_MODELOS[0];
+  const pexels = (id, w) => 'https://images.pexels.com/photos/' + id + '/pexels-photo-' + id + '.jpeg?auto=compress&cs=tinysrgb&w=' + w;
+  let AD_PRONTOS = null;
+
+  // anúncios prontos por nicho (modules/anuncios/modelos.json): preenchem o formulário para o operador só ajustar
+  async function initProntos() {
+    if (AD_PRONTOS) return;
+    try { AD_PRONTOS = await RS.fetchJson(RS.ROOT_URL + 'modules/anuncios/modelos.json'); } catch (_) { AD_PRONTOS = { nichos: [], modelos: [] }; }
+    $('#adNicho').innerHTML = '<option value="">Escolha o nicho…</option>' + AD_PRONTOS.nichos.map(n => '<option>' + esc(n) + '</option>').join('');
+  }
+  function renderProntos() {
+    const n = $('#adNicho').value;
+    const lista = n ? AD_PRONTOS.modelos.filter(m => m.nicho === n) : [];
+    $('#adProntos').innerHTML = lista.map(m =>
+      '<button type="button" class="ad-pronto" data-pronto="' + esc(m.id) + '" style="--pc:' + esc(m.cor) + '">' +
+        (m.foto ? '<img loading="lazy" alt="" src="' + pexels(m.foto, 200) + '">' : '<i>' + ICON(adModelo(m.modelo).icon) + '</i>') +
+        '<span><b>' + esc(m.nome) + '</b><small>' + esc(m.dados.titulo || '') + '</small></span></button>').join('');
+  }
+  function usarPronto(id) {
+    const m = AD_PRONTOS.modelos.find(x => x.id === id);
+    if (!m) return;
+    if (AD.editing && !confirm('Trocar os textos deste anúncio pelos do modelo "' + m.nome + '"?')) return;
+    AD.modelo = m.modelo; AD.cor = m.cor || '';
+    AD.img = null; AD.midia = ''; if (AD.imgUrl) URL.revokeObjectURL(AD.imgUrl); AD.imgUrl = '';
+    adDados = Object.assign({}, m.dados, m.foto ? { foto: m.foto } : {});
+    $('#adDuracao').value = m.duracao || 10;
+    renderAdForm(); schedulePreviewAd();
+    toast('Modelo aplicado. Troque os textos, o preço e o contato e salve.');
+  }
   const hojeBR = () => new Date(Date.now() - 3 * 3600 * 1000).toISOString().slice(0, 10);
 
   function adStatus(a) {
@@ -942,6 +970,7 @@
     $('#adCores').innerHTML = '<button type="button" class="ad-color auto" data-c="" title="Automática (cor do tema)">A</button>' +
       AD_CORES.map(c => '<button type="button" class="ad-color" data-c="' + c + '" style="background:' + c + '" title="' + c + '"></button>').join('');
     if (!AD.ready) { adReset(); AD.ready = true; }
+    await initProntos();
     await loadAds();
     setPreviewSrc();
   }
@@ -1012,7 +1041,7 @@
   }
 
   function renderThumb() {
-    const u = AD.imgUrl || (AD.midia ? RS.ROOT_URL + 'api/midia/' + AD.midia : '');
+    const u = AD.imgUrl || (AD.midia ? RS.ROOT_URL + 'api/midia/' + AD.midia : '') || (adDados.foto ? pexels(adDados.foto, 400) : '');
     $('#adThumb').innerHTML = u ? '<img src="' + esc(u) + '" alt="">' : ICON('upload');
     $('#adFotoDel').hidden = !u;
   }
@@ -1023,6 +1052,7 @@
     const cur = adCurrentDados();
     keys.forEach(spec => { const k = Array.isArray(spec) ? spec[0] : spec; if (cur[k]) dados[k] = cur[k]; });
     if (AD.cor) dados.cor = AD.cor;
+    if (adModelo(AD.modelo).foto && !AD.img && !AD.midia && adDados.foto) dados.foto = adDados.foto;
     if (AD.modelo === 'imagem' || AD.modelo === 'video') dados.ajuste = $('#adAjuste').value;
     if (forPreview && AD.imgUrl) dados.imagemUrl = AD.imgUrl;
     return {
@@ -1148,13 +1178,16 @@
       AD.img = blob;
       if (AD.imgUrl) URL.revokeObjectURL(AD.imgUrl);
       AD.imgUrl = URL.createObjectURL(blob);
+      delete adDados.foto;
       renderThumb();
       schedulePreviewAd();
       toast('Imagem pronta (' + Math.round(blob.size / 1024) + ' KB)');
     } catch (err) { toast(err.message, 'x'); }
   });
+  $('#adNicho').addEventListener('change', renderProntos);
+  $('#adProntos').addEventListener('click', e => { const b = e.target.closest('[data-pronto]'); if (b) usarPronto(b.dataset.pronto); });
   $('#adFotoDel').addEventListener('click', () => {
-    AD.img = null; AD.midia = '';
+    AD.img = null; AD.midia = ''; delete adDados.foto;
     if (AD.imgUrl) URL.revokeObjectURL(AD.imgUrl);
     AD.imgUrl = '';
     renderThumb();
@@ -1716,17 +1749,34 @@
   const dataHora = t => t ? new Date(t).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—';
   const telaTxt = t => (t || '').split('/').filter(p => p && p !== '-').join(' · ') || '—';
 
+  // telas contratadas (cadastro do cliente) x aparelhos que o monitoramento viu no período
+  const contratadas = key => { const c = clients.find(x => x.chave === key); return c && Number(c.telas) > 0 ? Number(c.telas) : 0; };
+  function planoCel(c) {
+    const t = contratadas(c.cliente);
+    if (c.cliente === SEM_ID) return '—';
+    if (!t) return '<small>sem limite cadastrado</small>';
+    const acima = c.aparelhos > t;
+    return '<span class="st ' + (acima ? 'st-bad' : 'st-ok') + '">' + fmtN(c.aparelhos) + ' / ' + fmtN(t) + '</span>' + (acima ? '<br><small>' + fmtN(c.aparelhos - t) + ' acima do plano</small>' : '');
+  }
+  function alertaPlanos(d) {
+    const acima = (d.porCliente || []).filter(c => c.cliente !== SEM_ID && contratadas(c.cliente) && c.aparelhos > contratadas(c.cliente));
+    if (!acima.length) return '';
+    return '<div class="card mon-alerta">' + ICON('zap') + '<div><b>' + (acima.length === 1 ? '1 cliente está' : acima.length + ' clientes estão') + ' usando mais telas do que o plano</b>' +
+      '<p>' + acima.map(c => esc(nomeCliente(c.cliente)) + ': ' + fmtN(c.aparelhos) + ' aparelhos para ' + fmtN(contratadas(c.cliente)) + ' telas contratadas').join(' · ') +
+      '. As telas continuam funcionando normalmente; use os detalhes e o relatório em PDF para conversar com o cliente. O número de telas contratadas fica no cadastro de cada cliente.</p></div></div>';
+  }
+
   function cardClientes(d) {
     const lista = d.porCliente || [];
     const total = lista.reduce((s, c) => s + c.reqs, 0);
     if (!lista.length) return '<div class="card"><div class="card-head"><div><h3>Consumo por cliente</h3></div></div><p class="mon-empty">Ainda sem dados por cliente. As telas passam a se identificar depois que abrirem a versão nova.</p></div>';
     return '<div class="card"><div class="card-head"><div><h3>Consumo por cliente</h3><p>Quantos aparelhos cada cliente tem, de onde acessam e quantos pedidos fazem ao servidor. Clique em um cliente para ver tudo.</p></div>' +
       '<button class="btn btn-dark btn-sm" data-print="geral">' + ICON('download') + ' Relatório geral em PDF</button></div>' +
-      '<div class="table-wrap"><table class="table mon-cli"><thead><tr><th>Cliente</th><th>Ligados agora</th><th>Aparelhos</th><th>Cidades</th><th>Pedidos</th><th>% do total</th><th>Por aparelho/dia</th><th></th></tr></thead><tbody>' +
+      '<div class="table-wrap"><table class="table mon-cli"><thead><tr><th>Cliente</th><th>Ligados agora</th><th>Aparelhos</th><th>Plano (aparelhos / telas)</th><th>Cidades</th><th>Pedidos</th><th>% do total</th><th>Por aparelho/dia</th><th></th></tr></thead><tbody>' +
       lista.map(c => '<tr class="' + (c.cliente === cliSel ? 'on' : '') + '">' +
         '<td><b>' + esc(nomeCliente(c.cliente)) + '</b>' + (c.cliente === SEM_ID ? '<br><small>telas ainda na versão antiga</small>' : '<br><small class="mono">' + esc(c.cliente) + '</small>') + '</td>' +
         '<td>' + (c.ligados ? '<span class="st st-ok">' + ICON('check') + fmtN(c.ligados) + '</span>' : '0') + '</td>' +
-        '<td><b>' + fmtN(c.aparelhos) + '</b></td><td>' + fmtN(c.cidades) + '</td>' +
+        '<td><b>' + fmtN(c.aparelhos) + '</b></td><td>' + planoCel(c) + '</td><td>' + fmtN(c.cidades) + '</td>' +
         '<td><b>' + fmtN(c.reqs) + '</b><div class="mc-mini"><i style="width:' + Math.max(2, Math.round(c.reqs / Math.max(1, lista[0].reqs) * 100)) + '%"></i></div></td>' +
         '<td>' + pct(c.reqs, total) + '</td><td>' + porAparelhoDia(c.reqs, c.aparelhos, d.dias) + '</td>' +
         '<td>' + (c.cliente === SEM_ID ? '' : '<button class="btn btn-ghost btn-sm" data-cli="' + esc(c.cliente) + '">Detalhes</button>') + '</td></tr>').join('') +
@@ -1873,7 +1923,7 @@
         '<div class="card kpi"><span>Requisições</span><b>' + fmtN(tot) + '</b><small>' + (d.dias === 1 ? 'hoje' : 'últimos ' + d.dias + ' dias') + '</small></div>' +
         '<div class="card kpi' + (bad ? ' kpi-bad' : '') + '"><span>Feeds com problema</span><b>' + fmtN(bad + warn) + '</b><small>' + okN + ' ativos · ' + feeds.length + ' cadastrados</small></div>' +
       '</div>' +
-      cardClientes(d) +
+      alertaPlanos(d) + cardClientes(d) +
       '<div id="monLot"></div>' +
       '<div class="card"><div class="card-head"><div><h3>Requisições por dia</h3><p>Sinais das telas (a cada 30 min), leituras de feed e buscas de foto.</p></div></div>' + chart + '</div>' +
 
