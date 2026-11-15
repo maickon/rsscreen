@@ -1,7 +1,7 @@
 /* rsscreen — service worker
    - Painel instalável (PWA) e funcionando offline
    - Telas continuam rodando se a internet do ponto cair */
-const VERSION = 'rsscreen-v27';
+const VERSION = 'rsscreen-v28';
 const SHELL = [
   './',
   './index.html',
@@ -79,6 +79,11 @@ self.addEventListener('fetch', event => {
     event.respondWith(networkFirst(req));
     return;
   }
-  // CSS, JS e imagens do sistema: rápido do cache, atualiza em segundo plano
+  // CSS e JS: sempre a versão mais nova (arquivos estáticos não contam na cota); sem internet, usa a guardada
+  if (/\.(js|css)$/.test(p)) {
+    event.respondWith(networkFirst(req));
+    return;
+  }
+  // imagens do sistema: rápido do cache, atualiza em segundo plano
   event.respondWith(staleWhileRevalidate(req));
 });

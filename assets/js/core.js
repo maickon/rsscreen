@@ -163,8 +163,20 @@
 
   function registerSW() {
     if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+      // Quando sai uma versão nova, o painel e o editor recarregam sozinhos uma vez para usar os
+      // arquivos novos (antes, o navegador mostrava a versão antiga até o segundo acesso).
+      // As telas das TVs não recarregam aqui: elas têm o próprio controle de atualização.
+      const tela = /\/tela\/?$/.test(location.pathname);
+      if (!tela && navigator.serviceWorker.controller) {
+        let recarregou = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (recarregou) return;
+          recarregou = true;
+          location.reload();
+        });
+      }
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register(ROOT_URL + 'sw.js').catch(() => {});
+        navigator.serviceWorker.register(ROOT_URL + 'sw.js').then(r => { try { r.update(); } catch (_) {} }).catch(() => {});
       });
     }
   }

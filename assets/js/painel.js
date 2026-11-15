@@ -1230,8 +1230,12 @@
     if (fr.dataset.url !== url) { fr.dataset.url = url; fr.src = url; }
   }
   let adJanela = null;   // prévia aberta em nova aba (tela cheia)
+  // formulário ainda vazio: a prévia mostra uma orientação em vez de uma tela escura
+  const AD_DICA = { id: 'dica', modelo: 'aviso', anunciante: '', duracao: 30, dados: { selo: 'PRÉVIA', titulo: 'Escolha um anúncio pronto', texto: 'ou preencha o formulário ao lado. A prévia muda enquanto você digita.' } };
   function sendPreview(alvo) {
-    const msg = { rs: 'previa', anuncios: [adPayload(true)] };
+    const p = adPayload(true), d = p.dados || {};
+    const vazio = !d.titulo && !d.video && !AD.imgUrl && !AD.midia && !d.foto;
+    const msg = { rs: 'previa', anuncios: [vazio ? AD_DICA : p] };
     const alvos = alvo ? [alvo] : [$('#adPreview').contentWindow, adJanela && !adJanela.closed ? adJanela : null];
     alvos.forEach(w => { if (w) try { w.postMessage(msg, location.origin); } catch (_) {} });
   }
