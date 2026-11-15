@@ -62,12 +62,25 @@
     return url + (url.indexOf('?') < 0 ? '?' : '&') + 'rc=' + encodeURIComponent(c) + '&rd=' + encodeURIComponent(deviceId());
   }
 
+  // Servidor pediu uma pausa (429: este aparelho fez pedidos demais): até o fim dela, a tela não pede
+  // nada ao servidor e continua mostrando o conteúdo que já tem guardado.
+  const PAUSA = 'rs_pausa';
+  const emPausa = () => { try { return Number(localStorage.getItem(PAUSA) || 0) > Date.now(); } catch (_) { return false; } };
   function fetchWithTimeout(url, ms) {
     url = identificar(url);
+    const proprio = typeof url === 'string' && url.indexOf(RS.ROOT_URL + 'api/') === 0;
+    if (proprio && emPausa()) return Promise.reject(new Error('Pausa pedida pelo servidor'));
     const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
     const t = setTimeout(() => ctrl && ctrl.abort(), ms || 15000);
     return fetch(url, ctrl ? { signal: ctrl.signal } : {}).then(
-      r => { clearTimeout(t); return r; },
+      r => {
+        clearTimeout(t);
+        if (proprio && r.status === 429) {
+          const s = Math.max(60, Math.min(7200, parseInt(r.headers.get('Retry-After'), 10) || 1800));
+          try { localStorage.setItem(PAUSA, String(Date.now() + s * 1000)); } catch (_) {}
+        }
+        return r;
+      },
       e => { clearTimeout(t); throw e; });
   }
 
@@ -418,7 +431,7 @@
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const r = await res.json();
       if (r && r.banco) {
-        const c = r.cliente ? { nome: r.cliente.nome, chave: r.cliente.chave, ativo: r.cliente.ativo, demo: r.cliente.demo } : null;
+        const c = r.cliente ? { nome: r.cliente.nome, chave: r.cliente.chave, ativo: r.cliente.ativo, demo: r.cliente.demo, fora: !!r.cliente.fora } : null;
         try { if (c) localStorage.setItem(memKey, JSON.stringify({ c, t: Date.now() })); else localStorage.removeItem(memKey); } catch (_) {}
         return c;
       }
@@ -447,6 +460,13 @@
     }
     ctx.client = client;
     document.title = client.nome;
+    // tela além do número contratado (o operador liga este aviso no cadastro do cliente)
+    if (client.fora && !embed && P.get('previa') !== '1') {
+      const f = document.createElement('div');
+      f.className = 'rs-fora';
+      f.textContent = 'Tela fora do plano contratado · fale com seu fornecedor';
+      document.body.appendChild(f);
+    }
 
     try {
       manifest = await RS.loadManifest(state.modulo);

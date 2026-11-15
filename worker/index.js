@@ -121,6 +121,28 @@ async function readJson(request) {
   try { return await request.json(); } catch (_) { return {}; }
 }
 
+/* ---------- proteção contra aparelho com pedidos demais ----------
+   Um player com defeito (recarregando sem parar) pode gastar sozinho a cota do dia de todos os clientes.
+   Cada aparelho tem um limite de pedidos a cada 10 minutos; passou, recebe 429 com Retry-After e a tela
+   para de pedir por 30 minutos, mostrando o conteúdo que já tem guardado. A contagem é por instância do
+   Worker (aproximada), o que basta para pegar os casos de loop. Sinais, fotos e o painel ficam de fora. */
+const LIMITE = { janelaMs: 10 * 60000, max: 40, pausaS: 1800 };
+const contagem = new Map();
+const LIVRES = ['/api/hit', '/api/velocidade', '/api/midia', '/api/editar'];
+function pedidosDemais(path, url) {
+  if (path.startsWith('/api/admin/') || path.startsWith('/api/stats') || LIVRES.some(p => path.startsWith(p)) || url.searchParams.get('og')) return false;
+  const dev = String(url.searchParams.get('rd') || '').slice(0, 120);
+  if (!dev) return false;
+  const agora = Date.now();
+  let e = contagem.get(dev);
+  if (!e || agora - e.t > LIMITE.janelaMs) {
+    e = { t: agora, n: 0 };
+    contagem.delete(dev); contagem.set(dev, e);
+    if (contagem.size > 5000) contagem.delete(contagem.keys().next().value);
+  }
+  return ++e.n > LIMITE.max;
+}
+
 /* ---------- rotas ---------- */
 export default {
   // Cron: resultados de loterias (só busca os jogos cujo sorteio já aconteceu)
@@ -136,6 +158,12 @@ export default {
     if (!path.startsWith('/api/')) return env.ASSETS.fetch(request);
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
     const waitUntil = p => ctx.waitUntil(p);
+    if (pedidosDemais(path, url)) {
+      trackRequest(request, 'pausado');
+      maybeFlush(env, waitUntil);
+      return new Response(JSON.stringify({ erro: 'pedidos-demais', pausa: LIMITE.pausaS }),
+        { status: 429, headers: Object.assign({ 'Content-Type': 'application/json; charset=utf-8', 'Retry-After': String(LIMITE.pausaS), 'Cache-Control': 'no-store' }, CORS) });
+    }
 
     if (path === '/api/rss') {
       if (request.method !== 'GET') return new Response('Método não permitido', { status: 405 });
@@ -275,7 +303,15 @@ export default {
         const n = await countClientes(env);
         if (n <= 0) return new Response(JSON.stringify({ banco: false }), { headers });
         const c = chave ? await getCliente(env, chave) : null;
-        return new Response(JSON.stringify({ banco: true, cliente: c ? { chave: c.chave, nome: c.nome, ativo: !!c.ativo, demo: !!c.demo } : null }), { headers });
+        const out = c ? { chave: c.chave, nome: c.nome, ativo: !!c.ativo, demo: !!c.demo } : null;
+        // aviso de "tela fora do plano": só quando o operador ligou no cadastro. As telas mais antigas
+        // (até o número contratado) ficam dentro do plano; as que entraram depois mostram o aviso discreto.
+        const dev = String(url.searchParams.get('rd') || '').slice(0, 120);
+        const stub = statsStub(env);
+        if (out && c.aviso && c.telas > 0 && dev && stub) {
+          try { const pos = await stub.posicao(c.chave, dev); if (pos >= c.telas) out.fora = true; } catch (_) {}
+        }
+        return new Response(JSON.stringify({ banco: true, cliente: out }), { headers });
       } catch (e) {
         return new Response(JSON.stringify({ banco: false, erro: 'indisponivel' }), { headers });
       }

@@ -278,6 +278,16 @@ export class Stats extends DurableObject {
     return Object.values(out).sort((a, b) => b.reqs - a.reqs || b.aparelhos - a.aparelhos);
   }
 
+  // Posição do aparelho entre os do cliente, pela data em que apareceu pela primeira vez (0 = o mais antigo).
+  // Só conta aparelhos vistos nos últimos 7 dias. Aparelho ainda não registrado: -1 (fica dentro do plano).
+  posicao(c, dev) {
+    const sql = this.sql, desde = Date.now() - 7 * 86400000;
+    const d = sql.exec('SELECT first FROM devices WHERE id = ? AND cliente = ?', dev, c).toArray()[0];
+    if (!d) return -1;
+    const r = sql.exec('SELECT COUNT(*) AS n FROM devices WHERE cliente = ? AND last >= ? AND (first < ? OR (first = ? AND id < ?))', c, desde, d.first, d.first, dev).toArray()[0];
+    return r ? r.n : 0;
+  }
+
   // Tudo sobre um cliente: aparelhos, cidades, telas (links), players e pedidos por dia
   cliente(c, days) {
     const sql = this.sql, now = Date.now();

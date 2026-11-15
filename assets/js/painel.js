@@ -541,7 +541,7 @@
   /* =================== CLIENTES =================== */
   const fromDb = r => ({
     nome: r.nome, chave: r.chave, whatsapp: r.whatsapp || '', ativo: !!r.ativo, demo: !!r.demo,
-    plano: r.plano || '', valor: Number(r.valor) || 0, telas: Number(r.telas) || 0, vencimento: Number(r.vencimento) || 0, obs: r.obs || ''
+    plano: r.plano || '', valor: Number(r.valor) || 0, telas: Number(r.telas) || 0, vencimento: Number(r.vencimento) || 0, obs: r.obs || '', aviso: !!r.aviso
   });
 
   // Tenta o banco D1; sem ele (ou fora da Cloudflare) continua com o config/clientes.js
@@ -686,6 +686,7 @@
     fillPlanos((PLANOS[0] || {}).id);
     $('#dbTelas').value = 1;
     $('#dbAtivo').checked = true;
+    $('#dbAviso').checked = false;
     suggestValor();
     $('#dbKey').textContent = '—';
     $('#dbFormTitle').textContent = 'Cadastrar cliente';
@@ -706,6 +707,7 @@
     $('#dbVenc').value = c.vencimento || '';
     $('#dbObs').value = c.obs;
     $('#dbAtivo').checked = c.ativo;
+    $('#dbAviso').checked = !!c.aviso;
     $('#dbKey').textContent = c.chave;
     $('#dbFormTitle').textContent = 'Editar cliente';
     $('#dbFormSub').textContent = 'A chave não muda ao trocar o nome: os links continuam valendo.';
@@ -755,6 +757,7 @@
       vencimento: $('#dbVenc').value,
       obs: $('#dbObs').value,
       ativo: $('#dbAtivo').checked,
+      aviso: $('#dbAviso').checked,
       demo: cur ? cur.demo : false
     };
     $('#dbSave').disabled = true;
@@ -1733,7 +1736,7 @@
   const TIPO_NOME = {
     noticias: 'Notícias', rss: 'Notícias (versão antiga, fonte por fonte)', og: 'Fotos de notícias', hit: 'Sinal da tela',
     cliente: 'Conferência do cliente', anuncios: 'Anúncios', playlist: 'Playlist', futebol: 'Futebol', loterias: 'Loterias',
-    agro: 'Cotações do agro', lista: 'Tabelas e cardápios'
+    agro: 'Cotações do agro', lista: 'Tabelas e cardápios', pausado: 'Recusados (aparelho com pedidos demais)'
   };
   const SEM_ID = '(sem identificação)';
   let cliDet = null, cliSel = '';

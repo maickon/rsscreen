@@ -211,6 +211,12 @@
     E.ctx.client = client;
     window.__rsCliente = client;
     document.title = client.nome;
+    if (client.fora && !previa) {
+      const f = document.createElement('div');
+      f.className = 'rs-fora';
+      f.textContent = 'Tela fora do plano contratado · fale com seu fornecedor';
+      document.body.appendChild(f);
+    }
     stage.classList.add('pl-stage');
 
     if (previa) {

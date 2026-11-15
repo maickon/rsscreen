@@ -23,11 +23,13 @@ export async function ensureSchema(env) {
       atualizado INTEGER
     )`)
   ]);
+  // coluna nova: mostrar o aviso discreto nas telas que passam do plano (ligado pelo operador)
+  try { await env.DB.prepare('ALTER TABLE clientes ADD COLUMN aviso INTEGER DEFAULT 0').run(); } catch (_) {}
   schemaOk = true;
   return true;
 }
 
-const FIELDS = ['chave', 'nome', 'whatsapp', 'plano', 'valor', 'telas', 'vencimento', 'ativo', 'demo', 'obs'];
+const FIELDS = ['chave', 'nome', 'whatsapp', 'plano', 'valor', 'telas', 'vencimento', 'ativo', 'demo', 'obs', 'aviso'];
 
 function clean(c) {
   const out = {
@@ -40,7 +42,8 @@ function clean(c) {
     vencimento: Math.max(0, Math.min(31, parseInt(c.vencimento, 10) || 0)),
     ativo: c.ativo === false || c.ativo === 0 || c.ativo === '0' ? 0 : 1,
     demo: c.demo ? 1 : 0,
-    obs: String(c.obs || '').slice(0, 500)
+    obs: String(c.obs || '').slice(0, 500),
+    aviso: c.aviso ? 1 : 0
   };
   return out;
 }
@@ -59,7 +62,7 @@ export async function countClientes(env) {
 
 export async function getCliente(env, chave) {
   if (!(await ensureSchema(env))) return null;
-  return env.DB.prepare('SELECT chave, nome, ativo, demo FROM clientes WHERE chave = ?').bind(chave).first();
+  return env.DB.prepare('SELECT chave, nome, ativo, demo, telas, aviso FROM clientes WHERE chave = ?').bind(chave).first();
 }
 
 // Cria ou atualiza (a chave nunca muda, para não quebrar links já enviados)
