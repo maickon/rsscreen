@@ -302,7 +302,8 @@
 
   /* =================== dados e cache offline =================== */
   function cacheKey() {
-    return 'rs_cache_v1_' + [state.modulo, ctx.assunto && ctx.assunto.id, ctx.fonte && ctx.fonte.id].join('_');
+    // &anuncio=<id> (anúncio escolhido na playlist ou modelo da galeria) tem o seu próprio cache
+    return 'rs_cache_v1_' + [state.modulo, ctx.assunto && ctx.assunto.id, ctx.fonte && ctx.fonte.id].join('_') + (P.get('anuncio') ? '_' + P.get('anuncio') : '');
   }
 
   // Na playlist cada aparição continua do slide seguinte ao da última vez

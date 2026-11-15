@@ -15,7 +15,8 @@
       previa = d.anuncios || [];
       if (previaWait) { previaWait(); previaWait = null; } else S.reload();
     });
-    try { window.parent.postMessage({ rs: 'previa-pronta' }, '*'); } catch (_) {}
+    // dentro do painel (iframe) ou aberta em nova aba pelo botão "tela cheia" (window.opener)
+    try { (window.parent !== window ? window.parent : window.opener).postMessage({ rs: 'previa-pronta' }, '*'); } catch (_) {}
   }
 
   const VAZIO = [{ id: 'vazio', modelo: 'aviso', anunciante: '', duracao: 15, dados: { selo: 'Espaço disponível', titulo: 'Anuncie aqui', texto: 'Sua marca nesta tela, para todo mundo que passa por aqui. Fale com o responsável pelo estabelecimento.' } }];
@@ -27,13 +28,18 @@
     }
     if (ctx.assunto && ctx.assunto.id === 'exemplo') {
       // vitrine: alguns modelos prontos de nichos diferentes (página inicial e galeria de modelos)
+      // &anuncio=<id>: mostra só aquele modelo (galeria "Modelos de tela" do painel)
       const m = (await S.fetchJson(RS.ROOT_URL + 'modules/anuncios/modelos.json')).modelos || [];
+      const um = new URLSearchParams(location.search).get('anuncio');
       const vistos = {};
-      return m.filter(x => !vistos[x.nicho] && (vistos[x.nicho] = 1)).slice(0, 10)
+      return (um ? m.filter(x => x.id === um) : m.filter(x => !vistos[x.nicho] && (vistos[x.nicho] = 1)).slice(0, 10))
         .map(x => ({ id: x.id, modelo: x.modelo, anunciante: '', duracao: x.duracao, dados: Object.assign({ cor: x.cor }, x.dados, x.foto ? { foto: x.foto } : {}) }));
     }
+    const so = new URLSearchParams(location.search).get('anuncio');   // playlist com um anúncio escolhido
     const d = await S.fetchJson(RS.ROOT_URL + 'api/anuncios?cliente=' + encodeURIComponent(ctx.client.chave) + '&_=' + Math.floor(Date.now() / 60000));
-    return d.anuncios && d.anuncios.length ? d.anuncios : VAZIO;
+    let lista = d.anuncios || [];
+    if (so && lista.some(a => a.id === so)) lista = lista.filter(a => a.id === so);
+    return lista.length ? lista : VAZIO;
   }
 
   /* ---------- peças ---------- */

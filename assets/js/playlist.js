@@ -23,7 +23,7 @@
     const ads = p.opcoes && p.opcoes.intercalar;
     (p.itens || []).forEach(it => {
       out.push(it);
-      if (ads && it.modulo !== 'anuncios') out.push({ modulo: 'anuncios', assunto: 'todos', layout: p.opcoes.layoutAnuncios || 'padrao', duracao: ads, extra: true });
+      if (ads && it.modulo !== 'anuncios') out.push({ modulo: 'anuncios', assunto: 'todos', layout: p.opcoes.layoutAnuncios || 'padrao', duracao: ads, extra: true, anuncio: p.opcoes.anuncio || '' });
     });
     return out;
   }
@@ -33,7 +33,7 @@
     return RS.buildScreenUrl({
       cliente: E.ctx.client.chave, modulo: it.modulo, assunto: it.assunto, fonte: it.fonte, layout: it.layout,
       orientacao: o, tema: tema(), tempo: it.tempo || ''
-    }) + '&embed=1';
+    }) + (it.anuncio ? '&anuncio=' + encodeURIComponent(it.anuncio) : '') + '&embed=1';
   }
 
   function duration(it) { return Math.max(5, Number(it.duracao) || DUR_PADRAO[it.modulo] || 30); }

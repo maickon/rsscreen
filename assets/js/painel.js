@@ -428,7 +428,8 @@
           const l = m.layouts.find(x => x.id === t.layout);
           return '<li>' + ICON(MOD_ICON(m)) + esc(a ? a.nome : t.assunto) + '<small>' + esc(l ? l.nome : t.layout) + '</small></li>';
         }).join('') + '</ul>' +
-        '<button class="btn btn-dark" data-pack="' + p.id + '">' + ICON('sparkles') + 'Gerar ' + n + ' links</button>' +
+        '<div class="pack-acts"><button class="btn btn-dark" data-pack="' + p.id + '">' + ICON('sparkles') + 'Gerar ' + n + ' links separados</button>' +
+        '<button class="btn btn-primary" data-pack-pl="' + p.id + '" title="Os conteúdos do pacote em sequência num link só, com tempo de cada um e anúncios entre eles">' + ICON('layers') + 'Montar link único</button></div>' +
       '</article>';
     }).join('');
   }
@@ -440,6 +441,13 @@
     toggleIn(PK.orient, b.dataset.v, true); renderPacks();
   });
   $('#packGrid').addEventListener('click', e => {
+    const u = e.target.closest('button[data-pack-pl]');
+    if (u) {
+      if (!PK.cliente) return toast('Escolha o cliente', 'x');
+      PL.cliente = PK.cliente; PL.pacote = u.dataset.packPl;
+      location.hash = '#playlists';
+      return;
+    }
     const b = e.target.closest('button[data-pack]'); if (!b) return;
     const p = pacotes.find(x => x.id === b.dataset.pack);
     if (!p || !PK.cliente) return;
@@ -633,20 +641,20 @@
     } else {
       $('#cKpis').hidden = true;
     }
-    $('#cTable').innerHTML = '<thead><tr><th>Cliente</th><th>Chave</th>' + (dbMode ? '<th>Plano</th><th>Mensal</th>' : '') + '<th>Status</th><th>Links</th><th></th></tr></thead><tbody>' +
+    // sem a coluna da chave (fica no botão de copiar) e com plano e valor juntos: cabe na tela sem rolagem
+    $('#cTable').innerHTML = '<thead><tr><th>Cliente</th>' + (dbMode ? '<th class="c-hide-sm">Plano</th>' : '') + '<th>Status</th><th class="c-hide-sm">Links</th><th></th></tr></thead><tbody>' +
       clients.map(c => '<tr>' +
         '<td><b>' + esc(c.nome) + '</b>' + (c.whatsapp ? '<br><small style="color:var(--muted)">' + esc(c.whatsapp) + '</small>' : '') + '</td>' +
-        '<td><span class="mono">' + esc(c.chave) + '</span></td>' +
         (dbMode
-          ? '<td><small>' + esc((planoById(c.plano) || {}).nome || c.plano || '—') + (c.telas ? ' · ' + c.telas + ' tela' + (c.telas > 1 ? 's' : '') : '') + '</small></td>' +
-            '<td><small>' + (c.valor ? money(c.valor) : '—') + (c.vencimento ? '<br>dia ' + c.vencimento : '') + '</small></td>'
+          ? '<td class="c-hide-sm"><small>' + esc((planoById(c.plano) || {}).nome || c.plano || '—') + (c.telas ? ' · ' + c.telas + ' tela' + (c.telas > 1 ? 's' : '') : '') +
+            '<br>' + (c.valor ? money(c.valor) : '—') + (c.vencimento ? ' · dia ' + c.vencimento : '') + '</small></td>'
           : '') +
-        '<td>' + (!c.ativo ? '<span class="badge">Suspenso</span>' : c.demo ? '<span class="badge badge-brand">Demonstração</span>' : '<span class="badge badge-ok">Ativo</span>') + '</td>' +
-        '<td>' + (counts[c.chave] || 0) + '</td>' +
+        '<td>' + (!c.ativo ? '<span class="badge">Suspenso</span>' : c.demo ? '<span class="badge badge-brand">Demo</span>' : '<span class="badge badge-ok">Ativo</span>') + '</td>' +
+        '<td class="c-hide-sm">' + (counts[c.chave] || 0) + '</td>' +
         '<td><div class="acts">' +
           (dbMode ? '<button class="btn btn-ghost btn-sm" data-edit="' + esc(c.chave) + '">Editar</button>' : '') +
-          '<button class="btn btn-ghost btn-sm btn-icon" data-copy="' + esc(c.chave) + '" title="Copiar chave">' + ICON('copy') + '</button>' +
-          (c.ativo ? '<button class="btn btn-dark btn-sm" data-gen="' + esc(c.chave) + '">' + ICON('link') + 'Gerar</button>' : '') +
+          '<button class="btn btn-ghost btn-sm btn-icon" data-copy="' + esc(c.chave) + '" title="Copiar chave: ' + esc(c.chave) + '">' + ICON('copy') + '</button>' +
+          (c.ativo ? '<button class="btn btn-dark btn-sm btn-icon" data-gen="' + esc(c.chave) + '" title="Gerar links">' + ICON('link') + '</button>' : '') +
         '</div></td>' +
       '</tr>').join('') + '</tbody>';
   }
@@ -829,6 +837,8 @@
     grid.classList.toggle('vert', MD.orient === 'vertical');
     if (!cli) { grid.innerHTML = '<div class="empty">Cadastre um cliente para ver os modelos.</div>'; return; }
     const p = m.padrao || {};
+    $('#mNichoBar').hidden = m.id !== 'anuncios';
+    if (m.id === 'anuncios') return renderModelosAnuncio(cli, grid);
     grid.innerHTML = m.layouts.map(l => {
       const url = RS.buildScreenUrl({ cliente: cli.chave, modulo: m.id, assunto: p.assunto, layout: l.id, orientacao: MD.orient, tema: MD.tema, tempo: 8 });
       return '<div class="card model">' +
@@ -839,6 +849,28 @@
     }).join('');
   }
 
+  // Anúncios: em vez dos 2 layouts, a galeria de anúncios prontos, separada por tipo de comércio
+  async function renderModelosAnuncio(cli, grid) {
+    await initProntos();
+    const nichos = AD_PRONTOS.nichos || [];
+    if (!MD.nicho || nichos.indexOf(MD.nicho) < 0) MD.nicho = nichos[0] || '';
+    $('#mNicho').innerHTML = nichos.map(n => '<button data-nicho="' + esc(n) + '" class="' + (n === MD.nicho ? 'on' : '') + '">' + esc(n) +
+      ' <small>' + AD_PRONTOS.modelos.filter(x => x.nicho === n).length + '</small></button>').join('');
+    grid.innerHTML = AD_PRONTOS.modelos.filter(x => x.nicho === MD.nicho).map(t => {
+      const url = RS.buildScreenUrl({ cliente: cli.chave, modulo: 'anuncios', assunto: 'exemplo', layout: 'padrao', orientacao: MD.orient, tema: MD.tema, tempo: 30 }) + '&anuncio=' + encodeURIComponent(t.id);
+      return '<div class="card model">' +
+        '<div class="' + (MD.orient === 'vertical' ? 'device-totem' : 'device-tv') + '"><div class="screen"><iframe loading="lazy" src="' + esc(url) + '" title="' + esc(t.nome) + '"></iframe></div></div>' +
+        '<div class="model-foot"><div><h3>' + esc(t.nome) + '</h3><p>' + esc(t.dados.titulo || '') + '</p></div>' +
+        '<div class="acts"><a class="btn btn-ghost btn-sm btn-icon" target="_blank" rel="noopener" title="Ver em tela cheia" href="' + esc(url) + '">' + ICON('external') + '</a>' +
+        '<button class="btn btn-dark btn-sm" data-usar-anuncio="' + esc(t.id) + '">Usar</button></div></div>' +
+      '</div>';
+    }).join('');
+  }
+  $('#mNicho').addEventListener('click', e => {
+    const b = e.target.closest('[data-nicho]'); if (!b) return;
+    MD.nicho = b.dataset.nicho; renderModels();
+  });
+
   $('#mModulo').addEventListener('click', e => {
     const b = e.target.closest('button[data-v]'); if (!b) return;
     MD.modulo = b.dataset.v; MD.tema = ''; renderModels();
@@ -848,7 +880,14 @@
     MD.orient = b.dataset.v; renderModels();
   });
   $('#mTema').addEventListener('change', e => { MD.tema = e.target.value; renderModels(); });
-  $('#modelGrid').addEventListener('click', e => {
+  $('#modelGrid').addEventListener('click', async e => {
+    const ua = e.target.closest('[data-usar-anuncio]');
+    if (ua) {
+      // abre Anúncios já com o modelo aplicado no formulário (aplicado ao final do initAds)
+      AD.pendente = ua.dataset.usarAnuncio;
+      location.hash = '#anuncios';
+      return;
+    }
     const b = e.target.closest('[data-use]'); if (!b) return;
     if (G.modulo !== MD.modulo) { G.modulo = MD.modulo; resetForModule(); }
     G.layouts = [b.dataset.use];
@@ -977,6 +1016,11 @@
       AD_CORES.map(c => '<button type="button" class="ad-color" data-c="' + c + '" style="background:' + c + '" title="' + c + '"></button>').join('');
     if (!AD.ready) { adReset(); AD.ready = true; }
     await initProntos();
+    if (AD.pendente) {
+      const t = AD_PRONTOS.modelos.find(x => x.id === AD.pendente);
+      AD.pendente = '';
+      if (t) { adReset(); $('#adNicho').value = t.nicho; renderProntos(); usarPronto(t.id); window.scrollTo(0, 0); }
+    }
     await loadAds();
     setPreviewSrc();
   }
@@ -1137,14 +1181,20 @@
     const url = adScreenUrl(AD.orient) + '&previa=1';
     if (fr.dataset.url !== url) { fr.dataset.url = url; fr.src = url; }
   }
-  function sendPreview() {
-    const fr = $('#adPreview');
-    if (!fr.contentWindow) return;
-    try { fr.contentWindow.postMessage({ rs: 'previa', anuncios: [adPayload(true)] }, location.origin); } catch (_) {}
+  let adJanela = null;   // prévia aberta em nova aba (tela cheia)
+  function sendPreview(alvo) {
+    const msg = { rs: 'previa', anuncios: [adPayload(true)] };
+    const alvos = alvo ? [alvo] : [$('#adPreview').contentWindow, adJanela && !adJanela.closed ? adJanela : null];
+    alvos.forEach(w => { if (w) try { w.postMessage(msg, location.origin); } catch (_) {} });
   }
-  function schedulePreviewAd() { clearTimeout(adTimer); adTimer = setTimeout(sendPreview, 250); }
+  function schedulePreviewAd() { clearTimeout(adTimer); adTimer = setTimeout(() => sendPreview(), 250); }
   window.addEventListener('message', e => {
-    if (e.origin === location.origin && e.data && e.data.rs === 'previa-pronta') sendPreview();
+    if (e.origin === location.origin && e.data && e.data.rs === 'previa-pronta') sendPreview(e.source);
+  });
+  // abre a mesma prévia numa aba própria, em tela cheia; ela continua recebendo as mudanças do formulário
+  $('#adPvFull').addEventListener('click', () => {
+    if (!AD.cliente) return toast('Escolha um cliente', 'x');
+    adJanela = window.open(adScreenUrl(AD.orient) + '&previa=1', 'rs-previa-anuncio');
   });
 
   /* ----- eventos ----- */
@@ -1427,8 +1477,23 @@
     $('#plTema').innerHTML = '<option value="">Padrão de cada conteúdo</option>' + RS.THEMES.map(t => '<option value="' + esc(t.id) + '">' + esc(t.nome) + '</option>').join('');
     $('#plPacote').innerHTML = '<option value="">Escolha um pacote…</option>' + pacotes.map(p => '<option value="' + esc(p.id) + '">' + esc(p.nome) + '</option>').join('');
     if (!PL.ready) { plReset(); PL.ready = true; }
+    if (PL.pacote) {
+      // veio de Pacotes prontos > "Montar link único": já começa com o pacote
+      const pk = PL.pacote; PL.pacote = '';
+      plReset(); PL.itens = []; $('#plPacote').value = pk; $('#plPacote').dispatchEvent(new Event('change'));
+      window.scrollTo(0, 0);
+    }
     await loadPlaylists();
     plSetPreviewSrc();
+  }
+
+  // anúncios do cliente para escolher qual entra entre os conteúdos
+  async function plAnuncios(sel) {
+    let lista = [];
+    if (PL.cliente) try { lista = (await api('api/admin/anuncios?cliente=' + encodeURIComponent(PL.cliente))).anuncios || []; } catch (_) {}
+    $('#plAnuncio').innerHTML = '<option value="">Todos os anúncios do cliente (um diferente a cada vez)</option>' +
+      lista.map(a => '<option value="' + esc(a.id) + '">' + esc((a.dados && a.dados.titulo) || a.anunciante || a.modelo) + (a.anunciante ? ' · ' + esc(a.anunciante) : '') + (a.ativo ? '' : ' (pausado)') + '</option>').join('');
+    $('#plAnuncio').value = lista.some(a => a.id === sel) ? sel : '';
   }
 
   async function loadPlaylists() {
@@ -1505,6 +1570,7 @@
       'Ciclo completo: <b>' + fmtDur(t) + '</b> · ' + PL.itens.length + ' conteúdo' + (PL.itens.length > 1 ? 's' : '') +
       (ads ? ' + ' + ads + ' anúncio' + (ads > 1 ? 's' : '') : '') + ' · repete cerca de <b>' + Math.floor(3600 / Math.max(t, 1)) + '×</b> por hora' : '';
     $('#plIntercalarHint').hidden = !inter;
+    $('#plAnuncioWrap').hidden = !inter;
   }
 
   function plPayload() {
@@ -1512,6 +1578,7 @@
     const opcoes = {};
     if ($('#plTema').value) opcoes.tema = $('#plTema').value;
     if (inter) opcoes.intercalar = inter;
+    if (inter && $('#plAnuncio').value) opcoes.anuncio = $('#plAnuncio').value;
     return {
       id: PL.editing || undefined, cliente: PL.cliente, nome: $('#plNome').value.trim() || 'Playlist',
       itens: PL.itens.map(it => { const o = { modulo: it.modulo, assunto: it.assunto, layout: it.layout, duracao: Number(it.duracao) || 30 }; if (it.fonte) o.fonte = it.fonte; return o; }),
@@ -1527,6 +1594,7 @@
     // começa com uma sugestão que já funciona
     PL.itens = [plNewItem('rss', 'ultimas', 'destaque'), plNewItem('clima'), plNewItem('rss', 'esportes', 'cartao'), plNewItem('cotacoes')].filter(Boolean);
     $('#plIntercalar').value = '15';
+    plAnuncios('');
     renderPlItems();
     plSchedulePreview(true);
   }
@@ -1541,6 +1609,7 @@
     const inter = String((p.opcoes && p.opcoes.intercalar) || 0);
     if (!$('#plIntercalar').querySelector('option[value="' + inter + '"]')) $('#plIntercalar').insertAdjacentHTML('beforeend', '<option value="' + inter + '">Sim, ' + inter + ' segundos</option>');
     $('#plIntercalar').value = inter;
+    plAnuncios((p.opcoes && p.opcoes.anuncio) || '');
     $('#plPacote').value = '';
     $('#plFormTitle').textContent = dup ? 'Nova playlist (cópia)' : 'Editar playlist';
     $('#plDelete').hidden = !!dup;
@@ -1634,6 +1703,7 @@
     plSchedulePreview();
   });
   $('#plIntercalar').addEventListener('change', () => { plTotal(); plSchedulePreview(); });
+  $('#plAnuncio').addEventListener('change', () => plSchedulePreview());
   $('#plTema').addEventListener('change', () => plSchedulePreview());
   $('#plOrient').addEventListener('click', e => {
     const b = e.target.closest('[data-v]');

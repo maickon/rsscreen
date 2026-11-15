@@ -40,6 +40,9 @@ function cleanOpcoes(o) {
   if (n >= 5 && n <= 120) out.intercalar = n;
   const lay = slug(o.layoutAnuncios);
   if (lay) out.layoutAnuncios = lay;
+  // um anúncio específico entre os conteúdos (vazio = todos os anúncios do cliente, em rodízio)
+  const an = String(o.anuncio || '').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 40);
+  if (an) out.anuncio = an;
   return out;
 }
 

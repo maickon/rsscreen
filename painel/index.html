@@ -230,7 +230,7 @@
         <div class="card client-list">
           <div class="card-head"><div><h3>Cadastrados</h3><p id="cCount"></p></div>
             <button type="button" class="btn btn-primary btn-sm" id="cAdd" hidden><i data-icon="plus"></i> Cadastrar cliente</button></div>
-          <div class="table-wrap"><table class="table" id="cTable"></table></div>
+          <div class="table-wrap c-wrap"><table class="table c-table" id="cTable"></table></div>
         </div>
 
         <!-- cadastro e edição de cliente (modal) -->
@@ -315,6 +315,9 @@
           </div>
           <label class="field"><span>Cores</span><select class="select" id="mTema"></select></label>
         </div>
+        <div class="card toolbar" id="mNichoBar" hidden>
+          <div class="field"><span>Tipo de comércio</span><div class="seg-light" id="mNicho"></div></div>
+        </div>
         <div class="model-grid" id="modelGrid"></div>
       </section>
 
@@ -328,32 +331,21 @@
         </div>
         <div class="db-banner muted" id="adNoDb" hidden><div><b>Anúncios precisam do banco de dados.</b> Eles funcionam no site publicado na Cloudflare (o banco D1 é criado no deploy).</div></div>
 
-        <div class="ads-grid" id="adsGrid">
-          <div class="ads-col">
-            <div class="card">
-              <div class="card-head">
-                <div><h3>Cliente</h3><p id="adCount"></p></div>
-                <button class="btn btn-primary btn-sm" id="adNew" type="button"><i data-icon="plus"></i> Novo anúncio</button>
-              </div>
-              <select class="select" id="adCliente"></select>
-              <div class="ad-list" id="adList"></div>
-              <div class="ad-link" id="adLink"></div>
+        <div id="adsGrid">
+          <div class="card ad-cli-card">
+            <div class="card-head">
+              <div><h3>Cliente</h3><p id="adCount"></p></div>
+              <button class="btn btn-primary btn-sm" id="adNew" type="button"><i data-icon="plus"></i> Novo anúncio</button>
             </div>
-            <div class="card">
-              <div class="card-head">
-                <div><h3>Prévia ao vivo</h3><p>Mostra o anúncio em edição antes de salvar.</p></div>
-                <div class="chips" id="adOrient">
-                  <button class="chip on" data-v="horizontal" type="button"><i data-icon="monitor"></i> Horizontal</button>
-                  <button class="chip" data-v="vertical" type="button"><i data-icon="phone"></i> Vertical</button>
-                </div>
-              </div>
-              <div class="pv-stage"><div class="device-tv" id="adDevice"><div class="screen"><iframe id="adPreview" title="Prévia do anúncio"></iframe></div></div></div>
-            </div>
+            <select class="select" id="adCliente"></select>
+            <div class="ad-list" id="adList"></div>
+            <div class="ad-link" id="adLink"></div>
           </div>
-
-          <form class="card ad-form" id="adForm" autocomplete="off">
+          <div class="ads-grid">
+            <form class="card ad-form" id="adForm" autocomplete="off">
             <div class="card-head"><div><h3 id="adFormTitle">Novo anúncio</h3><p>Escolha o modelo e preencha. Campos vazios não aparecem na tela.</p></div></div>
-            <div class="field ad-prontos-wrap"><span>Começar de um anúncio pronto (opcional)</span>
+            <div class="field ad-prontos-wrap"><span>Começar de um anúncio pronto</span>
+              <p class="hint">Escolha o tipo de comércio e clique num modelo: o anúncio vem completo (textos, cores, preço e foto) e aparece na prévia ao lado. Depois é só ajustar o que quiser.</p>
               <select class="select" id="adNicho"><option value="">Escolha o nicho…</option></select>
               <div class="ad-prontos" id="adProntos"></div>
             </div>
@@ -387,6 +379,18 @@
               <button class="btn btn-ghost" type="button" id="adDelete" hidden><i data-icon="trash"></i> Excluir</button>
             </div>
           </form>
+            <div class="card ad-pv-card">
+              <div class="card-head">
+                <div><h3>Prévia ao vivo</h3><p>Muda enquanto você edita, antes de salvar.</p></div>
+                <div class="chips" id="adOrient">
+                  <button class="chip on" data-v="horizontal" type="button"><i data-icon="monitor"></i> Horizontal</button>
+                  <button class="chip" data-v="vertical" type="button"><i data-icon="phone"></i> Vertical</button>
+                </div>
+              </div>
+              <div class="pv-stage"><div class="device-tv" id="adDevice"><div class="screen"><iframe id="adPreview" title="Prévia do anúncio"></iframe></div></div></div>
+              <button class="btn btn-ghost btn-sm" type="button" id="adPvFull"><i data-icon="external"></i> Ver em tela cheia (nova aba)</button>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -445,6 +449,7 @@
               </label>
               <label class="field"><span>Começar de um pacote pronto</span><select class="select" id="plPacote"></select></label>
             </div>
+            <label class="field" id="plAnuncioWrap"><span>Qual anúncio entra entre os conteúdos</span><select class="select" id="plAnuncio"><option value="">Todos os anúncios do cliente (um diferente a cada vez)</option></select></label>
             <p class="hint" id="plIntercalarHint">Com anúncios intercalados, entra 1 anúncio do cliente depois de cada conteúdo (um diferente a cada vez).</p>
 
             <div class="field"><span>Conteúdos</span></div>
