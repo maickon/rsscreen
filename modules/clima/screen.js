@@ -53,8 +53,37 @@
     return '<svg class="w-ico" viewBox="0 0 64 64" aria-hidden="true">' + body + '</svg>';
   }
 
+  // UFs para mostrar "Cidade - UF" nas cidades buscadas
+  const UF = { 'Acre': 'AC', 'Alagoas': 'AL', 'Amapá': 'AP', 'Amazonas': 'AM', 'Bahia': 'BA', 'Ceará': 'CE', 'Distrito Federal': 'DF', 'Espírito Santo': 'ES',
+    'Goiás': 'GO', 'Maranhão': 'MA', 'Mato Grosso': 'MT', 'Mato Grosso do Sul': 'MS', 'Minas Gerais': 'MG', 'Pará': 'PA', 'Paraíba': 'PB', 'Paraná': 'PR',
+    'Pernambuco': 'PE', 'Piauí': 'PI', 'Rio de Janeiro': 'RJ', 'Rio Grande do Norte': 'RN', 'Rio Grande do Sul': 'RS', 'Rondônia': 'RO', 'Roraima': 'RR',
+    'Santa Catarina': 'SC', 'São Paulo': 'SP', 'Sergipe': 'SE', 'Tocantins': 'TO' };
+
+  // geo-<id>: busca nome e coordenadas uma vez no Open-Meteo e guarda no aparelho para sempre
+  async function resolveGeo(c) {
+    const id = c.id.slice(4), key = 'rs_geo_' + id;
+    let g = null;
+    try { g = JSON.parse(localStorage.getItem(key) || 'null'); } catch (_) {}
+    if (!g) {
+      const r = await S.fetchJson('https://geocoding-api.open-meteo.com/v1/get?id=' + encodeURIComponent(id) + '&language=pt');
+      if (!r || r.latitude == null) throw new Error('Cidade não encontrada');
+      const nome = r.feature_code && r.feature_code.indexOf('PPL') === 0 && r.admin2 ? r.admin2 : r.name;
+      g = { lat: r.latitude, lon: r.longitude, nome: nome + (UF[r.admin1] ? ' - ' + UF[r.admin1] : '') };
+      try { localStorage.setItem(key, JSON.stringify(g)); } catch (_) {}
+    }
+    c.lat = g.lat; c.lon = g.lon; c.nome = g.nome;
+  }
+
+  // nome da cidade buscada já guardado (a tela pode abrir pelo cache, antes de rodar o load)
+  function nomeCidade(c) {
+    if (c.nome || !c.geo) return c.nome || '';
+    try { const g = JSON.parse(localStorage.getItem('rs_geo_' + c.id.slice(4)) || 'null'); if (g) { c.lat = g.lat; c.lon = g.lon; c.nome = g.nome; } } catch (_) {}
+    return c.nome || '';
+  }
+
   async function load(ctx) {
     const c = ctx.assunto;
+    if (c.geo && c.lat == null) await resolveGeo(c);
     const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + c.lat + '&longitude=' + c.lon +
       '&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,is_day' +
       '&hourly=temperature_2m,precipitation_probability,weather_code,is_day' +
@@ -79,7 +108,7 @@
 
   function header(ctx, d) {
     return '<div class="w-head">' +
-      '<div><div class="w-city">' + esc(ctx.assunto.nome) + '</div><div class="w-date">' + S.clockHtml('date') + '</div></div>' +
+      '<div><div class="w-city">' + esc(nomeCidade(ctx.assunto)) + '</div><div class="w-date">' + S.clockHtml('date') + '</div></div>' +
       '<div class="w-clock">' + S.clockHtml() + '</div>' +
     '</div>';
   }

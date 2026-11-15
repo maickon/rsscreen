@@ -261,6 +261,51 @@
     return out;
   }
 
+  /* ----- previsão do tempo: qualquer cidade do Brasil -----
+     A busca usa o Open-Meteo (grátis, sem chave). A cidade vira o assunto "geo-<id>"; a tela busca
+     nome e coordenadas pelo id. As cidades adicionadas ficam salvas neste navegador. */
+  const CIDADES_KEY = 'rs_cidades_extras';
+  const UF_SIGLA = { 'Acre': 'AC', 'Alagoas': 'AL', 'Amapá': 'AP', 'Amazonas': 'AM', 'Bahia': 'BA', 'Ceará': 'CE', 'Distrito Federal': 'DF', 'Espírito Santo': 'ES',
+    'Goiás': 'GO', 'Maranhão': 'MA', 'Mato Grosso': 'MT', 'Mato Grosso do Sul': 'MS', 'Minas Gerais': 'MG', 'Pará': 'PA', 'Paraíba': 'PB', 'Paraná': 'PR',
+    'Pernambuco': 'PE', 'Piauí': 'PI', 'Rio de Janeiro': 'RJ', 'Rio Grande do Norte': 'RN', 'Rio Grande do Sul': 'RS', 'Rondônia': 'RO', 'Roraima': 'RR',
+    'Santa Catarina': 'SC', 'São Paulo': 'SP', 'Sergipe': 'SE', 'Tocantins': 'TO' };
+  function cidadesExtras() { try { return JSON.parse(localStorage.getItem(CIDADES_KEY) || '[]'); } catch (_) { return []; } }
+  function juntaCidade(c) {
+    const m = modById('clima');
+    if (m && !m.assuntos.some(a => a.id === c.id)) m.assuntos.push({ id: c.id, nome: c.nome, lat: c.lat, lon: c.lon });
+  }
+  function salvaCidade(c) {
+    const l = cidadesExtras().filter(x => x.id !== c.id); l.push(c);
+    try { localStorage.setItem(CIDADES_KEY, JSON.stringify(l.slice(-200))); } catch (_) {}
+    juntaCidade(c);
+    renderPacks();   // a cidade nova aparece também na lista de Pacotes prontos
+  }
+  function geoBusca(inp, res, escolher) {
+    let t, ult = [];
+    inp.addEventListener('input', () => {
+      clearTimeout(t);
+      const q = inp.value.trim();
+      if (q.length < 3) { res.innerHTML = ''; return; }
+      t = setTimeout(async () => {
+        try {
+          const r = await RS.fetchJson('https://geocoding-api.open-meteo.com/v1/search?count=8&language=pt&countryCode=BR&name=' + encodeURIComponent(q));
+          ult = (r.results || []).filter(x => /^PPL/.test(x.feature_code || '')).map(x => ({
+            id: 'geo-' + x.id, lat: x.latitude, lon: x.longitude,
+            nome: (x.admin2 && x.feature_code !== 'PPLX' ? x.admin2 : x.name) + (UF_SIGLA[x.admin1] ? ' - ' + UF_SIGLA[x.admin1] : '')
+          }));
+          res.innerHTML = ult.length ? ult.map((c, i) => '<button type="button" data-geo="' + i + '">' + ICON('plus') + esc(c.nome) + '</button>').join('') : '<small>Nenhuma cidade encontrada.</small>';
+        } catch (_) { res.innerHTML = '<small>Não foi possível buscar agora.</small>'; }
+      }, 350);
+    });
+    res.addEventListener('click', e => {
+      const b = e.target.closest('[data-geo]'); if (!b) return;
+      const c = ult[Number(b.dataset.geo)];
+      salvaCidade(c); inp.value = ''; res.innerHTML = '';
+      escolher(c);
+      toast(c.nome + ' adicionada');
+    });
+  }
+
   function renderGen() {
     const m = gModule();
     $('#gCliente').innerHTML = clientOptions(G.cliente);
@@ -279,6 +324,7 @@
     }
     const visiveis = assuntosVisiveis();
     $('#gAssuntoBusca').hidden = visiveis.length < 12;
+    $('#gGeo').hidden = m.id !== 'clima';
     const q = RS.normalize(G.busca);
     $('#gAssuntos').innerHTML = visiveis
       .filter(a => !q || RS.normalize(a.nome).indexOf(q) >= 0 || G.assuntos.indexOf(a.id) >= 0)
@@ -334,6 +380,8 @@
     renderGen();
   });
   $('#gAssuntoBusca').addEventListener('input', e => { G.busca = e.target.value; renderGen(); });
+  geoBusca($('#gGeoQ'), $('#gGeoRes'), c => { G.assuntos = [c.id]; G.busca = ''; $('#gAssuntoBusca').value = ''; renderGen(); });
+  geoBusca($('#pGeoQ'), $('#pGeoRes'), c => { PK.cidade = c.id; renderPacks(); });
   $('#gAssuntos').addEventListener('click', e => {
     const b = e.target.closest('button[data-v]'); if (!b) return;
     toggleIn(G.assuntos, b.dataset.v, false); G.fonte = ''; renderGen();
@@ -2163,6 +2211,7 @@
     try {
       modules = await RS.loadModules();
       active = modules.filter(m => m.status === 'ativo' && m.layouts && m.assuntos);
+      cidadesExtras().forEach(c => juntaCidade(c));
       const pk = await RS.fetchJson(RS.ROOT_URL + 'modules/pacotes.json').catch(() => ({ pacotes: [] }));
       pacotes = pk.pacotes || [];
     } catch (e) {

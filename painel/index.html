@@ -115,6 +115,10 @@
               </label>
               <input class="input input-sm" id="gAssuntoBusca" placeholder="Filtrar…" />
               <div class="chips" id="gAssuntos"></div>
+              <div class="geo-busca" id="gGeo" hidden>
+                <input class="input input-sm" id="gGeoQ" placeholder="Outra cidade do Brasil: digite o nome (ex.: São João del-Rei)" autocomplete="off" />
+                <div class="geo-res" id="gGeoRes"></div>
+              </div>
               <div class="field fonte-field" id="gFonteWrap" hidden>
                 <span id="gFonteLabel">Fonte</span>
                 <select class="select" id="gFonte"></select>
@@ -187,7 +191,9 @@
         </div>
         <div class="card toolbar">
           <label class="field"><span>Cliente</span><select class="select" id="pCliente"></select></label>
-          <label class="field"><span>Cidade (telas de clima)</span><select class="select" id="pCidade"></select></label>
+          <div class="field"><span>Cidade (telas de clima)</span><select class="select" id="pCidade"></select>
+            <div class="geo-busca"><input class="input input-sm" id="pGeoQ" placeholder="Outra cidade: digite o nome" autocomplete="off" /><div class="geo-res" id="pGeoRes"></div></div>
+          </div>
           <div class="field"><span>Orientação</span>
             <div class="chips" id="pOrient">
               <button class="chip on" data-v="horizontal"><i data-icon="monitor"></i> Horizontal</button>

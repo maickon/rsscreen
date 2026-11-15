@@ -403,6 +403,8 @@
     ctx.assunto = assuntos.find(a => a.id === state.assunto) || assuntos.find(a => a.id === pad_.assunto) || assuntos[0] || null;
     // módulos com conteúdo do cliente (ex.: tabela de preços): o "assunto" é o código da lista
     if (manifest.assuntoLivre && state.assunto && (!ctx.assunto || ctx.assunto.id !== state.assunto)) ctx.assunto = { id: state.assunto, nome: manifest.nome };
+    // cidade escolhida pela busca do painel (qualquer lugar do Brasil): geo-<id da cidade no Open-Meteo>
+    if (manifest.assuntoGeo && /^geo-\d{1,12}$/.test(state.assunto || '') && (!ctx.assunto || ctx.assunto.id !== state.assunto)) ctx.assunto = { id: state.assunto, nome: '', geo: true };
     state.assunto = ctx.assunto ? ctx.assunto.id : '';
     const fontes = (ctx.assunto && ctx.assunto.fontes) || [];
     ctx.fonte = fontes.find(f => f.id === state.fonte) || fontes.find(f => state.fonte && f.site === state.fonte) || null;

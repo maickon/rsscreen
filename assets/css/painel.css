@@ -531,3 +531,11 @@ body.modal-open { overflow: hidden; }
 @media (max-width: 640px) { .c-table .c-hide-sm { display: none; } .c-table td, .c-table th { padding-left: 10px; padding-right: 10px; } }
 .pack-acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
 .pack-acts .btn { flex: 1 1 auto; }
+
+/* busca de cidade (previsão do tempo) */
+.geo-busca { display: grid; gap: 6px; margin-top: 8px; }
+.geo-res { display: flex; flex-wrap: wrap; gap: 6px; }
+.geo-res:empty { display: none; }
+.geo-res button { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; border: 1px dashed var(--brand); background: var(--brand-50); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; color: var(--text); }
+.geo-res button .ico { width: 14px; height: 14px; }
+.geo-res small { color: var(--muted); }

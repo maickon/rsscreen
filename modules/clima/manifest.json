@@ -8,7 +8,7 @@
   "chamada": "Temperatura agora e previsão da semana da cidade do seu cliente.",
   "descricao": "O conteúdo mais consultado em qualquer tela pública. Mostra a temperatura atual, sensação térmica, umidade, vento e a previsão dos próximos dias, com ícones claros que se leem de longe.",
   "beneficios": [
-    "Todas as capitais + cidades da Região dos Lagos e Norte Fluminense",
+    "Qualquer cidade do Brasil (busca pelo nome no painel)",
     "Agora, próximas horas e semana",
     "Atualização automática a cada 15 minutos",
     "Horizontal e vertical"
@@ -17,6 +17,7 @@
   "script": "screen.js",
   "estilo": "style.css",
   "rotuloAssunto": "Cidade",
+  "assuntoGeo": true,
   "padrao": { "assunto": "cabo-frio-rj", "layout": "agora", "tema": "oceano", "tempo": 15 },
   "layouts": [
     { "id": "agora", "nome": "Agora + próximos dias", "descricao": "Temperatura atual grande e a previsão dos próximos 5 dias." },
