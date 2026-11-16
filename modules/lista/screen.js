@@ -62,13 +62,42 @@
     try { window.parent.postMessage({ rs: 'lista-pronta' }, '*'); } catch (_) {}
   }
 
+  // Exemplo de qualquer segmento do catálogo (&seg=<id>&modelo=<id>), usado nas páginas de modelos do site.
+  // Os preços são de exemplo: fixos por produto (mesmo valor sempre), dentro da faixa típica da categoria.
+  const FAIXA = { acougue: { Bovinos: [34, 79], 'Suínos': [18, 36], Aves: [11, 29], 'Linguiças e embutidos': [19, 42], 'Para o churrasco': [9, 95], Peixes: [29, 89] },
+    hortifruti: { _: [3, 14] }, padaria: { 'Pães': [1, 22], Salgados: [5, 9], 'Doces e bolos': [4, 45], Frios: [29, 69], 'Lanches e café': [4, 14], 'Leite e derivados': [5, 14] },
+    mercado: { _: [4, 34] }, bebidas: { _: [3, 89] }, lanchonete: { _: [8, 42] }, pizzaria: { _: [8, 72] }, acai: { _: [3, 32] }, cafeteria: { _: [5, 24] } };
+  const TEMA_SEG = { acougue: 'acougue', hortifruti: 'hortifruti', padaria: 'padaria', mercado: 'mercado', bebidas: 'bebidas', lanchonete: 'lanchonete', pizzaria: 'pizzaria', acai: 'acai', cafeteria: 'cafeteria' };
+  const FOTO_SEG = { acougue: '8444102', hortifruti: '17302468', padaria: '1287278', mercado: '32550092', bebidas: '14356408', lanchonete: '12034622', pizzaria: '2762938', acai: '8230032', cafeteria: '585754' };
+  function precoExemplo(seg, cat, nome) {
+    const f = (FAIXA[seg] || {})[cat] || (FAIXA[seg] || {})._ || [5, 30];
+    let h = 0; for (let i = 0; i < nome.length; i++) h = (h * 31 + nome.charCodeAt(i)) >>> 0;
+    return (f[0] + h % (f[1] - f[0] + 1)) + ',90';
+  }
+  async function exemploSegmento() {
+    const P = new URLSearchParams(location.search), seg = P.get('seg');
+    const cat = await S.fetchJson(RS.ROOT_URL + 'modules/catalogo/' + encodeURIComponent(seg) + '.json');
+    const idx = {};
+    cat.categorias.forEach(c => c.itens.forEach(it => { if (!idx[it[0]]) idx[it[0]] = { n: it[0], u: it[1], d: it[2] || '', c: c.nome }; }));
+    const m = (cat.modelos || []).find(x => x.id === P.get('modelo')) || (cat.modelos || [])[0];
+    const itens = (m ? m.itens : Object.keys(idx).slice(0, 12)).map((n, k) => {
+      const r = idx[n]; if (!r) return null;
+      const it = { n: r.n, u: r.u, c: r.c, d: r.d, p: precoExemplo(seg, r.c, r.n) };
+      if (k === 0) { it.o = 1; it.de = (parseInt(it.p, 10) + 10) + ',90'; }
+      return it;
+    }).filter(Boolean);
+    return { id: 'exemplo', tipo: cat.tipo, tema: TEMA_SEG[seg] || 'geral', nome: cat.nome,
+      dados: { marca: 'Seu ' + cat.nome.split(' ')[0], titulo: m ? m.titulo : cat.nome, subtitulo: m ? m.subtitulo : '', fundo: P.get('foto') === '0' ? '' : FOTO_SEG[seg] || '',
+        rodape: 'Preços de exemplo · edite os seus pelo celular', itens } };
+  }
+
   async function load(ctx) {
     let l;
     if (S.previa) {
       if (!previa) await new Promise(r => { previaWait = r; });
       l = previa;
     } else if (!ctx.assunto || ctx.assunto.id === 'exemplo') {
-      l = EXEMPLO;
+      l = new URLSearchParams(location.search).get('seg') ? await exemploSegmento() : EXEMPLO;
     } else {
       const r = await S.fetchJson(RS.ROOT_URL + 'api/lista?id=' + encodeURIComponent(ctx.assunto.id) + '&cliente=' + encodeURIComponent(ctx.state.cliente) + (NOVO ? '&novo=1' : ''));
       l = r && r.lista;

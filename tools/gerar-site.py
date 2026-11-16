@@ -22,7 +22,10 @@ O gerador cria <slug>/index.html com menu, trilha, sumário (a partir dos <h2>),
 estruturados para o Google (artigo, trilha e perguntas frequentes), "continue lendo" e rodapé.
 Também cria guia/paginas.json, usado pelo Worker para montar o /sitemap.xml.
 """
-import html, json, os, re, unicodedata, datetime
+import html, json, os, re, sys, unicodedata, datetime
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import programaticas   # páginas geradas dos dados do sistema (modelos, tabelas, calendário)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(ROOT, 'tools', 'paginas')
@@ -80,7 +83,12 @@ def pagina(p, todas):
     tipo = p.get('tipo', 'artigo')
     e = html.escape
 
-    trilha = [('Início', up)] + ([] if tipo == 'legal' else [('Guia', up + 'guia/')])
+    if tipo == 'colecao':
+        trilha = [('Início', up), (p['pai'][0], up + p['pai'][1] + '/')]
+    elif tipo == 'hub':
+        trilha = [('Início', up)]
+    else:
+        trilha = [('Início', up)] + ([] if tipo == 'legal' else [('Guia', up + 'guia/')])
     if tipo != 'indice':
         trilha.append((p['h1'] if len(p['h1']) < 48 else p['h1'][:45].rsplit(' ', 1)[0] + '…', ''))
     crumbs = ' <span aria-hidden="true">›</span> '.join(
@@ -90,7 +98,7 @@ def pagina(p, todas):
         '@context': 'https://schema.org', '@type': 'BreadcrumbList',
         'itemListElement': [{'@type': 'ListItem', 'position': i + 1, 'name': t} for i, (t, u) in enumerate(trilha)]
     }]
-    if tipo == 'artigo':
+    if tipo in ('artigo', 'colecao'):
         ld.append({'@context': 'https://schema.org', '@type': 'Article', 'headline': p['h1'], 'description': p['descricao'],
                    'inLanguage': 'pt-BR', 'dateModified': HOJE, 'author': {'@type': 'Organization', 'name': 'rsscreen'},
                    'publisher': {'@type': 'Organization', 'name': 'rsscreen'}})
@@ -103,7 +111,7 @@ def pagina(p, todas):
         ld.append({'@context': 'https://schema.org', '@type': 'FAQPage', 'mainEntity': fq})
     ld_html = ''.join('<script type="application/ld+json">%s</script>\n' % json.dumps(x, ensure_ascii=False) for x in ld)
 
-    if tipo == 'artigo' and toc:
+    if tipo in ('artigo', 'colecao') and toc:
         lateral = ('<aside class="toc"><b>Nesta página</b>' + ''.join('<a href="#%s">%s</a>' % (i, e(t)) for i, t in toc) +
                    '<a class="btn btn-primary btn-sm js-wa" data-msg="Olá! Li o guia do rsscreen e quero conhecer o conteúdo para as minhas telas." href="#">'
                    '<i data-icon="whatsapp"></i> Tirar dúvidas</a></aside>')
@@ -113,18 +121,26 @@ def pagina(p, todas):
     else:
         miolo = corpo
 
-    meta = '<div class="page-meta"><span><i data-icon="clock"></i> Última atualização: %s</span></div>' % datetime.date.today().strftime('%d/%m/%Y') if tipo == 'legal' else '' if tipo == 'indice' else (
+    meta = '<div class="page-meta"><span><i data-icon="clock"></i> Última atualização: %s</span></div>' % datetime.date.today().strftime('%d/%m/%Y') if tipo == 'legal' else '' if tipo in ('indice', 'hub') else (
         '<div class="page-meta"><span><i data-icon="clock"></i> Atualizado em %s</span><span><i data-icon="check"></i> Grátis, sem cadastro</span></div>'
         % datetime.date.today().strftime('%d/%m/%Y'))
 
-    rel = [x for x in todas if x['slug'] != p['slug'] and x.get('tipo') in ('artigo', 'ferramenta')]
-    rel.sort(key=lambda x: (x.get('tipo') == p.get('tipo'), x['ordem']))
-    rel = rel[:3] if tipo in ('artigo', 'ferramenta') else []
+    if tipo == 'colecao':
+        # páginas irmãs (mesmo índice), começando pelas seguintes
+        irmas = [x for x in todas if x.get('pai') == p['pai'] and x['slug'] != p['slug']]
+        irmas.sort(key=lambda x: (x['ordem'] < p['ordem'], x['ordem']))
+        rel = irmas[:3]
+    else:
+        rel = [x for x in todas if x['slug'] != p['slug'] and x.get('tipo') in ('artigo', 'ferramenta')]
+        rel.sort(key=lambda x: (x.get('tipo') == p.get('tipo'), x['ordem']))
+        rel = rel[:3] if tipo in ('artigo', 'ferramenta') else []
     relacionados = '' if not rel else (
-        '<section class="related"><div class="wrap"><h2>Continue lendo</h2><div class="cards">' +
+        '<section class="related"><div class="wrap"><h2>%s</h2><div class="cards">' % ('Veja também' if tipo == 'colecao' else 'Continue lendo') +
         ''.join(card(x, up) for x in rel) + '</div></div></section>')
 
     script = ('<script src="%s"></script>\n' % p['script'].replace('{raiz}', up)) if p.get('script') else ''
+    if 'tv-live' in corpo:
+        script += '<script src="%sassets/js/vitrine.js"></script>\n' % up
 
     return TEMPLATE.format(
         titulo=e(p['titulo']), descricao=e(p['descricao']), up=up, ld=ld_html, crumbs=crumbs,
@@ -135,7 +151,7 @@ def pagina(p, todas):
 def card(x, up):
     return ('<a class="card-link" href="%s%s/"><i data-icon="%s"></i><b>%s</b><span>%s</span><em>%s <i data-icon="arrow"></i></em></a>'
             % (up, x['slug'], x.get('icone', 'sparkles'), html.escape(x['h1']), html.escape(x.get('cartao', '')),
-               'Abrir ferramenta' if x.get('tipo') == 'ferramenta' else 'Ler o guia'))
+               'Abrir ferramenta' if x.get('tipo') == 'ferramenta' else 'Ver' if x.get('tipo') in ('colecao', 'hub') else 'Ler o guia'))
 
 
 TEMPLATE = '''<!DOCTYPE html>
@@ -167,7 +183,8 @@ TEMPLATE = '''<!DOCTYPE html>
       <nav class="nav-links" id="navLinks">
         <a href="{up}guia/">Guia</a>
         <a href="{up}ferramentas/calculadora-midia-indoor/">Calculadora</a>
-        <a href="{up}ferramentas/proposta-comercial/">Proposta</a>
+        <a href="{up}modelos/">Modelos</a>
+        <a href="{up}calendario-comercial/">Calendário</a>
         <a href="{up}#modulos">Conteúdos</a>
         <a href="{up}#modelos">Telas ao vivo</a>
       </nav>
@@ -203,7 +220,7 @@ TEMPLATE = '''<!DOCTYPE html>
   <footer class="footer">
     <div class="wrap footer-inner">
       <a href="{up}" class="logo"><i data-logo></i><span><b>rss</b>creen</span></a>
-      <p><a href="{up}guia/">Guia da mídia indoor</a> · <a href="{up}ferramentas/calculadora-midia-indoor/">Calculadora</a> · <a href="{up}ferramentas/proposta-comercial/">Modelo de proposta</a> · <a href="{up}ferramentas/tabela-de-precos/">Tabela de preços</a> · <a href="{up}termos-de-uso/">Termos de uso</a> · <a href="{up}privacidade/">Privacidade</a> · © <span id="year"></span> rsscreen</p>
+      <p><a href="{up}guia/">Guia da mídia indoor</a> · <a href="{up}ferramentas/calculadora-midia-indoor/">Calculadora</a> · <a href="{up}ferramentas/proposta-comercial/">Modelo de proposta</a> · <a href="{up}ferramentas/tabela-de-precos/">Tabela de preços</a> · <a href="{up}modelos/">Modelos prontos</a> · <a href="{up}calendario-comercial/">Calendário comercial</a> · <a href="{up}termos-de-uso/">Termos de uso</a> · <a href="{up}privacidade/">Privacidade</a> · © <span id="year"></span> rsscreen</p>
     </div>
   </footer>
   <a class="wa-float js-wa" data-msg="Olá! Vim pelo guia do rsscreen." href="#" aria-label="Falar no WhatsApp"><i data-icon="whatsapp"></i></a>
@@ -219,6 +236,7 @@ TEMPLATE = '''<!DOCTYPE html>
 
 def main():
     todas = sorted((ler(os.path.join(SRC, f)) for f in os.listdir(SRC) if f.endswith('.html')), key=lambda x: x['ordem'])
+    todas += programaticas.todas()
     for p in todas:
         if p.get('tipo') == 'indice':
             arts = [x for x in todas if x.get('tipo') == 'artigo']
