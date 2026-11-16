@@ -116,6 +116,29 @@ def faqs(corpo):
     return out
 
 
+# ---------------------------------------------------------------- versão dos arquivos
+# Cada CSS/JS vai com ?v=<resumo do conteúdo>: quando o arquivo muda, o endereço muda, e nenhum
+# navegador ou cache antigo continua mostrando a versão velha.
+_VERS = {}
+_ASSET = re.compile(r'((?:src|href)="(?:\.\./)*)((?:assets/(?:css|js)/[\w.-]+\.(?:css|js))|config/clientes\.js)(?:\?v=\w+)?(")')
+
+
+def versao(rel):
+    if rel not in _VERS:
+        try:
+            _VERS[rel] = hashlib.sha1(open(os.path.join(ROOT, *rel.split('/')), 'rb').read()).hexdigest()[:8]
+        except OSError:
+            _VERS[rel] = ''
+    return _VERS[rel]
+
+
+def com_versao(txt):
+    def rep(m):
+        v = versao(m.group(2))
+        return m.group(1) + m.group(2) + ('?v=' + v if v else '') + m.group(3)
+    return _ASSET.sub(rep, txt)
+
+
 def br(d):
     return datetime.date.fromisoformat(d).strftime('%d/%m/%Y')
 
@@ -420,7 +443,7 @@ def main():
     for p in todas:
         out = os.path.join(ROOT, *p['slug'].split('/'), 'index.html')
         os.makedirs(os.path.dirname(out), exist_ok=True)
-        open(out, 'w', encoding='utf-8', newline='\n').write(pagina(p, todas))
+        open(out, 'w', encoding='utf-8', newline='\n').write(com_versao(pagina(p, todas)))
     print('ok ', len(todas), 'páginas')
     lista = [{'url': '/' + p['slug'] + '/', 'atualizado': p['atualizado']} for p in todas]
     open(os.path.join(ROOT, 'guia', 'paginas.json'), 'w', encoding='utf-8', newline='\n').write(json.dumps(lista, ensure_ascii=False, indent=1))
@@ -502,6 +525,7 @@ def pagina_inicial():
     s = trocar(s, 'modulos', ''.join(cards))
     s = trocar(s, 'nav', layout.nav(''))
     s = trocar(s, 'rodape', layout.rodape(''))
+    s = com_versao(s)
     open(path, 'w', encoding='utf-8', newline='\n').write(s)
     print('ok  index.html (menu, rodapé e módulos)')
 
