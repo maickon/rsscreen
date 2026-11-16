@@ -1,9 +1,9 @@
 # rsscreen
 
-> rsscreen é um sistema brasileiro de conteúdo automático para mídia indoor e TVs comerciais. Gera links de tela (notícias, previsão do tempo, cotações, futebol, loterias, anúncios, tabelas de preços e cardápios) que abrem em qualquer TV com navegador, TV Box ou sistema de mídia indoor e se atualizam sozinhos, 24 horas por dia.
+> rsscreen é um sistema brasileiro de conteúdo automático para mídia indoor e TVs comerciais, desenvolvido pela Mksoft (mksoft.com.br) desde 2018. Gera links de tela (notícias, previsão do tempo, cotações, futebol, loterias, anúncios, tabelas de preços e cardápios) que abrem em qualquer TV com navegador, TV Box ou sistema de mídia indoor e se atualizam sozinhos, 24 horas por dia.
 
 ## Para quem é
-- Operadores de mídia indoor que vendem anúncios em TVs instaladas em comércios.
+- Operadores de mídia indoor que vendem anúncios em TVs instaladas em comércios, inclusive quem está começando com poucas TVs.
 - Comércios (padarias, açougues, hortifrútis, lanchonetes, clínicas, academias, salões) que querem uma TV com conteúdo e ofertas.
 
 ## O que o sistema faz
@@ -25,15 +25,15 @@
 ## Planos
 Planos mensais por faixa de telas (até 10, até 50 e até 200 telas): Notícias (conteúdo automático) e Completo (tudo, inclusive anúncios, tabelas e cardápios). Teste grátis de 7 dias. Contratação e valores pelo WhatsApp do site.
 
-## Guia da mídia indoor (artigos)
+## Artigos (blog e guia)
 - [O que é mídia indoor e como funciona](https://rsscreen.com.br/guia/o-que-e-midia-indoor/): O que é mídia indoor, como funciona a propaganda em TVs dentro de comércios, quem ganha com ela, exemplos por tipo de ponto, equipamentos necessários e quanto custa.
+- [Como transformar uma TV em painel digital](https://rsscreen.com.br/guia/como-transformar-tv-em-painel-digital/): Passo a passo para transformar uma TV comum ou Smart TV em painel digital de comércio: o que comprar, como configurar para ligar sozinha, o que exibir e erros comuns.
 - [Como ganhar dinheiro com mídia indoor: o guia para quem está começando](https://rsscreen.com.br/guia/como-ganhar-dinheiro-com-midia-indoor/): Como funciona o negócio de mídia indoor, quanto dá para ganhar, quanto custa começar, se precisa de MEI e o passo a passo para conseguir o primeiro ponto e o primeiro anunciante.
 - [Quanto cobrar por anúncio em TV de mídia indoor](https://rsscreen.com.br/guia/quanto-cobrar-por-anuncio-em-tv/): Como definir o preço do anúncio em TV de mídia indoor: o que influencia o valor, como montar a tabela de preços, pacotes, desconto por tempo e como vender anúncio para o comércio.
 - [Sistema de mídia indoor: como escolher o player certo](https://rsscreen.com.br/guia/sistema-de-midia-indoor/): O que um sistema de mídia indoor precisa ter, quanto custa, se existe opção grátis, diferença entre player e conteúdo e como controlar várias TVs pela internet.
 - [Conteúdo para mídia indoor: o que passar na TV](https://rsscreen.com.br/guia/conteudo-para-midia-indoor/): Que conteúdo passar na TV de mídia indoor: notícias, previsão do tempo, futebol, loterias, datas comemorativas e frases. Como montar a programação e intercalar com os anúncios.
 - [TV Box para mídia indoor: qual comprar e como configurar](https://rsscreen.com.br/guia/tv-box-para-midia-indoor/): Qual TV Box comprar para mídia indoor, o que olhar nas especificações, TV Box ou mini PC, como configurar para ligar sozinha e por que evitar o pen drive.
 - [TV com propaganda no comércio: ideias por tipo de ponto](https://rsscreen.com.br/guia/tv-com-propaganda-no-comercio/): Como usar TV com propaganda em padaria, salão de beleza, consultório, academia, farmácia, bar e barbearia: o que passar na tela, quem anuncia e como abordar o dono do ponto.
-- [Como transformar uma TV em painel digital](https://rsscreen.com.br/guia/como-transformar-tv-em-painel-digital/): Passo a passo para transformar uma TV comum ou Smart TV em painel digital de comércio: o que comprar, como configurar para ligar sozinha, o que exibir e erros comuns.
 
 ## Ferramentas grátis
 - [Calculadora de mídia indoor: quanto posso ganhar?](https://rsscreen.com.br/ferramentas/calculadora-midia-indoor/): Simule quanto dá para ganhar com mídia indoor: faturamento, custos, lucro por mês, em quantos meses o investimento se paga e quantas vezes cada anúncio aparece por dia.
@@ -107,3 +107,4 @@ Planos mensais por faixa de telas (até 10, até 50 e até 200 telas): Notícias
 ## Contato
 - Site: https://rsscreen.com.br/
 - WhatsApp: pelo botão em qualquer página do site.
+- Empresa: Mksoft (https://mksoft.com.br)

@@ -226,3 +226,50 @@
 .footer p a:hover { color: var(--brand); }
 @media (max-width: 1024px) { .guide-links { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 600px) { .guide-links { grid-template-columns: 1fr; } }
+
+/* ---------- menu com submenus (igual em todo o site) ---------- */
+.nav-links { align-items: center; }
+.nav-item { position: relative; }
+.nav-top { display: inline-flex; align-items: center; gap: 6px; background: none; border: 0; font: inherit; color: var(--ink-muted); font-weight: 600; font-size: 14.5px; padding: 8px 12px; border-radius: 10px; cursor: pointer; white-space: nowrap; transition: .15s; }
+.nav-top .ico { width: 14px; height: 14px; transition: transform .2s; }
+.nav-top:hover, .nav-item:hover > .nav-top, .nav-item.open > .nav-top { color: #fff; background: var(--ink-3); }
+.nav-drop { position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%) translateY(6px); min-width: 280px; background: #fff; color: var(--text); border-radius: 16px; box-shadow: 0 24px 60px rgba(0,0,0,.28); padding: 8px; display: grid; gap: 2px; opacity: 0; visibility: hidden; transition: .16s; z-index: 120; }
+.nav-drop::before { content: ''; position: absolute; left: 0; right: 0; top: -10px; height: 10px; }
+.nav-drop-2 { grid-template-columns: 1fr 1fr; min-width: 560px; }
+.nav-item:hover > .nav-drop, .nav-item:focus-within > .nav-drop, .nav-item.open > .nav-drop { opacity: 1; visibility: visible; transform: translateX(-50%); }
+.nav-item:hover > .nav-top .ico, .nav-item.open > .nav-top .ico { transform: rotate(180deg); }
+.nav-drop a { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: 10px; color: var(--text); font-size: 14px; }
+.nav-drop a:hover { background: var(--bg-soft); }
+.nav-drop a > .ico { width: 18px; height: 18px; color: var(--brand-700); flex: none; margin-top: 1px; }
+.nav-drop a b { display: block; font-weight: 700; }
+.nav-drop a small { display: block; color: var(--muted); font-size: 12.5px; font-weight: 500; margin-top: 1px; }
+.nav-drop .nav-drop-all { grid-column: 1 / -1; justify-content: space-between; align-items: center; background: var(--bg-soft); margin-top: 4px; }
+.nav-drop .nav-drop-all b { color: var(--brand-700); }
+@media (max-width: 1080px) and (min-width: 821px) { .nav-cta .btn span { display: none; } .nav-cta .btn { width: 40px; padding: 0; } }
+@media (max-width: 820px) {
+  .nav-links { align-items: stretch; max-height: calc(100vh - 68px); overflow-y: auto; }
+  .nav-top { width: 100%; justify-content: space-between; padding: 13px 12px; font-size: 16px; }
+  .nav-drop, .nav-drop-2 { position: static; transform: none; min-width: 0; grid-template-columns: 1fr; box-shadow: none; background: var(--ink-2, #161616); display: none; opacity: 1; visibility: visible; padding: 4px; margin: 2px 0 8px; }
+  .nav-item:hover > .nav-drop { transform: none; }
+  .nav-item.open > .nav-drop { display: grid; transform: none; }
+  .nav-drop a { color: #eee; }
+  .nav-drop a:hover { background: rgba(255,255,255,.06); }
+  .nav-drop a small { color: #aaa; }
+  .nav-drop .nav-drop-all { background: rgba(255,255,255,.06); }
+  .nav-drop .nav-drop-all b { color: var(--brand); }
+}
+
+/* ---------- rodapé em colunas ---------- */
+.footer { padding: 48px 0 22px; }
+.ft-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 32px; }
+.ft-brand p { color: var(--ink-muted); font-size: 14px; margin-top: 12px; max-width: 320px; line-height: 1.55; }
+.ft-col { display: flex; flex-direction: column; gap: 9px; }
+.ft-col b { color: #fff; font-size: 14px; margin-bottom: 4px; }
+.ft-col a { color: var(--ink-muted); font-size: 14px; }
+.ft-col a:hover, .ft-base a:hover { color: var(--brand); }
+.ft-base { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-top: 1px solid var(--ink-line); margin-top: 36px; padding-top: 18px; }
+.ft-base p { color: var(--ink-muted); font-size: 13px; }
+.ft-base a { color: #ddd; }
+@media (max-width: 900px) { .ft-grid { grid-template-columns: 1fr 1fr; } .ft-brand { grid-column: 1 / -1; } }
+@media (max-width: 520px) { .ft-grid { grid-template-columns: 1fr; } }
+@media (max-width: 820px) { .nav-cta { margin-left: auto; } }

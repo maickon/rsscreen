@@ -1,0 +1,392 @@
+{
+ "blog": {
+  "atualizado": "2026-11-16",
+  "hash": "51305dd4ce275c13",
+  "publicado": "2026-11-16"
+ },
+ "blog/comecar": {
+  "atualizado": "2026-11-16",
+  "hash": "1cae2bcc92d78a5f",
+  "publicado": "2026-11-16"
+ },
+ "blog/conteudo": {
+  "atualizado": "2026-11-16",
+  "hash": "9939280264cdf6a6",
+  "publicado": "2026-11-16"
+ },
+ "blog/equipamentos": {
+  "atualizado": "2026-11-16",
+  "hash": "8c08b0433f574876",
+  "publicado": "2026-11-16"
+ },
+ "blog/pontos": {
+  "atualizado": "2026-11-16",
+  "hash": "06d58a5695c5cc32",
+  "publicado": "2026-11-16"
+ },
+ "blog/precos": {
+  "atualizado": "2026-11-16",
+  "hash": "e331cbe1d013d8f0",
+  "publicado": "2026-11-16"
+ },
+ "calendario-comercial": {
+  "atualizado": "2026-11-16",
+  "hash": "6eb8ba6a79912bf7",
+  "publicado": "2026-11-16"
+ },
+ "calendario-comercial/abril": {
+  "atualizado": "2026-11-16",
+  "hash": "4603773d712f31f9",
+  "publicado": "2026-11-16"
+ },
+ "calendario-comercial/agosto": {
+  "atualizado": "2026-11-16",
+  "hash": "91c06b599f68bab8",
+  "publicado": "2026-11-16"
+ },
+ "calendario-comercial/dezembro": {
+  "atualizado": "2026-11-16",
+  "hash": "47a563dd6c7d53af",
+  "publicado": "2026-11-16"
+ },
+ "calendario-comercial/fevereiro": {
+  "atualizado": "2026-11-16",
+  "hash": "d962ad6b89c35e2e",
+  "publicado": "2026-11-16"
+ },
+ "calendario-comercial/janeiro": {
+  "atualizado": "2026-11-16",
+  "hash": "96603f09cb4fe02a",
+  "publicado": "2026-11-16"
+ },
+ "calendario-comercial/julho": {
+  "atualizado": "2026-11-16",
+  "hash": "72092005e29e4df1",
+  "publicado": "2026-11-16"
+ },
+ "calendario-comercial/junho": {
+  "atualizado": "2026-11-16",
+  "hash": "43f17f344d1b3b1d",
+  "publicado": "2026-11-16"
+ },
+ "calendario-comercial/maio": {
+  "atualizado": "2026-11-16",
+  "hash": "d9691f8f5f2b3f12",
+  "publicado": "2026-11-16"
+ },
+ "calendario-comercial/marco": {
+  "atualizado": "2026-11-16",
+  "hash": "c34f07770eae7532",
+  "publicado": "2026-11-16"
+ },
+ "calendario-comercial/novembro": {
+  "atualizado": "2026-11-16",
+  "hash": "bc317c1047a937fd",
+  "publicado": "2026-11-16"
+ },
+ "calendario-comercial/outubro": {
+  "atualizado": "2026-11-16",
+  "hash": "d345ebf575aadc58",
+  "publicado": "2026-11-16"
+ },
+ "calendario-comercial/setembro": {
+  "atualizado": "2026-11-16",
+  "hash": "29febaa3cc2697a2",
+  "publicado": "2026-11-16"
+ },
+ "ferramentas/calculadora-midia-indoor": {
+  "atualizado": "2026-11-16",
+  "hash": "e5f6af9e34efadcf",
+  "publicado": "2026-11-16"
+ },
+ "ferramentas/gerador-de-anuncio": {
+  "atualizado": "2026-11-16",
+  "hash": "e7c1e174679f4de0",
+  "publicado": "2026-11-16"
+ },
+ "ferramentas/mensagens-de-abordagem": {
+  "atualizado": "2026-11-16",
+  "hash": "bb3f59c3d6caa5b9",
+  "publicado": "2026-11-16"
+ },
+ "ferramentas/midia-kit": {
+  "atualizado": "2026-11-16",
+  "hash": "15dd9cf04cde158b",
+  "publicado": "2026-11-16"
+ },
+ "ferramentas/proposta-comercial": {
+  "atualizado": "2026-11-16",
+  "hash": "46c97dc5a1465549",
+  "publicado": "2026-11-16"
+ },
+ "ferramentas/tabela-de-precos": {
+  "atualizado": "2026-11-16",
+  "hash": "ec47081627656f31",
+  "publicado": "2026-11-16"
+ },
+ "ferramentas/tamanho-de-tv-ideal": {
+  "atualizado": "2026-11-16",
+  "hash": "467fb9df1c0b6f70",
+  "publicado": "2026-11-16"
+ },
+ "ferramentas/teste-da-tv": {
+  "atualizado": "2026-11-16",
+  "hash": "11309c0033297a97",
+  "publicado": "2026-11-16"
+ },
+ "guia": {
+  "atualizado": "2026-11-16",
+  "hash": "9d68923d988b4826",
+  "publicado": "2026-11-16"
+ },
+ "guia/como-ganhar-dinheiro-com-midia-indoor": {
+  "atualizado": "2026-11-16",
+  "hash": "73ea11706cb13d66",
+  "publicado": "2026-11-13"
+ },
+ "guia/como-transformar-tv-em-painel-digital": {
+  "atualizado": "2026-11-16",
+  "hash": "e7977c5e5844ba5c",
+  "publicado": "2026-11-16"
+ },
+ "guia/conteudo-para-midia-indoor": {
+  "atualizado": "2026-11-16",
+  "hash": "e1de6c55eb0817c6",
+  "publicado": "2026-11-13"
+ },
+ "guia/o-que-e-midia-indoor": {
+  "atualizado": "2026-11-16",
+  "hash": "eab375aaed3b19b2",
+  "publicado": "2026-11-16"
+ },
+ "guia/quanto-cobrar-por-anuncio-em-tv": {
+  "atualizado": "2026-11-16",
+  "hash": "1e4c30c2b9c1e8bd",
+  "publicado": "2026-11-13"
+ },
+ "guia/sistema-de-midia-indoor": {
+  "atualizado": "2026-11-16",
+  "hash": "dfb67153772413a1",
+  "publicado": "2026-11-13"
+ },
+ "guia/tv-box-para-midia-indoor": {
+  "atualizado": "2026-11-16",
+  "hash": "15d9180f7285535b",
+  "publicado": "2026-11-13"
+ },
+ "guia/tv-com-propaganda-no-comercio": {
+  "atualizado": "2026-11-16",
+  "hash": "9247528e4b39a901",
+  "publicado": "2026-11-13"
+ },
+ "modelos": {
+  "atualizado": "2026-11-16",
+  "hash": "86a08d0e512bd155",
+  "publicado": "2026-11-16"
+ },
+ "modelos/anuncio-para-academia": {
+  "atualizado": "2026-11-16",
+  "hash": "b173d78df45bafc2",
+  "publicado": "2026-11-16"
+ },
+ "modelos/anuncio-para-acai": {
+  "atualizado": "2026-11-16",
+  "hash": "51767e8ce90d14dc",
+  "publicado": "2026-11-16"
+ },
+ "modelos/anuncio-para-acougue": {
+  "atualizado": "2026-11-16",
+  "hash": "b233cfffee911f23",
+  "publicado": "2026-11-16"
+ },
+ "modelos/anuncio-para-adega-e-bebidas": {
+  "atualizado": "2026-11-16",
+  "hash": "7f7ce30af23b9906",
+  "publicado": "2026-11-16"
+ },
+ "modelos/anuncio-para-avisos-gerais": {
+  "atualizado": "2026-11-16",
+  "hash": "4621f929346e00ba",
+  "publicado": "2026-11-16"
+ },
+ "modelos/anuncio-para-barbearia-e-salao": {
+  "atualizado": "2026-11-16",
+  "hash": "6f681aa658f095ed",
+  "publicado": "2026-11-16"
+ },
+ "modelos/anuncio-para-cafeteria": {
+  "atualizado": "2026-11-16",
+  "hash": "7e67d684eaa8fc64",
+  "publicado": "2026-11-16"
+ },
+ "modelos/anuncio-para-clinica-e-odontologia": {
+  "atualizado": "2026-11-16",
+  "hash": "b064f009ead6ba36",
+  "publicado": "2026-11-16"
+ },
+ "modelos/anuncio-para-escola-e-cursos": {
+  "atualizado": "2026-11-16",
+  "hash": "ea7498fcac32b237",
+  "publicado": "2026-11-16"
+ },
+ "modelos/anuncio-para-eventos": {
+  "atualizado": "2026-11-16",
+  "hash": "3dea9f1ea74c45de",
+  "publicado": "2026-11-16"
+ },
+ "modelos/anuncio-para-farmacia": {
+  "atualizado": "2026-11-16",
+  "hash": "cc76d249fb2b179d",
+  "publicado": "2026-11-16"
+ },
+ "modelos/anuncio-para-hortifruti": {
+  "atualizado": "2026-11-16",
+  "hash": "333265b14512ffa8",
+  "publicado": "2026-11-16"
+ },
+ "modelos/anuncio-para-imobiliaria": {
+  "atualizado": "2026-11-16",
+  "hash": "18a2b5cac316d19d",
+  "publicado": "2026-11-16"
+ },
+ "modelos/anuncio-para-lanchonete": {
+  "atualizado": "2026-11-16",
+  "hash": "cfd9846093fe2b04",
+  "publicado": "2026-11-16"
+ },
+ "modelos/anuncio-para-loja-de-roupas-e-calcados": {
+  "atualizado": "2026-11-16",
+  "hash": "b833623b1439daed",
+  "publicado": "2026-11-16"
+ },
+ "modelos/anuncio-para-material-de-construcao": {
+  "atualizado": "2026-11-16",
+  "hash": "03512b2d5b3fe5bd",
+  "publicado": "2026-11-16"
+ },
+ "modelos/anuncio-para-mercado": {
+  "atualizado": "2026-11-16",
+  "hash": "daaf46d9429f242d",
+  "publicado": "2026-11-16"
+ },
+ "modelos/anuncio-para-oficina-e-autopecas": {
+  "atualizado": "2026-11-16",
+  "hash": "b76fade8e2d5e251",
+  "publicado": "2026-11-16"
+ },
+ "modelos/anuncio-para-otica": {
+  "atualizado": "2026-11-16",
+  "hash": "bc1b38f4967c62c6",
+  "publicado": "2026-11-16"
+ },
+ "modelos/anuncio-para-padaria": {
+  "atualizado": "2026-11-16",
+  "hash": "7f62bbb1bf9b3f1b",
+  "publicado": "2026-11-16"
+ },
+ "modelos/anuncio-para-pet-shop": {
+  "atualizado": "2026-11-16",
+  "hash": "54915694e3a289d6",
+  "publicado": "2026-11-16"
+ },
+ "modelos/anuncio-para-pizzaria": {
+  "atualizado": "2026-11-16",
+  "hash": "4bd65ce125699fd7",
+  "publicado": "2026-11-16"
+ },
+ "modelos/anuncio-para-restaurante": {
+  "atualizado": "2026-11-16",
+  "hash": "5f83fa523a40cd37",
+  "publicado": "2026-11-16"
+ },
+ "modelos/cardapio-para-acai": {
+  "atualizado": "2026-11-16",
+  "hash": "26344894fa97d1dd",
+  "publicado": "2026-11-16"
+ },
+ "modelos/cardapio-para-cafeteria": {
+  "atualizado": "2026-11-16",
+  "hash": "ee301272afd2635f",
+  "publicado": "2026-11-16"
+ },
+ "modelos/cardapio-para-lanchonete": {
+  "atualizado": "2026-11-16",
+  "hash": "ef4f34f3d7d00415",
+  "publicado": "2026-11-16"
+ },
+ "modelos/cardapio-para-pizzaria": {
+  "atualizado": "2026-11-16",
+  "hash": "74e8205750eb54d1",
+  "publicado": "2026-11-16"
+ },
+ "modelos/tabela-de-precos-para-acougue": {
+  "atualizado": "2026-11-16",
+  "hash": "a005c2660d0ab398",
+  "publicado": "2026-11-16"
+ },
+ "modelos/tabela-de-precos-para-adega-e-bebidas": {
+  "atualizado": "2026-11-16",
+  "hash": "8c64168257005d76",
+  "publicado": "2026-11-16"
+ },
+ "modelos/tabela-de-precos-para-hortifruti": {
+  "atualizado": "2026-11-16",
+  "hash": "01ef9cb14ea72b66",
+  "publicado": "2026-11-16"
+ },
+ "modelos/tabela-de-precos-para-mercado": {
+  "atualizado": "2026-11-16",
+  "hash": "2162761572107086",
+  "publicado": "2026-11-16"
+ },
+ "modelos/tabela-de-precos-para-padaria": {
+  "atualizado": "2026-11-16",
+  "hash": "27df232e71944348",
+  "publicado": "2026-11-16"
+ },
+ "privacidade": {
+  "atualizado": "2026-11-16",
+  "hash": "03ee6c4ebdc12be0",
+  "publicado": "2026-11-16"
+ },
+ "solucoes": {
+  "atualizado": "2026-11-16",
+  "hash": "5415eced181221a3",
+  "publicado": "2026-11-16"
+ },
+ "solucoes/cotacoes-na-tv": {
+  "atualizado": "2026-11-16",
+  "hash": "6bb2dbbaa3808962",
+  "publicado": "2026-11-16"
+ },
+ "solucoes/futebol-na-tv": {
+  "atualizado": "2026-11-16",
+  "hash": "89189b47b2e2b119",
+  "publicado": "2026-11-16"
+ },
+ "solucoes/noticias-na-tv": {
+  "atualizado": "2026-11-16",
+  "hash": "6598659c54c9a477",
+  "publicado": "2026-11-16"
+ },
+ "solucoes/previsao-do-tempo-na-tv": {
+  "atualizado": "2026-11-16",
+  "hash": "7046f84c01df2906",
+  "publicado": "2026-11-16"
+ },
+ "solucoes/qr-code-wifi-na-tv": {
+  "atualizado": "2026-11-16",
+  "hash": "5f28734437fa31ed",
+  "publicado": "2026-11-16"
+ },
+ "solucoes/resultados-de-loterias-na-tv": {
+  "atualizado": "2026-11-16",
+  "hash": "c93bd6abbcaea440",
+  "publicado": "2026-11-16"
+ },
+ "termos-de-uso": {
+  "atualizado": "2026-11-16",
+  "hash": "6dade0cbb47ebe26",
+  "publicado": "2026-11-16"
+ }
+}

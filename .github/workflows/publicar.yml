@@ -1,0 +1,45 @@
+# Publicação automática do site (blog com fila, calendário comercial e demais páginas geradas).
+# Roda todo dia às 8h (horário de Brasília): gera o site; se alguma página mudou (post da fila
+# chegou na data, virou o mês do calendário...), faz commit e push. A Cloudflare publica o push
+# sozinha, e o IndexNow avisa os buscadores.
+name: Publicar site
+
+on:
+  schedule:
+    - cron: '0 11 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Gerar o site
+        env:
+          TZ: America/Sao_Paulo
+        run: python tools/gerar-site.py
+      - name: Commit e push se algo mudou
+        id: commit
+        run: |
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "Nada novo para publicar."
+            echo "mudou=0" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name "rsscreen-bot"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Publicação automática do site ($(TZ=America/Sao_Paulo date +%Y-%m-%d))"
+          git push
+          echo "mudou=1" >> "$GITHUB_OUTPUT"
+      - name: Avisar os buscadores (IndexNow)
+        if: steps.commit.outputs.mudou == '1'
+        run: |
+          sleep 120
+          python tools/indexnow.py || true
