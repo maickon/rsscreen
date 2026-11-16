@@ -45,6 +45,7 @@ Planos mensais por faixa de telas (até 10, até 50 e até 200 telas): Notícias
 - [Gerador de mídia kit do ponto](https://rsscreen.com.br/ferramentas/midia-kit/): Monte grátis o mídia kit do seu ponto de mídia indoor: movimento, público, exibições por dia, fotos do local e investimento. Pronto para imprimir, salvar em PDF ou mandar no WhatsApp.
 - [Mensagens prontas para vender anúncio em TV](https://rsscreen.com.br/ferramentas/mensagens-de-abordagem/): Mensagens prontas de WhatsApp para vender anúncio de mídia indoor por segmento: primeiro contato, depois da visita, proposta sem resposta, fechamento, renovação, indicação e abordagem ao dono do ponto.
 - [Calculadora de exibições do anúncio na TV](https://rsscreen.com.br/ferramentas/calculadora-de-exibicoes/): Calcule quantas vezes por dia, por hora e por mês o anúncio aparece na TV de mídia indoor, o tamanho do ciclo e o tempo de tela, e gere um texto pronto para o anunciante.
+- [Gerador de contrato de mídia indoor](https://rsscreen.com.br/ferramentas/gerador-de-contrato/): Gere contrato de mídia indoor com o estabelecimento, com o anunciante, autorização de instalação de TV e parceria com divisão de receita. Preencha, imprima ou salve em PDF.
 
 ## Soluções prontas para a TV do comércio
 - [Soluções prontas para a TV do comércio](https://rsscreen.com.br/solucoes/): Notícias, previsão do tempo, loterias, cotações, futebol e QR Code do Wi-Fi na TV do comércio ou mídia indoor, funcionando ao vivo e atualizando sozinhos.

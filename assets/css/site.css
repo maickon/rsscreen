@@ -212,3 +212,25 @@
 .ciclo-leg { font-size: 12.5px; color: var(--muted); display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
 .ciclo-leg i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 4px; }
 .x-texto { background: var(--bg-soft); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin: 6px 0 10px; }
+
+/* gerador de contrato */
+.ctr-aviso { border: 1px solid #f5c26b; background: #fff8eb; color: #6b4a00; border-radius: 12px; padding: 12px 14px; font-size: 14px; line-height: 1.45; }
+.ctr-doc { font-size: 14px; text-align: justify; }
+.ctr-doc .ctr-tit { font-size: 18px; text-align: center; letter-spacing: 0; line-height: 1.3; margin-bottom: 18px; }
+.ctr-doc h3 { margin: 18px 0 6px; }
+.ctr-doc p + p { margin-top: 6px; }
+.ctr-linha { display: inline-block; min-width: 180px; border-bottom: 1px solid #555; height: 1em; vertical-align: baseline; }
+.ctr-local { margin-top: 22px; text-align: right; }
+.ctr-doc .sign { margin-top: 44px; }
+.ctr-rodape { margin-top: 30px; font-size: 11.5px; color: #777; text-align: center; }
+.tool-form [hidden] { display: none !important; }
+
+/* impressão de documentos (proposta, tabela, contrato): o documento ocupa a página inteira, em várias páginas se preciso */
+@media print {
+  .tool, .tool-out, .doc-wrap, .page-body, .page-body .wrap { display: block !important; position: static !important; padding: 0 !important; margin: 0 !important; max-width: none !important; }
+  .tool-form, .ctr-aviso, .tool-actions, .page-hero, .related, .cta-final, .footer, .prose { display: none !important; }
+  .doc { position: static !important; width: auto !important; }
+  .ctr-doc h3 { break-after: avoid; }
+  .ctr-doc .sign { break-inside: avoid; }
+}
+.ctr-dica { color: #888; font-size: 11px; }

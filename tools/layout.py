@@ -29,6 +29,7 @@ FERRAMENTAS = [
     ('Calculadora de ganhos', 'chart', 'ferramentas/calculadora-midia-indoor/'),
     ('Exibições do anúncio', 'clock', 'ferramentas/calculadora-de-exibicoes/'),
     ('Proposta comercial', 'copy', 'ferramentas/proposta-comercial/'),
+    ('Gerador de contrato', 'shield', 'ferramentas/gerador-de-contrato/'),
     ('Tabela de preços', 'tag', 'ferramentas/tabela-de-precos/'),
     ('Gerador de anúncio', 'sparkles', 'ferramentas/gerador-de-anuncio/'),
     ('Mídia kit', 'layers', 'ferramentas/midia-kit/'),

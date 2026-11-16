@@ -260,4 +260,107 @@
       (navigator.clipboard ? navigator.clipboard.writeText(texto) : Promise.reject()).then(() => toast('Texto copiado'), () => toast('Selecione o texto e copie'));
     });
   }
+
+  /* =================== GERADOR DE CONTRATO =================== */
+  // Modelos informativos (revisão jurídica recomendada). Campo vazio vira uma linha para preencher à mão.
+  const ctr = $('ctr');
+  if (ctr) {
+    const hoje = new Date();
+    const em = n => { const d = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() + n); return d.toISOString().slice(0, 10); };
+    if (!$('kInicio').value) $('kInicio').value = em(7);
+    if (!$('kInst').value) $('kInst').value = em(7);
+    const brd = iso => iso ? iso.split('-').reverse().join('/') : '____/____/______';
+    const extenso = n => n === 1 ? '1 (um) mês' : n + ' meses';
+    const NOMES = {
+      estabelecimento: ['CONTRATO DE CESSÃO DE ESPAÇO PARA INSTALAÇÃO DE TELA DE MÍDIA INDOOR', 'ESTABELECIMENTO'],
+      anunciante: ['CONTRATO DE VEICULAÇÃO DE PUBLICIDADE EM MÍDIA INDOOR', 'ANUNCIANTE'],
+      autorizacao: ['AUTORIZAÇÃO PARA INSTALAÇÃO DE EQUIPAMENTO DE MÍDIA INDOOR', 'AUTORIZANTE'],
+      parceria: ['TERMO DE PARCERIA COM DIVISÃO DE RECEITA DE MÍDIA INDOOR', 'ESTABELECIMENTO PARCEIRO']
+    };
+    let texto = '';
+    wire(ctr, 'rs_ctr_v1', () => {
+      const tipo = $('kTipo').value;
+      ctr.querySelectorAll('[data-so]').forEach(el => { el.hidden = el.dataset.so.split(' ').indexOf(tipo) < 0; });
+      $('kParteTit').textContent = tipo === 'anunciante' ? 'Anunciante' : 'Estabelecimento';
+      const v = id => esc($(id).value.trim());
+      const ou = (id, linha) => v(id) || '<span class="ctr-linha"></span>' + (linha ? ' <small class="ctr-dica">(' + linha + ')</small>' : '');
+      const n = Math.max(1, Math.round(num('kMeses'))), aviso = Math.max(0, Math.round(num('kAviso')));
+      const [titulo, papel] = NOMES[tipo];
+      const op = '<b>' + ou('kOpNome') + '</b>, inscrito(a) no CPF/CNPJ sob o nº ' + ou('kOpDoc') + ', com endereço em ' + ou('kOpEnd') + ', doravante <b>OPERADOR</b>';
+      const pt = '<b>' + ou('kPtNome') + '</b>, inscrito(a) no CPF/CNPJ sob o nº ' + ou('kPtDoc') + ', com endereço em ' + ou('kPtEnd') + ', neste ato representado(a) por ' + ou('kPtResp') + ', doravante <b>' + papel + '</b>';
+      let c = [];   // cláusulas: [título, [parágrafos]]
+      const prazo = ['O presente instrumento vigora por <b>' + extenso(n) + '</b>, a partir de <b>' + brd($('kInicio').value) + '</b>, renovando-se automaticamente por iguais períodos, salvo manifestação contrária de qualquer das partes.',
+        'Qualquer das partes pode encerrar este instrumento a qualquer tempo, mediante aviso por escrito (inclusive por mensagem eletrônica) com <b>' + aviso + ' dias</b> de antecedência, sem multa, ressalvados os valores devidos até a data do encerramento.'];
+
+      if (tipo === 'estabelecimento' || tipo === 'parceria') {
+        const contra = tipo === 'parceria' ? 'pct' : $('kContra').value;
+        const pct = tipo === 'parceria' ? num('kPct') : num('kPctEst');
+        c.push(['Do objeto', ['O ESTABELECIMENTO cede ao OPERADOR, a título de ' + (contra === 'uso' ? 'parceria sem pagamento em dinheiro' : 'parceria remunerada') +
+          ', espaço em suas dependências para a instalação e o funcionamento de tela de mídia indoor no seguinte local: <b>' + ou('kLocal', 'local da instalação') + '</b>.',
+          'Os equipamentos instalados são: <b>' + ou('kEquip', 'descrição dos equipamentos') + '</b>.']]);
+        c.push(['Da propriedade dos equipamentos', ['Os equipamentos são de propriedade exclusiva do OPERADOR e não integram o patrimônio do ESTABELECIMENTO, podendo ser retirados pelo OPERADOR a qualquer tempo e, obrigatoriamente, ao término deste instrumento.',
+          'O ESTABELECIMENTO compromete-se a zelar pelos equipamentos e a comunicar ao OPERADOR, em até 48 horas, qualquer dano, defeito ou furto. Danos causados por mau uso ou negligência do ESTABELECIMENTO serão por ele ressarcidos.']]);
+        c.push(['Das obrigações do estabelecimento', ['Manter a tela ligada durante o horário de funcionamento, com energia elétrica e acesso à internet (Wi-Fi) disponíveis, sem custo para o OPERADOR.',
+          'Permitir o acesso do OPERADOR, em horário comercial, para instalação, manutenção e retirada dos equipamentos.',
+          'Não alterar a programação, desconectar ou mudar os equipamentos de lugar sem autorização do OPERADOR.']]);
+        c.push(['Das obrigações do operador', ['Instalar, configurar e manter os equipamentos em funcionamento, às suas expensas.',
+          'Veicular apenas conteúdo lícito, informativo e publicitário, sem conteúdo ofensivo, político-partidário, adulto ou que viole a legislação.',
+          'Não veicular anúncios de concorrentes diretos do ESTABELECIMENTO na tela instalada em suas dependências.']]);
+        if (contra === 'uso') c.push(['Da contrapartida', ['Como contrapartida, o ESTABELECIMENTO terá direito a: <b>' + ou('kEspaco', 'espaço na programação') + '</b>, com conteúdo fornecido por ele e aprovado pelo OPERADOR. Não haverá pagamento em dinheiro entre as partes.']]);
+        if (contra === 'fixo') c.push(['Da contrapartida', ['O OPERADOR pagará ao ESTABELECIMENTO o valor fixo de <b>' + brl(num('kFixo')) + ' por mês</b>, até o dia 10 do mês seguinte ao de referência, por Pix ou transferência.',
+          'O ESTABELECIMENTO terá ainda direito a: <b>' + ou('kEspaco', 'espaço na programação') + '</b>.']]);
+        if (contra === 'pct') c.push(['Da divisão da receita', ['O OPERADOR repassará ao ESTABELECIMENTO <b>' + pct + '% (' + pct + ' por cento)</b> da receita efetivamente recebida dos anúncios veiculados na tela instalada em suas dependências, descontados os tributos incidentes.',
+          'O OPERADOR enviará ao ESTABELECIMENTO, até o dia <b>' + Math.max(1, Math.min(28, num('kContas') || 10)) + '</b> de cada mês, relatório com os anunciantes veiculados e os valores recebidos no mês anterior, efetuando o repasse no mesmo prazo.',
+          'Meses sem receita de anúncios não geram repasse. A venda dos anúncios, os preços e os contratos com anunciantes são de responsabilidade exclusiva do OPERADOR.'].concat(tipo === 'estabelecimento' ? ['O ESTABELECIMENTO terá ainda direito a: <b>' + ou('kEspaco', 'espaço na programação') + '</b>.'] : [])]);
+        c.push(['Do prazo e do encerramento', prazo.concat(['Encerrado o instrumento, o OPERADOR retirará os equipamentos em até 10 (dez) dias, e o ESTABELECIMENTO deverá disponibilizá-los no estado em que os recebeu, salvo o desgaste natural.'])]);
+        c.push(['Da ausência de vínculo', ['Este instrumento não cria vínculo empregatício, societário ou de exclusividade entre as partes, que respondem cada uma por suas obrigações trabalhistas, fiscais e tributárias.']]);
+      }
+
+      if (tipo === 'anunciante') {
+        const pontos = $('kPontos').value.split('\n').map(s => s.trim()).filter(Boolean);
+        const arte = { inclusa: 'A criação da arte do anúncio está incluída no valor contratado. Alterações de conteúdo poderão ser solicitadas até 1 (uma) vez por mês, sem custo.',
+          cliente: 'O ANUNCIANTE fornecerá a arte do anúncio pronta (imagem em 1920×1080 ou 1080×1920 pixels, ou vídeo em formato compatível), sendo responsável pelo seu conteúdo.',
+          cobrada: 'A criação da arte, se solicitada ao OPERADOR, será cobrada à parte, conforme orçamento prévio aprovado pelo ANUNCIANTE.' }[$('kArte').value];
+        c.push(['Do objeto', ['O OPERADOR veiculará o anúncio do ANUNCIANTE nas telas de mídia indoor instaladas nos seguintes pontos: ' +
+          (pontos.length ? '<b>' + pontos.map(esc).join('; ') + '</b>' : '<span class="ctr-linha"></span> <small class="ctr-dica">(pontos)</small>') + '.',
+          'O anúncio terá duração de <b>' + Math.round(num('kDur') || 15) + ' segundos</b> e será exibido <b>' + Math.max(1, Math.round(num('kInser') || 1)) + ' vez(es) a cada volta</b> da programação, em rodízio com outros anúncios e conteúdos informativos, durante o horário de funcionamento de cada ponto.',
+          'O número de exibições informado em propostas é uma estimativa baseada na programação e no horário de funcionamento, podendo variar conforme o funcionamento dos pontos, quedas de energia ou de internet.']]);
+        c.push(['Do conteúdo do anúncio', [arte, 'O ANUNCIANTE é responsável pela veracidade das informações, preços e ofertas anunciadas e pelo direito de uso de marcas e imagens fornecidas.',
+          'O OPERADOR poderá recusar ou retirar anúncio com conteúdo ilegal, ofensivo, enganoso, adulto, político-partidário ou que concorra diretamente com o estabelecimento onde a tela está instalada, comunicando o ANUNCIANTE.']]);
+        if ($('kExcl').value.trim()) c.push(['Da exclusividade', ['O OPERADOR garante ao ANUNCIANTE exclusividade nos seguintes termos: <b>' + v('kExcl') + '</b>, durante a vigência deste contrato.']]);
+        c.push(['Do valor e do pagamento', ['O ANUNCIANTE pagará ao OPERADOR o valor de <b>' + brl(num('kValor')) + ' por mês</b>, com vencimento todo dia <b>' + Math.max(1, Math.min(28, Math.round(num('kDia') || 10))) + '</b>, por Pix, boleto ou transferência.',
+          'O atraso no pagamento implicará multa de 2% (dois por cento) e juros de 1% (um por cento) ao mês. Após 10 (dez) dias de atraso, o OPERADOR poderá suspender a veiculação até a regularização, sem que isso suspenda a cobrança.',
+          'O valor poderá ser reajustado anualmente, com aviso prévio de 30 (trinta) dias.']]);
+        c.push(['Das falhas de exibição', ['Interrupções causadas por falta de energia, internet ou funcionamento dos pontos, ou por manutenção, não geram desconto quando somarem menos de 3 (três) dias no mês em determinado ponto. Acima disso, o OPERADOR concederá desconto proporcional ou compensará os dias em veiculação extra.']]);
+        c.push(['Do prazo e do encerramento', prazo]);
+      }
+
+      if (tipo === 'autorizacao') {
+        c.push(['Da autorização', ['O AUTORIZANTE, responsável pelo imóvel e pelo estabelecimento acima, autoriza o OPERADOR a instalar, no local <b>' + ou('kLocal', 'local da instalação') + '</b>, os seguintes equipamentos de mídia indoor: <b>' + ou('kEquip', 'descrição dos equipamentos') + '</b>.',
+          'A instalação está prevista para <b>' + brd($('kInst').value) + '</b>, em horário combinado entre as partes, e inclui a fixação de suporte na parede ou no teto e a passagem de cabos, quando necessário.']]);
+        c.push(['Das condições', ['Os equipamentos são de propriedade do OPERADOR, que se responsabiliza pela instalação, pela manutenção e por eventuais danos causados ao imóvel durante esses serviços.',
+          'Ao retirar os equipamentos, o OPERADOR fará o acabamento dos furos de fixação, quando solicitado.',
+          'As demais condições de funcionamento, contrapartidas e prazo serão definidas em contrato próprio entre as partes.']]);
+      }
+
+      if ($('kObs').value.trim()) c.push(['Disposições adicionais', [v('kObs').replace(/\n/g, '<br>')]]);
+      c.push(['Do foro', ['As partes elegem o foro da comarca de <b>' + ou('kForo', 'cidade/UF') + '</b> para dirimir quaisquer dúvidas oriundas deste instrumento, com renúncia a qualquer outro.']]);
+
+      const corpo = c.map((cl, i) => '<h3>Cláusula ' + (i + 1) + 'ª · ' + cl[0] + '</h3>' + cl[1].map((p, j) => '<p>' + (cl[1].length > 1 ? (i + 1) + '.' + (j + 1) + '. ' : '') + p + '</p>').join('')).join('');
+      const local = (v('kForo') || '____________________') + ', ' + hoje.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
+      $('kDoc').innerHTML = '<h2 class="ctr-tit">' + titulo + '</h2>' +
+        '<p>Pelo presente instrumento particular, de um lado ' + op + ', e de outro lado ' + pt + ', têm entre si justo e acordado o que segue:</p>' +
+        corpo +
+        '<p>E, por estarem de acordo, as partes assinam este instrumento em 2 (duas) vias de igual teor, na presença de 2 (duas) testemunhas.</p>' +
+        '<p class="ctr-local">' + local + '</p>' +
+        '<div class="sign"><div>OPERADOR<br>' + (v('kOpNome') || '') + '</div><div>' + papel + '<br>' + (v('kPtResp') || v('kPtNome') || '') + '</div></div>' +
+        '<div class="sign"><div>Testemunha 1 · Nome e CPF</div><div>Testemunha 2 · Nome e CPF</div></div>' +
+        '<p class="ctr-rodape">Modelo informativo gerado gratuitamente em rsscreen.com.br. Recomenda-se a revisão por advogado antes da assinatura.</p>';
+      texto = $('kDoc').innerText;
+    });
+    $('kPrint').addEventListener('click', () => window.print());
+    $('kCopy').addEventListener('click', () => {
+      (navigator.clipboard ? navigator.clipboard.writeText(texto) : Promise.reject()).then(() => toast('Texto copiado'), () => toast('Selecione o texto e copie'));
+    });
+  }
 })();

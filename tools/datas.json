@@ -1,7 +1,7 @@
 {
  "blog": {
   "atualizado": "2026-11-16",
-  "hash": "daa662b35c8b4b76",
+  "hash": "2b31584bb8f10735",
   "publicado": "2026-11-16"
  },
  "blog/comecar": {
@@ -109,6 +109,11 @@
   "hash": "e7c1e174679f4de0",
   "publicado": "2026-11-16"
  },
+ "ferramentas/gerador-de-contrato": {
+  "atualizado": "2026-11-16",
+  "hash": "37d0ead383f6a906",
+  "publicado": "2026-11-16"
+ },
  "ferramentas/mensagens-de-abordagem": {
   "atualizado": "2026-11-16",
   "hash": "bb3f59c3d6caa5b9",
@@ -141,7 +146,7 @@
  },
  "guia": {
   "atualizado": "2026-11-16",
-  "hash": "b22d31e19526f99d",
+  "hash": "e731caeacf853e18",
   "publicado": "2026-11-16"
  },
  "guia/como-ganhar-dinheiro-com-midia-indoor": {
