@@ -354,9 +354,9 @@
       '<button class="theme-opt' + (t.id === G.tema ? ' on' : '') + '" data-v="' + t.id + '"><i style="background:' + t.bg + '"><b style="background:' + t.accent + '"></b></i>' + esc(t.nome) + '</button>').join('');
 
     const n = combos().length;
-    $('#gSummary').innerHTML = n ? 'Serão gerados <b>' + n + ' link' + (n > 1 ? 's' : '') + '</b> para <b>' + esc(c ? c.nome : '—') + '</b>' + (n > MAX_COMBOS ? ' <span class="warn">(máximo ' + MAX_COMBOS + ' por vez)</span>' : '') : 'Selecione ao menos um item em cada etapa.';
+    $('#gSummary').innerHTML = n ? (n > 1 ? '<b>' + n + ' telas</b> (todas as combinações)' : '<b>1 tela</b>') + ' para <b>' + esc(c ? c.nome : '—') + '</b>' + (n > MAX_COMBOS ? ' <span class="warn">(máximo ' + MAX_COMBOS + ' por vez)</span>' : '') : 'Selecione ao menos um item em cada etapa.';
     $('#gGenerate').disabled = !n || n > MAX_COMBOS || !G.cliente;
-    $('#gGenerate span').textContent = n > 1 ? 'Gerar ' + n + ' links' : 'Gerar link';
+    $('#gGenerate span').textContent = n > 1 ? 'Adicionar ' + n + ' telas à seleção' : 'Adicionar à seleção';
     schedulePreview();
   }
 
@@ -409,8 +409,217 @@
   $('#gGenerate').addEventListener('click', () => {
     const list = combos();
     if (!list.length || list.length > MAX_COMBOS) return;
-    showResults(list.map(makeRecord));
+    selAdicionar(list);
   });
+
+  /* =================== SELEÇÃO DE TELAS E ENTREGA =================== */
+  // Cada tela montada entra na seleção (pode misturar conteúdos). No fim: links separados ou link único
+  // (playlist guardada no banco, com tempo de cada tela e anúncios entre elas).
+  const SEL = { cliente: '', itens: [], modo: 'separados', editing: null, anuncios: [] };
+  const selKey = it => [it.modulo, it.assunto, it.fonte || '', it.layout].join('|');
+  const DUR_PADRAO_TELA = { rss: 40, anuncios: 30, clima: 20, cotacoes: 20, loterias: 25 };
+
+  function selAdicionar(list) {
+    if (SEL.cliente && SEL.cliente !== G.cliente && SEL.itens.length) {
+      if (!confirm('A seleção atual é de outro cliente. Começar uma seleção nova para este cliente?')) return;
+      SEL.itens = []; SEL.editing = null;
+    }
+    SEL.cliente = G.cliente;
+    let n = 0;
+    list.forEach(o => {
+      if (SEL.itens.some(x => selKey(x) === selKey(o) && x.orientacao === o.orientacao)) return;
+      SEL.itens.push(Object.assign({ duracao: DUR_PADRAO_TELA[o.modulo] || 30 }, o)); n++;
+    });
+    renderSel();
+    toast(n ? n + ' tela' + (n > 1 ? 's' : '') + ' adicionada' + (n > 1 ? 's' : '') + ' à seleção' : 'Essas telas já estavam na seleção');
+    if (window.innerWidth < 1000) $('#selCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // itens do link único: sem repetir a mesma tela nas duas orientações
+  function selItensUnicos() {
+    const vistos = {};
+    return SEL.itens.filter(it => !vistos[selKey(it)] && (vistos[selKey(it)] = 1));
+  }
+
+  function selNome(it) {
+    const m = modById(it.modulo);
+    if (m && m.assuntoLivre) return plItemName(it);
+    const r = makeRecord(it);
+    return r.moduloNome + ' · ' + recordTitle(r);
+  }
+
+  function selTemas() {
+    if (!$('#selTema').options.length) $('#selTema').innerHTML = '<option value="">As cores de cada tela</option>' + RS.THEMES.map(t => '<option value="' + esc(t.id) + '">' + esc(t.nome) + '</option>').join('');
+  }
+  function renderSel() {
+    selTemas();
+    const unico = SEL.modo === 'unico';
+    const lista = unico ? selItensUnicos() : SEL.itens;
+    const c = clients.find(x => x.chave === SEL.cliente);
+    $('#selCount').textContent = SEL.itens.length ? '(' + lista.length + ')' : '';
+    $('#selSub').innerHTML = SEL.itens.length ? 'Cliente: <b>' + esc(c ? c.nome : SEL.cliente) + '</b>' + (SEL.editing ? ' · editando um link único já existente' : '') :
+      'Monte a tela à esquerda e clique em <b>Adicionar à seleção</b>. Pode adicionar várias, de conteúdos diferentes.';
+    $('#selLimpar').hidden = !SEL.itens.length;
+    $('#selEntrega').hidden = !SEL.itens.length;
+    $('#selUnico').hidden = !unico;
+    $$('input[name=selModo]').forEach(r => { r.checked = r.value === SEL.modo; });
+    $('#selList').innerHTML = lista.map((it, k) => {
+      const m = modById(it.modulo);
+      const r = m && !m.assuntoLivre ? makeRecord(it) : null;
+      return '<div class="sel-item' + (unico ? ' unico' : '') + '" data-k="' + k + '">' +
+        '<span class="sel-n">' + (k + 1) + '</span>' +
+        '<div class="sel-txt"><b>' + esc(selNome(it)) + '</b><small>' + esc(r ? r.layoutNome : '') + (unico ? '' : ' · ' + esc(ORIENT_NAME[it.orientacao] || '') + (r ? ' · ' + esc(r.temaNome) : '')) + '</small></div>' +
+        (unico ? '<label class="sel-dur" title="Tempo desta tela no link único"><input class="input input-sm" type="number" min="5" max="600" data-dur value="' + (Number(it.duracao) || 30) + '"><span>s</span></label>' +
+          '<button class="btn btn-ghost btn-sm btn-icon" data-mv="-1" title="Subir"' + (k === 0 ? ' disabled' : '') + '>↑</button>' +
+          '<button class="btn btn-ghost btn-sm btn-icon" data-mv="1" title="Descer"' + (k === lista.length - 1 ? ' disabled' : '') + '>↓</button>' : '') +
+        '<button class="btn btn-ghost btn-sm btn-icon" data-rm title="Tirar da seleção">' + ICON('x') + '</button>' +
+      '</div>';
+    }).join('') || '<div class="empty">Nenhuma tela selecionada ainda.</div>';
+    const inter = Number($('#selInter').value) || 0;
+    $('#selAnWrap').hidden = !inter;
+    if (unico && lista.length) {
+      const t = plCycle(lista, inter);
+      const ads = inter ? lista.filter(i => i.modulo !== 'anuncios').length : 0;
+      $('#selCiclo').innerHTML = 'Ciclo completo: <b>' + fmtDur(t) + '</b> · ' + lista.length + ' tela' + (lista.length > 1 ? 's' : '') + (ads ? ' + ' + ads + ' anúncio' + (ads > 1 ? 's' : '') : '') + ' · repete cerca de <b>' + Math.floor(3600 / Math.max(t, 1)) + '×</b> por hora';
+    }
+    $('#selGerar span').textContent = unico ? (SEL.editing ? 'Salvar link único' : 'Gerar link único') : 'Gerar ' + SEL.itens.length + ' link' + (SEL.itens.length > 1 ? 's' : '');
+    selPreview();
+  }
+
+  async function selCarregaAnuncios(sel) {
+    SEL.anuncios = [];
+    if (SEL.cliente && dbMode) try { SEL.anuncios = (await api('api/admin/anuncios?cliente=' + encodeURIComponent(SEL.cliente))).anuncios || []; } catch (_) {}
+    $('#selAnuncio').innerHTML = '<option value="">Todos os anúncios do cliente (um diferente a cada vez)</option>' +
+      SEL.anuncios.map(a => '<option value="' + esc(a.id) + '">' + esc((a.dados && a.dados.titulo) || a.anunciante || a.modelo) + (a.ativo ? '' : ' (pausado)') + '</option>').join('');
+    $('#selAnuncio').value = SEL.anuncios.some(a => a.id === sel) ? sel : '';
+  }
+
+  function selPlaylist() {
+    const inter = Number($('#selInter').value) || 0;
+    const opcoes = {};
+    if ($('#selTema').value) opcoes.tema = $('#selTema').value;
+    if (inter) { opcoes.intercalar = inter; if ($('#selAnuncio').value) opcoes.anuncio = $('#selAnuncio').value; }
+    return {
+      id: SEL.editing || undefined, cliente: SEL.cliente, nome: $('#selNome').value.trim() || 'Link único',
+      itens: selItensUnicos().map(it => { const o = { modulo: it.modulo, assunto: it.assunto, layout: it.layout, duracao: Math.max(5, Number(it.duracao) || 30) }; if (it.fonte) o.fonte = it.fonte; return o; }),
+      opcoes
+    };
+  }
+
+  // prévia: no link único roda a sequência inteira; nos links separados mostra a tela montada à esquerda
+  function selPreview() {
+    if (SEL.modo !== 'unico' || !SEL.itens.length) { schedulePreview(); return; }
+    const frame = $('#pvFrame');
+    const o = $('#selOrient').value;
+    const url = RS.ROOT_URL + 'tela/?cliente=' + encodeURIComponent(SEL.cliente) + '&playlist=previa&previa=1' + (o === 'vertical' ? '&orientacao=vertical' : '');
+    $('#pvDevice').className = o === 'vertical' ? 'device-totem' : 'device-tv';
+    $('#pvLabel').textContent = 'Link único: a sequência completa, antes de salvar';
+    $('#pvOpen').hidden = true;
+    if (frame.dataset.url !== url) { frame.dataset.url = url; frame.src = url; }
+    else selEnviaPrevia();
+  }
+  function selEnviaPrevia() {
+    const p = selPlaylist();
+    try { $('#pvFrame').contentWindow.postMessage({ rs: 'pl-previa', playlist: { id: 'previa', nome: p.nome, itens: p.itens, opcoes: p.opcoes } }, location.origin); } catch (_) {}
+  }
+  window.addEventListener('message', e => {
+    if (e.origin === location.origin && e.data && e.data.rs === 'pl-previa-pronta' && e.source === $('#pvFrame').contentWindow && SEL.modo === 'unico') selEnviaPrevia();
+  });
+
+  $('#selList').addEventListener('click', e => {
+    const row = e.target.closest('[data-k]'); if (!row) return;
+    const lista = SEL.modo === 'unico' ? selItensUnicos() : SEL.itens;
+    const it = lista[Number(row.dataset.k)];
+    const mv = e.target.closest('[data-mv]');
+    if (e.target.closest('[data-rm]')) {
+      SEL.itens = SEL.itens.filter(x => SEL.modo === 'unico' ? selKey(x) !== selKey(it) : x !== it);
+    } else if (mv) {
+      const j = Number(row.dataset.k) + Number(mv.dataset.mv);
+      const outro = lista[j]; if (!outro) return;
+      const a = SEL.itens.indexOf(it), b = SEL.itens.indexOf(outro);
+      [SEL.itens[a], SEL.itens[b]] = [SEL.itens[b], SEL.itens[a]];
+    } else return;
+    if (!SEL.itens.length) SEL.editing = null;
+    renderSel();
+  });
+  $('#selList').addEventListener('change', e => {
+    const inp = e.target.closest('[data-dur]'); if (!inp) return;
+    const it = selItensUnicos()[Number(inp.closest('[data-k]').dataset.k)];
+    const v = Math.max(5, Math.min(600, Number(inp.value) || 30));
+    SEL.itens.forEach(x => { if (selKey(x) === selKey(it)) x.duracao = v; });
+    renderSel();
+  });
+  $('#selLimpar').addEventListener('click', () => { if (!confirm('Tirar todas as telas da seleção?')) return; SEL.itens = []; SEL.editing = null; renderSel(); });
+  $$('input[name=selModo]').forEach(r => r.addEventListener('change', () => {
+    SEL.modo = r.value;
+    if (SEL.modo === 'unico') { selCarregaAnuncios($('#selAnuncio').value); if (!$('#selNome').value) { const c = clients.find(x => x.chave === SEL.cliente); $('#selNome').value = c ? 'TV de ' + c.nome : ''; } }
+    $('#pvOpen').hidden = false; $('#pvFrame').dataset.url = '';
+    renderSel();
+  }));
+  ['selInter', 'selAnuncio', 'selTema', 'selOrient'].forEach(id => $('#' + id).addEventListener('change', renderSel));
+  $('#selNome').addEventListener('input', () => { clearTimeout(SEL.t); SEL.t = setTimeout(selEnviaPrevia, 500); });
+
+  $('#selGerar').addEventListener('click', async () => {
+    if (!SEL.itens.length) return;
+    if (SEL.modo === 'separados') { showResults(SEL.itens.map(makeRecord)); return; }
+    if (!dbMode) return toast('O link único precisa do banco de dados (site publicado na Cloudflare)', 'x');
+    $('#selGerar').disabled = true;
+    try {
+      const r = await api('api/admin/playlists', { method: 'POST', headers: { 'X-Admin-Senha': adminSenha(), 'Content-Type': 'application/json' }, body: JSON.stringify(selPlaylist()) });
+      SEL.editing = r.id;
+      showUnico(r.id);
+      renderSel();
+    } catch (err) { toast(err.message, 'x'); }
+    $('#selGerar').disabled = false;
+  });
+
+  function unicoUrl(cliente, id, orient) {
+    return RS.ROOT_URL + 'tela/?cliente=' + encodeURIComponent(cliente) + '&playlist=' + encodeURIComponent(id) + (orient === 'vertical' ? '&orientacao=vertical' : '');
+  }
+  function unicoMensagem(c, nome, url) {
+    return 'Olá' + (c ? ', ' + c.nome : '') + '! Este é o link da programação da sua TV (' + nome + '):\n\n' + url +
+      '\n\nÉ só abrir na TV, TV Box ou no seu sistema de mídia indoor. Quando a programação mudar, a TV atualiza sozinha, sem trocar o link.';
+  }
+  function showUnico(id) {
+    const c = clients.find(x => x.chave === SEL.cliente);
+    const nome = $('#selNome').value.trim() || 'Link único';
+    const url = unicoUrl(SEL.cliente, id, $('#selOrient').value);
+    results = [];
+    $('#results').hidden = false;
+    $('#resTitle').textContent = 'Link único pronto para ' + (c ? c.nome : SEL.cliente);
+    $('#resSub').textContent = 'Fica salvo em "Links únicos". Se você mudar a programação depois, a TV recebe sozinha, sem trocar o link.';
+    $('#resList').innerHTML = '<div class="link-row"><div class="link-ico">' + ICON('play') + '</div><div class="link-main"><div class="link-title">' + esc(nome) +
+      '<span class="tag">' + selItensUnicos().length + ' telas</span><span class="tag">' + esc(ORIENT_NAME[$('#selOrient').value] || '') + '</span></div>' +
+      '<div class="link-url">' + esc(url) + '</div></div><div class="link-actions">' +
+      '<button class="btn btn-ghost btn-sm" data-unico-cp="' + esc(url) + '" title="Copiar link">' + ICON('copy') + '</button>' +
+      '<a class="btn btn-ghost btn-sm" href="' + esc(url) + '" target="_blank" rel="noopener" title="Abrir tela">' + ICON('external') + '</a></div></div>';
+    $('#resCopyAll').dataset.unico = url;
+    const msg = unicoMensagem(c, nome, url);
+    $('#resCopyMsg').dataset.unico = msg;
+    let phone = c && c.whatsapp ? c.whatsapp : '';
+    if (phone && phone.length <= 11) phone = '55' + phone;
+    $('#resWhats').href = phone ? RS.whatsappLink(phone, msg) : 'https://wa.me/?text=' + encodeURIComponent(msg);
+    toast(SEL.editing ? 'Link único salvo' : 'Link único criado');
+    setTimeout(() => $('#results').scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+  }
+  $('#resList').addEventListener('click', e => { const b = e.target.closest('[data-unico-cp]'); if (b) copy(b.dataset.unicoCp, 'Link copiado'); });
+
+  // abre no Gerar links uma seleção pronta (pacote ou link único existente)
+  async function selCarregar(cliente, itens, modo, extra) {
+    extra = extra || {};
+    SEL.cliente = cliente; SEL.itens = itens; SEL.modo = modo; SEL.editing = extra.editing || null;
+    selTemas();
+    G.cliente = cliente;
+    $('#selNome').value = extra.nome || '';
+    $('#selTema').value = extra.tema || '';
+    $('#selOrient').value = extra.orient || 'horizontal';
+    $('#selInter').value = String(extra.intercalar || 0);
+    if (!$('#selInter').querySelector('option[value="' + $('#selInter').value + '"]')) $('#selInter').insertAdjacentHTML('beforeend', '<option value="' + extra.intercalar + '">Sim, ' + extra.intercalar + ' segundos</option>'), $('#selInter').value = String(extra.intercalar);
+    $('#results').hidden = true;
+    await selCarregaAnuncios(extra.anuncio || '');
+    $('#pvOpen').hidden = false; $('#pvFrame').dataset.url = '';
+    renderGen(); renderSel();
+  }
 
   function showResults(records) {
     results = records;
@@ -431,8 +640,8 @@
     const r = results.find(x => x.id === b.closest('.link-row').dataset.id);
     if (r) copy(r.url, 'Link copiado');
   });
-  $('#resCopyAll').addEventListener('click', () => copy(results.map(r => r.url).join('\n'), results.length + ' links copiados'));
-  $('#resCopyMsg').addEventListener('click', () => copy(whatsappMessage(results), 'Mensagem copiada'));
+  $('#resCopyAll').addEventListener('click', e => { if (!results.length && e.currentTarget.dataset.unico) return copy(e.currentTarget.dataset.unico, 'Link copiado'); copy(results.map(r => r.url).join('\n'), results.length + ' links copiados'); });
+  $('#resCopyMsg').addEventListener('click', e => { if (!results.length && e.currentTarget.dataset.unico) return copy(e.currentTarget.dataset.unico, 'Mensagem copiada'); copy(whatsappMessage(results), 'Mensagem copiada'); });
 
   /* ---------- pré-visualização ---------- */
   let pvTimer;
@@ -441,6 +650,8 @@
     pvTimer = setTimeout(updatePreview, 350);
   }
   function updatePreview() {
+    if (SEL.modo === 'unico' && SEL.itens.length) return;
+    $('#pvOpen').hidden = false;
     const first = combos()[0];
     const frame = $('#pvFrame');
     if (!first || !first.cliente) { frame.removeAttribute('src'); $('#pvLabel').textContent = 'Selecione as opções para ver a tela.'; return; }
@@ -476,8 +687,8 @@
           const l = m.layouts.find(x => x.id === t.layout);
           return '<li>' + ICON(MOD_ICON(m)) + esc(a ? a.nome : t.assunto) + '<small>' + esc(l ? l.nome : t.layout) + '</small></li>';
         }).join('') + '</ul>' +
-        '<div class="pack-acts"><button class="btn btn-dark" data-pack="' + p.id + '">' + ICON('sparkles') + 'Gerar ' + n + ' links separados</button>' +
-        '<button class="btn btn-primary" data-pack-pl="' + p.id + '" title="Os conteúdos do pacote em sequência num link só, com tempo de cada um e anúncios entre eles">' + ICON('layers') + 'Montar link único</button></div>' +
+        '<div class="pack-acts"><button class="btn btn-dark" data-pack="' + p.id + '">' + ICON('sparkles') + 'Gerar links separados</button>' +
+        '<button class="btn btn-primary" data-pack-pl="' + p.id + '" title="As telas do pacote em sequência num link só, com tempo de cada uma e anúncios entre elas">' + ICON('play') + 'Gerar link único</button></div>' +
       '</article>';
     }).join('');
   }
@@ -488,29 +699,29 @@
     const b = e.target.closest('button[data-v]'); if (!b) return;
     toggleIn(PK.orient, b.dataset.v, true); renderPacks();
   });
-  $('#packGrid').addEventListener('click', e => {
-    const u = e.target.closest('button[data-pack-pl]');
-    if (u) {
-      if (!PK.cliente) return toast('Escolha o cliente', 'x');
-      PL.cliente = PK.cliente; PL.pacote = u.dataset.packPl;
-      location.hash = '#playlists';
-      return;
-    }
-    const b = e.target.closest('button[data-pack]'); if (!b) return;
-    const p = pacotes.find(x => x.id === b.dataset.pack);
-    if (!p || !PK.cliente) return;
-    const recs = [];
+  // os dois botões abrem Gerar links com as telas do pacote na seleção, para revisar antes de gerar
+  $('#packGrid').addEventListener('click', async e => {
+    const b = e.target.closest('button[data-pack], button[data-pack-pl]'); if (!b) return;
+    const unico = !!b.dataset.packPl;
+    const p = pacotes.find(x => x.id === (b.dataset.pack || b.dataset.packPl));
+    if (!p) return;
+    if (!PK.cliente) return toast('Escolha o cliente', 'x');
+    const itens = [];
     p.telas.forEach(t => {
       const m = modById(t.modulo);
       if (!m || m.status !== 'ativo') return;
       const assunto = t.modulo === 'clima' && PK.cidade ? PK.cidade : t.assunto;
       const a = m.assuntos.find(x => x.id === assunto);
-      const fonte = a && a.fonteObrigatoria && a.fontes ? a.fontes[0].id : '';
-      PK.orient.forEach(o => recs.push(makeRecord({ cliente: PK.cliente, modulo: m.id, assunto, fonte, layout: t.layout, orientacao: o, tema: p.tema || (m.padrao && m.padrao.tema) })));
+      const fonte = t.fonte || (a && a.fonteObrigatoria && a.fontes ? a.fontes[0].id : '');
+      (unico ? [PK.orient[0] || 'horizontal'] : PK.orient).forEach(o => itens.push({
+        cliente: PK.cliente, modulo: m.id, assunto, fonte, layout: t.layout, orientacao: o,
+        tema: p.tema || (m.padrao && m.padrao.tema) || 'noite', tempo: '', girar: '', duracao: DUR_PADRAO_TELA[m.id] || 30 }));
     });
-    if (!recs.length) return;
+    if (!itens.length) return;
     location.hash = '#gerar';
-    setTimeout(() => showResults(recs), 30);
+    await selCarregar(PK.cliente, itens, unico ? 'unico' : 'separados', { nome: p.nome, tema: unico ? (p.tema || '') : '', orient: PK.orient[0] || 'horizontal', intercalar: unico ? 15 : 0 });
+    toast('Telas do pacote "' + p.nome + '" na seleção. Revise e clique em ' + (unico ? 'Gerar link único' : 'Gerar links'));
+    setTimeout(() => $('#selCard').scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
   });
 
   /* =================== MEUS LINKS =================== */
@@ -1560,18 +1771,24 @@
 
   function renderPlList() {
     const n = PL.list.length;
-    $('#plCount').textContent = n ? n + ' playlist' + (n > 1 ? 's' : '') : 'Nenhuma playlist ainda';
+    $('#plCount').textContent = n ? n + ' link' + (n > 1 ? 's' : '') + ' único' + (n > 1 ? 's' : '') : 'Nenhum link único ainda';
+    const cli = clients.find(x => x.chave === PL.cliente);
     $('#plList').innerHTML = n ? PL.list.map(p => {
       const inter = (p.opcoes && p.opcoes.intercalar) || 0;
-      return '<div class="ad-item pl-row' + (PL.editing === p.id ? ' on' : '') + '">' +
+      const url = plUrl(p.id, 'horizontal');
+      const wa = cli && cli.whatsapp ? RS.whatsappLink(cli.whatsapp.length <= 11 ? '55' + cli.whatsapp : cli.whatsapp, unicoMensagem(cli, p.nome, url)) : 'https://wa.me/?text=' + encodeURIComponent(unicoMensagem(cli, p.nome, url));
+      return '<div class="ad-item pl-row">' +
         '<div class="ad-item-thumb">' + ICON('play') + '</div>' +
-        '<div class="ad-item-txt"><b>' + esc(p.nome) + '</b><small>' + p.itens.length + ' conteúdo' + (p.itens.length > 1 ? 's' : '') +
-          (inter ? ' + anúncios' : '') + ' · ciclo de ' + fmtDur(plCycle(p.itens, inter)) + '</small></div>' +
+        '<div class="ad-item-txt"><b>' + esc(p.nome) + '</b><small>' + p.itens.length + ' tela' + (p.itens.length > 1 ? 's' : '') +
+          (inter ? ' + anúncios de ' + inter + ' s' : '') + ' · ciclo de ' + fmtDur(plCycle(p.itens, inter)) + '</small></div>' +
         '<div class="acts">' +
-          '<button class="btn btn-ghost btn-sm" data-ed="' + esc(p.id) + '">Editar</button>' +
-          '<button class="btn btn-ghost btn-sm" data-dup="' + esc(p.id) + '" title="Duplicar">' + ICON('copy') + '</button>' +
+          '<button class="btn btn-dark btn-sm" data-ed="' + esc(p.id) + '">Editar</button>' +
+          '<a class="btn btn-ghost btn-sm btn-icon" target="_blank" rel="noopener" title="Abrir na TV" href="' + esc(url) + '">' + ICON('external') + '</a>' +
+          '<button class="btn btn-ghost btn-sm btn-icon" data-cpu="' + esc(p.id) + '" title="Copiar link (horizontal)">' + ICON('copy') + '</button>' +
+          '<a class="btn btn-ghost btn-sm btn-icon" target="_blank" rel="noopener" title="Enviar no WhatsApp" href="' + esc(wa) + '">' + ICON('whatsapp') + '</a>' +
+          '<button class="btn btn-ghost btn-sm btn-icon" data-del="' + esc(p.id) + '" title="Excluir">' + ICON('trash') + '</button>' +
         '</div></div>';
-    }).join('') : '<div class="empty">Crie a primeira playlist deste cliente no formulário ao lado.</div>';
+    }).join('') : '<div class="empty">Este cliente ainda não tem link único. Crie em <a href="#gerar">Gerar links</a> ou num <a href="#pacotes">pacote pronto</a>.</div>';
     const c = clients.find(x => x.chave === PL.cliente);
     const p = PL.list.find(x => x.id === PL.editing);
     $('#plLink').innerHTML = p ?
@@ -1795,9 +2012,25 @@
     } catch (err) { toast(err.message, 'x'); }
   });
 
-  $('#plList').addEventListener('click', e => {
-    const ed = e.target.closest('[data-ed]'); if (ed) return plEdit(ed.dataset.ed);
-    const dp = e.target.closest('[data-dup]'); if (dp) return plEdit(dp.dataset.dup, true);
+  $('#plList').addEventListener('click', async e => {
+    const ed = e.target.closest('[data-ed]');
+    if (ed) {
+      // editar abre o Gerar links com as telas do link único na seleção
+      const p = PL.list.find(x => x.id === ed.dataset.ed); if (!p) return;
+      const o = p.opcoes || {};
+      const itens = p.itens.map(it => { const m = modById(it.modulo) || {}; return { cliente: PL.cliente, modulo: it.modulo, assunto: it.assunto, fonte: it.fonte || '', layout: it.layout, orientacao: 'horizontal', tema: o.tema || ((m.padrao || {}).tema) || 'noite', tempo: '', girar: '', duracao: it.duracao || 30 }; });
+      location.hash = '#gerar';
+      await selCarregar(PL.cliente, itens, 'unico', { editing: p.id, nome: p.nome, tema: o.tema || '', intercalar: o.intercalar || 0, anuncio: o.anuncio || '' });
+      setTimeout(() => $('#selCard').scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
+      return;
+    }
+    const cp = e.target.closest('[data-cpu]'); if (cp) return copy(plUrl(cp.dataset.cpu, 'horizontal'), 'Link copiado');
+    const del = e.target.closest('[data-del]');
+    if (del) {
+      if (!confirm('Excluir este link único? As TVs que usam esse link vão parar de mostrar a programação.')) return;
+      try { await api('api/admin/playlists?id=' + encodeURIComponent(del.dataset.del) + '&cliente=' + encodeURIComponent(PL.cliente), { method: 'DELETE' }); toast('Link único excluído'); await loadPlaylists(); }
+      catch (err) { toast(err.message, 'x'); }
+    }
   });
   $('#plLink').addEventListener('click', e => {
     const b = e.target.closest('[data-cplink]');
@@ -2230,6 +2463,7 @@
     G.modulo = active[0] ? active[0].id : 'rss';
     resetForModule();
     renderGen();
+    renderSel();
     renderPacks();
     renderClients();
     renderModulesView();

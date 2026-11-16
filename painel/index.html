@@ -59,7 +59,7 @@
       <nav class="side-nav" id="sideNav">
         <a href="#gerar" data-view="gerar"><i data-icon="link"></i> Gerar links</a>
         <a href="#anuncios" data-view="anuncios"><i data-icon="tag"></i> Anúncios</a>
-        <a href="#playlists" data-view="playlists"><i data-icon="play"></i> Playlists</a>
+        <a href="#playlists" data-view="playlists"><i data-icon="play"></i> Links únicos</a>
         <a href="#listas" data-view="listas"><i data-icon="cart"></i> Conteúdo do cliente</a>
         <a href="#pacotes" data-view="pacotes"><i data-icon="package"></i> Pacotes prontos</a>
         <a href="#links" data-view="links"><i data-icon="layers"></i> Meus links <em id="navLinksCount"></em></a>
@@ -88,7 +88,7 @@
         <div class="page-head">
           <div>
             <h1>Gerar links</h1>
-            <p>Monte as telas do cliente. Selecione vários assuntos, modelos e orientações para gerar todas as combinações de uma vez.</p>
+            <p>Monte as telas à esquerda e adicione à seleção (pode misturar notícias, clima, anúncios…). No fim, escolha como entregar: <b>links separados</b>, para o cliente montar no player dele, ou um <b>link único</b> com todas as telas em sequência, o tempo de cada uma e anúncios entre elas.</p>
           </div>
         </div>
 
@@ -151,11 +151,39 @@
 
             <div class="gen-submit">
               <p id="gSummary"></p>
-              <button class="btn btn-primary btn-lg" id="gGenerate"><i data-icon="sparkles"></i> <span>Gerar links</span></button>
+              <button class="btn btn-primary btn-lg" id="gGenerate"><i data-icon="plus"></i> <span>Adicionar à seleção</span></button>
             </div>
           </div>
 
           <div class="gen-side">
+            <div class="card sel-card" id="selCard">
+              <div class="card-head">
+                <div><h3>Telas selecionadas <small id="selCount"></small></h3><p id="selSub">Monte a tela à esquerda e clique em <b>Adicionar à seleção</b>.</p></div>
+                <button class="btn btn-ghost btn-sm" id="selLimpar" type="button" hidden>Limpar</button>
+              </div>
+              <div class="sel-list" id="selList"></div>
+              <div class="sel-entrega" id="selEntrega" hidden>
+                <div class="field"><span>Como entregar ao cliente</span>
+                  <div class="sel-modos">
+                    <label><input type="radio" name="selModo" value="separados" checked><span><b>Links separados</b><small>Um link por tela. O cliente monta a programação no player dele.</small></span></label>
+                    <label><input type="radio" name="selModo" value="unico"><span><b>Link único</b><small>Todas as telas em sequência num link só. Você muda depois sem trocar o link.</small></span></label>
+                  </div>
+                </div>
+                <div class="sel-unico" id="selUnico" hidden>
+                  <label class="field"><span>Nome do link único (só para você)</span><input class="input" id="selNome" maxlength="80" placeholder="Ex.: TV do balcão" /></label>
+                  <div class="row-2">
+                    <label class="field"><span>Orientação da TV</span><select class="select" id="selOrient"><option value="horizontal">Horizontal (deitada)</option><option value="vertical">Vertical (em pé)</option></select></label>
+                    <label class="field"><span>Cores</span><select class="select" id="selTema"></select></label>
+                  </div>
+                  <div class="row-2">
+                    <label class="field"><span>Anúncios entre as telas</span><select class="select" id="selInter"><option value="0">Sem anúncios</option><option value="10">Sim, 10 segundos</option><option value="15">Sim, 15 segundos</option><option value="20">Sim, 20 segundos</option><option value="30">Sim, 30 segundos</option></select></label>
+                    <label class="field" id="selAnWrap" hidden><span>Qual anúncio</span><select class="select" id="selAnuncio"></select></label>
+                  </div>
+                  <p class="hint" id="selCiclo"></p>
+                </div>
+                <button class="btn btn-primary btn-lg" id="selGerar" type="button"><i data-icon="sparkles"></i> <span>Gerar links</span></button>
+              </div>
+            </div>
             <div class="card preview-card">
               <div class="card-head">
                 <div><h3>Pré-visualização</h3><p id="pvLabel">—</p></div>
@@ -404,24 +432,25 @@
       <section class="view" id="view-playlists" hidden>
         <div class="page-head">
           <div>
-            <h1>Playlists</h1>
-            <p>Monte a programação inteira da TV num link só: notícias, clima, loterias, cotações e os anúncios do cliente em sequência, cada um com o seu tempo. Ao editar, a TV recebe a mudança sozinha em até 10 minutos, sem trocar o link.</p>
+            <h1>Links únicos</h1>
+            <p>Cada link único passa várias telas em sequência (notícias, clima, anúncios…), com o tempo de cada uma. Para criar, use <a href="#gerar">Gerar links</a> ou um <a href="#pacotes">pacote pronto</a> e escolha <b>Link único</b> no fim. Ao editar, a TV recebe a mudança sozinha em até 10 minutos, sem trocar o link.</p>
           </div>
         </div>
         <div class="db-banner muted" id="plNoDb" hidden><div><b>Playlists precisam do banco de dados.</b> Elas funcionam no site publicado na Cloudflare (o banco D1 é criado no deploy).</div></div>
 
-        <div class="ads-grid pl-grid" id="plGrid">
+        <div class="ads-grid pl-grid pl-so-lista" id="plGrid">
           <div class="ads-col">
             <div class="card">
               <div class="card-head">
                 <div><h3>Cliente</h3><p id="plCount"></p></div>
-                <button class="btn btn-primary btn-sm" id="plNew" type="button"><i data-icon="plus"></i> Nova playlist</button>
+                <a class="btn btn-primary btn-sm" href="#gerar"><i data-icon="plus"></i> Novo link único</a>
+                <button id="plNew" type="button" hidden></button>
               </div>
               <select class="select" id="plCliente"></select>
               <div class="ad-list" id="plList"></div>
               <div class="ad-link" id="plLink"></div>
             </div>
-            <div class="card">
+            <div class="card" hidden>
               <div class="card-head">
                 <div><h3>Prévia ao vivo</h3><p id="plPvInfo">Roda a playlist em edição, antes de salvar.</p></div>
                 <div class="chips" id="plOrient">
@@ -437,7 +466,7 @@
             </div>
           </div>
 
-          <form class="card ad-form" id="plForm" autocomplete="off">
+          <form class="card ad-form" id="plForm" autocomplete="off" hidden>
             <div class="card-head"><div><h3 id="plFormTitle">Nova playlist</h3><p>Adicione os conteúdos na ordem em que devem passar. A sequência se repete o dia todo.</p></div></div>
             <div class="row-2">
               <label class="field"><span>Nome da playlist</span><input class="input" id="plNome" maxlength="80" placeholder="Ex.: Recepção, TV do balcão" /></label>
