@@ -2,7 +2,13 @@
 export async function seo(path, url, env, request) {
   const origin = url.origin;
   if (path === '/robots.txt') {
-    const txt = ['User-agent: *', 'Allow: /', 'Disallow: /painel/', 'Disallow: /tela/', 'Disallow: /editar/', 'Disallow: /api/', 'Disallow: /admin', '', 'Sitemap: ' + origin + '/sitemap.xml', ''].join('\n');
+    // Buscadores e robôs de IA (pesquisa e treinamento) podem ler todo o conteúdo público.
+    // Ficam de fora só o painel, as telas das TVs, o editor dos clientes e a API.
+    const fora = ['Allow: /', 'Disallow: /painel/', 'Disallow: /tela/', 'Disallow: /editar/', 'Disallow: /api/', 'Disallow: /admin'];
+    const robos = ['*', 'Googlebot', 'Bingbot', 'OAI-SearchBot', 'ChatGPT-User', 'GPTBot', 'ClaudeBot', 'Claude-SearchBot', 'Claude-User',
+      'PerplexityBot', 'Perplexity-User', 'Google-Extended', 'Applebot', 'Applebot-Extended', 'DuckDuckBot'];
+    const txt = robos.map(r => ['User-agent: ' + r].concat(fora).join('\n')).join('\n\n') +
+      '\n\n# Resumo do site para ferramentas de IA: ' + origin + '/llms.txt\nSitemap: ' + origin + '/sitemap.xml\n';
     return new Response(txt,
       { headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=3600' } });
   }

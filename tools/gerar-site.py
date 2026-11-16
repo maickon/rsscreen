@@ -30,6 +30,12 @@ import programaticas   # páginas geradas dos dados do sistema (modelos, tabelas
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC = os.path.join(ROOT, 'tools', 'paginas')
 HOJE = datetime.date.today().isoformat()
+e = html.escape
+SITE = 'https://rsscreen.com.br'          # endereço oficial (canonical, Open Graph, dados estruturados)
+OG_IMG = SITE + '/assets/img/og.png'      # imagem de compartilhamento 1200x630
+ORG = {'@type': 'Organization', '@id': SITE + '/#org', 'name': 'rsscreen', 'url': SITE + '/',
+       'logo': SITE + '/assets/img/icon-512.png', 'areaServed': 'BR',
+       'description': 'Sistema brasileiro de conteúdo automático para mídia indoor e TVs comerciais.'}
 
 
 def slugify(s):
@@ -94,14 +100,16 @@ def pagina(p, todas):
     crumbs = ' <span aria-hidden="true">›</span> '.join(
         ('<a href="%s">%s</a>' % (u, e(t)) if u else '<span>%s</span>' % e(t)) for t, u in trilha)
 
+    url = SITE + '/' + p['slug'] + '/'
+    abs_ = lambda u: SITE + '/' + (u[len(up):] if u.startswith(up) else u) if u else url
     ld = [{
         '@context': 'https://schema.org', '@type': 'BreadcrumbList',
-        'itemListElement': [{'@type': 'ListItem', 'position': i + 1, 'name': t} for i, (t, u) in enumerate(trilha)]
+        'itemListElement': [{'@type': 'ListItem', 'position': i + 1, 'name': t, 'item': abs_(u)} for i, (t, u) in enumerate(trilha)]
     }]
     if tipo in ('artigo', 'colecao'):
         ld.append({'@context': 'https://schema.org', '@type': 'Article', 'headline': p['h1'], 'description': p['descricao'],
-                   'inLanguage': 'pt-BR', 'dateModified': HOJE, 'author': {'@type': 'Organization', 'name': 'rsscreen'},
-                   'publisher': {'@type': 'Organization', 'name': 'rsscreen'}})
+                   'inLanguage': 'pt-BR', 'datePublished': p.get('publicado', HOJE), 'dateModified': HOJE,
+                   'mainEntityOfPage': url, 'image': OG_IMG, 'author': ORG, 'publisher': ORG})
     elif tipo == 'ferramenta':
         ld.append({'@context': 'https://schema.org', '@type': 'WebApplication', 'name': p['h1'], 'description': p['descricao'],
                    'applicationCategory': 'BusinessApplication', 'operatingSystem': 'Qualquer navegador', 'inLanguage': 'pt-BR',
@@ -143,7 +151,7 @@ def pagina(p, todas):
         script += '<script src="%sassets/js/vitrine.js"></script>\n' % up
 
     return TEMPLATE.format(
-        titulo=e(p['titulo']), descricao=e(p['descricao']), up=up, ld=ld_html, crumbs=crumbs,
+        titulo=e(p['titulo']), descricao=e(p['descricao']), up=up, ld=ld_html, crumbs=crumbs, url=url, og_img=OG_IMG,
         h1=e(p['h1']), lead=('<p class="lead">%s</p>' % p['lead']) if p.get('lead') else '', meta=meta,
         miolo=miolo, relacionados=relacionados, script=script)
 
@@ -166,6 +174,13 @@ TEMPLATE = '''<!DOCTYPE html>
   <meta property="og:title" content="{titulo}" />
   <meta property="og:description" content="{descricao}" />
   <meta property="og:locale" content="pt_BR" />
+  <meta property="og:url" content="{url}" />
+  <meta property="og:site_name" content="rsscreen" />
+  <meta property="og:image" content="{og_img}" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="canonical" href="{url}" />
   <link rel="icon" href="{up}assets/img/icon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="{up}assets/img/icon-192.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -183,6 +198,7 @@ TEMPLATE = '''<!DOCTYPE html>
       <nav class="nav-links" id="navLinks">
         <a href="{up}guia/">Guia</a>
         <a href="{up}ferramentas/calculadora-midia-indoor/">Calculadora</a>
+        <a href="{up}solucoes/">Soluções</a>
         <a href="{up}modelos/">Modelos</a>
         <a href="{up}calendario-comercial/">Calendário</a>
         <a href="{up}#modulos">Conteúdos</a>
@@ -220,7 +236,7 @@ TEMPLATE = '''<!DOCTYPE html>
   <footer class="footer">
     <div class="wrap footer-inner">
       <a href="{up}" class="logo"><i data-logo></i><span><b>rss</b>creen</span></a>
-      <p><a href="{up}guia/">Guia da mídia indoor</a> · <a href="{up}ferramentas/calculadora-midia-indoor/">Calculadora</a> · <a href="{up}ferramentas/proposta-comercial/">Modelo de proposta</a> · <a href="{up}ferramentas/tabela-de-precos/">Tabela de preços</a> · <a href="{up}modelos/">Modelos prontos</a> · <a href="{up}calendario-comercial/">Calendário comercial</a> · <a href="{up}termos-de-uso/">Termos de uso</a> · <a href="{up}privacidade/">Privacidade</a> · © <span id="year"></span> rsscreen</p>
+      <p><a href="{up}guia/">Guia da mídia indoor</a> · <a href="{up}ferramentas/calculadora-midia-indoor/">Calculadora</a> · <a href="{up}ferramentas/proposta-comercial/">Modelo de proposta</a> · <a href="{up}ferramentas/tabela-de-precos/">Tabela de preços</a> · <a href="{up}solucoes/">Soluções</a> · <a href="{up}modelos/">Modelos prontos</a> · <a href="{up}calendario-comercial/">Calendário comercial</a> · <a href="{up}termos-de-uso/">Termos de uso</a> · <a href="{up}privacidade/">Privacidade</a> · © <span id="year"></span> rsscreen</p>
     </div>
   </footer>
   <a class="wa-float js-wa" data-msg="Olá! Vim pelo guia do rsscreen." href="#" aria-label="Falar no WhatsApp"><i data-icon="whatsapp"></i></a>
@@ -251,6 +267,83 @@ def main():
         print('ok ', p['slug'])
     lista = [{'url': '/' + p['slug'] + '/', 'atualizado': HOJE} for p in todas]
     open(os.path.join(ROOT, 'guia', 'paginas.json'), 'w', encoding='utf-8', newline='\n').write(json.dumps(lista, ensure_ascii=False, indent=1))
+    open(os.path.join(ROOT, 'llms.txt'), 'w', encoding='utf-8', newline='\n').write(llms(todas))
+    print('ok  llms.txt')
+    modulos_na_home()
+
+
+# ---------------------------------------------------------------- llms.txt
+# Resumo em texto do site para ferramentas de IA (padrão llms.txt). Gerado a cada execução,
+# sempre com as páginas que existem. Só informação verificável no próprio site.
+LLMS_TOPO = '''# rsscreen
+
+> rsscreen é um sistema brasileiro de conteúdo automático para mídia indoor e TVs comerciais. Gera links de tela (notícias, previsão do tempo, cotações, futebol, loterias, anúncios, tabelas de preços e cardápios) que abrem em qualquer TV com navegador, TV Box ou sistema de mídia indoor e se atualizam sozinhos, 24 horas por dia.
+
+## Para quem é
+- Operadores de mídia indoor que vendem anúncios em TVs instaladas em comércios.
+- Comércios (padarias, açougues, hortifrútis, lanchonetes, clínicas, academias, salões) que querem uma TV com conteúdo e ofertas.
+
+## O que o sistema faz
+- Notícias em tempo real de mais de 90 sites brasileiros, separadas por assunto (últimas, esportes, economia, entretenimento, saúde e outros).
+- Previsão do tempo de qualquer cidade do Brasil, cotações (dólar, euro, bitcoin) e cotações do agronegócio (CEPEA).
+- Resultados das loterias da Caixa, futebol (jogos, placares e tabela), horóscopo, datas comemorativas, frases e relógio.
+- Anúncios dos anunciantes do operador, com mais de 40 modelos prontos por tipo de comércio.
+- Tabela de preços e cardápio que o próprio comerciante edita pelo celular, com catálogo de mais de 450 produtos com descrição.
+- Boas-vindas com QR Code do Wi-Fi e mural de aniversariantes e avisos.
+- Link único: várias telas em sequência num só link, com tempo de cada uma e anúncios entre elas.
+- Modelos de tela horizontais e verticais, sem marca do rsscreen na tela.
+- Monitoramento de cada tela (aparelhos, cidades) com relatório em PDF.
+
+## Como funciona
+1. O operador gera os links no painel (ou recebe prontos).
+2. Abre o link no navegador da TV, na TV Box ou cadastra no sistema de mídia indoor que já usa.
+3. A tela se atualiza sozinha; se a internet cair, continua mostrando o último conteúdo.
+
+## Planos
+Planos mensais por faixa de telas (até 10, até 50 e até 200 telas): Notícias (conteúdo automático) e Completo (tudo, inclusive anúncios, tabelas e cardápios). Teste grátis de 7 dias. Contratação e valores pelo WhatsApp do site.
+'''
+
+
+def llms(todas):
+    sec = [('Guia da mídia indoor (artigos)', 'artigo'), ('Ferramentas grátis', 'ferramenta')]
+    out = [LLMS_TOPO]
+    for nome, tipo in sec:
+        ps = [x for x in todas if x.get('tipo') == tipo]
+        if ps:
+            out.append('## %s\n' % nome + ''.join('- [%s](%s/%s/): %s\n' % (x['h1'], SITE, x['slug'], x['descricao']) for x in ps))
+    hubs = [x for x in todas if x.get('tipo') == 'hub']
+    for h in hubs:
+        filhas = [x for x in todas if x.get('pai') and x['pai'][1] == h['slug']]
+        out.append('## %s\n- [%s](%s/%s/): %s\n' % (h['h1'], h['h1'], SITE, h['slug'], h['descricao']) +
+                   ''.join('- [%s](%s/%s/)\n' % (x['h1'], SITE, x['slug']) for x in filhas))
+    out.append('## Contato\n- Site: %s/\n- WhatsApp: pelo botão em qualquer página do site.\n' % SITE)
+    return '\n'.join(out)
+
+
+# ---------------------------------------------------------------- módulos na página inicial
+# A lista de conteúdos da página inicial é montada por JavaScript; para buscadores e IAs que não
+# rodam JavaScript, o gerador escreve a mesma lista em HTML entre os marcadores do index.html.
+def modulos_na_home():
+    path = os.path.join(ROOT, 'index.html')
+    s = open(path, encoding='utf-8').read()
+    ini, fim = '<!--modulos:inicio-->', '<!--modulos:fim-->'
+    if ini not in s:
+        return
+    reg = json.load(open(os.path.join(ROOT, 'modules', 'registry.json'), encoding='utf-8'))['modulos']
+    cards = []
+    for mid in reg:
+        mp = os.path.join(ROOT, 'modules', mid, 'manifest.json')
+        if not os.path.exists(mp):
+            continue
+        m = json.load(open(mp, encoding='utf-8'))
+        if m.get('status') != 'ativo':
+            continue
+        cards.append('<article class="module"><h3>%s</h3><p>%s</p><ul>%s</ul></article>' % (
+            e(m['nome']), e(m.get('chamada') or m.get('descricao', '')), ''.join('<li>%s</li>' % e(b) for b in m.get('beneficios', [])[:4])))
+    a, b = s.index(ini) + len(ini), s.index(fim)
+    s = s[:a] + ''.join(cards) + s[b:]
+    open(path, 'w', encoding='utf-8', newline='\n').write(s)
+    print('ok  index.html (módulos em HTML)')
 
 
 if __name__ == '__main__':

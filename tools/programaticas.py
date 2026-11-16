@@ -339,6 +339,106 @@ def indices(anuncios, tabelas, calendario):
     return [modelos, cal]
 
 
+# ---------------------------------------------------------------- soluções (uma por necessidade real)
+# Cada página responde a uma pesquisa concreta ("como colocar X na TV"), com a tela funcionando,
+# os dados reais do módulo (modelos, assuntos, fontes) e perguntas frequentes.
+SOLUCOES = [
+    {'slug': 'noticias-na-tv', 'mod': 'rss', 'plano': 'Notícias e Completo',
+     'h1': 'Notícias na TV do comércio, atualizadas sozinhas',
+     'titulo': 'Como colocar notícias na TV do comércio (atualiza sozinho)',
+     'descricao': 'Notícias de mais de 90 sites brasileiros na TV do seu comércio ou mídia indoor, separadas por assunto e atualizadas a cada 15 minutos. Veja funcionando.',
+     'intro': 'Notícia é o conteúdo que mais segura o olhar numa tela pública: muda o tempo todo, interessa a qualquer pessoa e faz o cliente olhar de novo. O rsscreen busca as manchetes nos sites de notícias, escolhe as mais recentes do assunto e monta a tela com foto, título, fonte e há quanto tempo foi publicada.',
+     'como': ['Escolha o assunto (últimas, esportes, economia, saúde, entretenimento…) e o modelo de tela.', 'Copie o link gerado e abra no navegador da TV, na TV Box ou no sistema de mídia indoor que você já usa.', 'Pronto: a tela busca notícias novas sozinha a cada 15 minutos, 24 horas por dia.'],
+     'faq': [('Preciso atualizar alguma coisa?', 'Não. As notícias são buscadas automaticamente nos sites de origem, a cada 15 minutos.'),
+             ('De onde vêm as notícias?', 'De mais de 90 sites brasileiros de notícias, com o nome da fonte sempre na tela. Você pode deixar todas as fontes misturadas ou escolher um site específico.'),
+             ('Posso mostrar só esportes ou só economia?', 'Sim. Cada link é de um assunto; dá para ter um link por assunto ou juntar vários num link único.'),
+             ('E se a internet cair?', 'A tela continua mostrando as últimas notícias carregadas e volta a atualizar sozinha quando a internet volta.')]},
+    {'slug': 'previsao-do-tempo-na-tv', 'mod': 'clima', 'plano': 'Notícias e Completo',
+     'h1': 'Previsão do tempo na TV, de qualquer cidade do Brasil',
+     'titulo': 'Previsão do tempo na TV do comércio: qualquer cidade do Brasil',
+     'descricao': 'Temperatura agora, próximas horas e previsão da semana de qualquer cidade do Brasil na TV ou mídia indoor, atualizada a cada 15 minutos. Veja funcionando.',
+     'intro': 'Previsão do tempo é útil para todo mundo e funciona em qualquer ponto: recepção, padaria, academia, hotel, loja de praia. A tela mostra a temperatura atual, a sensação térmica, umidade, vento e a previsão dos próximos dias, com ícones que se leem de longe.',
+     'como': ['Escolha a cidade (qualquer cidade do Brasil, pela busca do painel) e o modelo.', 'Abra o link na TV, TV Box ou sistema de mídia indoor.', 'A previsão se atualiza sozinha a cada 15 minutos.'],
+     'faq': [('Funciona para cidades pequenas?', 'Sim. A busca encontra qualquer município do Brasil; a previsão usa as coordenadas da cidade.'),
+             ('De onde vêm os dados do tempo?', 'Do Open-Meteo, serviço aberto de previsão que reúne modelos meteorológicos nacionais e internacionais.'),
+             ('Dá para mostrar a semana inteira?', 'Sim: há modelos de tela para agora + próximos dias, semana completa e próximas horas.')]},
+    {'slug': 'resultados-de-loterias-na-tv', 'mod': 'loterias', 'plano': 'Completo',
+     'h1': 'Resultados das loterias na TV, logo depois do sorteio',
+     'titulo': 'Como exibir resultados da Mega-Sena e loterias na TV',
+     'descricao': 'Resultados da Mega-Sena, Lotofácil, Quina e demais loterias da Caixa na TV, atualizados logo após o sorteio, com prêmio acumulado e ganhadores. Veja funcionando.',
+     'intro': 'Em lotérica, bar, padaria e banca, o resultado da loteria é o conteúdo que o cliente procura. A tela mostra os números sorteados, o valor do próximo prêmio, se acumulou, a quantidade de ganhadores e estatísticas como números quentes e atrasados.',
+     'como': ['Escolha as loterias (as principais ou uma específica, como a Mega-Sena) e o modelo.', 'Abra o link na TV ou no sistema de mídia indoor.', 'O resultado entra sozinho logo depois de cada sorteio.'],
+     'faq': [('Quais loterias aparecem?', 'Mega-Sena, Lotofácil, Quina, +Milionária, Lotomania, Dupla Sena, Timemania, Dia de Sorte, Super Sete, Loteria Federal e Loteca.'),
+             ('Quando o resultado atualiza?', 'O sistema confere os resultados nos horários de sorteio da Caixa e atualiza a tela assim que o resultado oficial sai.'),
+             ('Mostra o prêmio acumulado?', 'Sim: há modelos com o resultado, o próximo prêmio estimado e a premiação com o número de ganhadores.')]},
+    {'slug': 'cotacoes-na-tv', 'mod': 'cotacoes', 'extra': 'agro', 'plano': 'Notícias e Completo',
+     'h1': 'Cotações na TV: dólar, euro, bitcoin e agronegócio',
+     'titulo': 'Cotação do dólar e do agro na TV (atualiza sozinho)',
+     'descricao': 'Dólar, euro, libra, bitcoin e cotações do agronegócio (boi, soja, milho, café) na TV ou mídia indoor, atualizadas automaticamente. Veja funcionando.',
+     'intro': 'Cotações funcionam bem em casas de câmbio, agências, escritórios, cooperativas e comércios do interior. Há duas telas: moedas e criptomoedas, e o painel do agronegócio com os indicadores do CEPEA (boi gordo, bezerro, soja, milho, café, açúcar e outros).',
+     'como': ['Escolha as moedas ou os produtos do agro e o modelo de tela.', 'Abra o link na TV ou no sistema de mídia indoor.', 'As cotações se atualizam sozinhas ao longo do dia.'],
+     'faq': [('Quais moedas aparecem?', 'Dólar, euro, libra e outras moedas estrangeiras, além de bitcoin e outras criptomoedas.'),
+             ('De onde vêm as cotações do agro?', 'Dos indicadores do CEPEA/Esalq-USP, referência de preços do agronegócio no Brasil.'),
+             ('Serve para cooperativa e loja agropecuária?', 'Sim: o painel do agro mostra pecuária, grãos, café, açúcar, etanol e laranja.')]},
+    {'slug': 'futebol-na-tv', 'mod': 'futebol', 'plano': 'Completo',
+     'h1': 'Futebol na TV: placares, próximos jogos e tabela',
+     'titulo': 'Placar e tabela do Brasileirão na TV do comércio',
+     'descricao': 'Resultados ao vivo, próximos jogos e tabela do Brasileirão, Copa do Brasil, Libertadores e campeonatos europeus na TV ou mídia indoor. Veja funcionando.',
+     'intro': 'Futebol é assunto garantido em bar, barbearia, lanchonete e academia. A tela mostra os jogos da rodada com placar, os próximos jogos com horário e a tabela de classificação do campeonato escolhido.',
+     'como': ['Escolha o campeonato e o modelo (placar, agenda, tabela ou um jogo por vez).', 'Abra o link na TV ou no sistema de mídia indoor.', 'Placar, agenda e tabela se atualizam sozinhos.'],
+     'faq': [('Quais campeonatos aparecem?', 'Brasileirão Série A e B, Copa do Brasil, Libertadores, Sul-Americana, Champions League, Premier League e La Liga.'),
+             ('Mostra o jogo ao vivo?', 'Mostra o placar atualizado dos jogos em andamento; não transmite imagens do jogo.')]},
+    {'slug': 'qr-code-wifi-na-tv', 'mod': 'mural', 'plano': 'Completo',
+     'h1': 'QR Code do Wi-Fi na TV da recepção',
+     'titulo': 'Como mostrar o QR Code do Wi-Fi na TV da recepção',
+     'descricao': 'Tela de boas-vindas com QR Code do Wi-Fi: o cliente aponta a câmera e conecta sem digitar a senha. Com horário, redes sociais e mural de aniversariantes.',
+     'intro': 'Em clínicas, salões, academias e escritórios, a pergunta mais repetida na recepção é a senha do Wi-Fi. A tela de boas-vindas mostra um QR Code: o cliente aponta a câmera do celular e conecta sem digitar nada. Junto vão a mensagem de boas-vindas, o horário de funcionamento e as redes sociais. Há também o mural de aniversariantes do mês e avisos.',
+     'como': ['O próprio estabelecimento preenche o nome da rede e a senha pelo celular, num link de edição sem login.', 'Abra o link da tela na TV da recepção.', 'Mudou a senha? É só editar pelo celular; a TV atualiza sozinha.'],
+     'faq': [('O QR Code funciona em qualquer celular?', 'Sim. Câmeras de Android e iPhone leem o QR Code de Wi-Fi e conectam direto.'),
+             ('A senha fica exposta?', 'A senha aparece escrita abaixo do QR Code para quem preferir digitar; é a mesma que seria dita na recepção.')]},
+]
+
+
+def paginas_solucoes():
+    out = []
+    for i, s in enumerate(SOLUCOES):
+        mods = [s['mod']] + ([s['extra']] if s.get('extra') else [])
+        corpo = ['<p>%s</p>' % e(s['intro'])]
+        corpo.append('<h2>Veja funcionando</h2><p>As telas abaixo estão rodando agora, com dados reais, do jeito que aparecem na TV.</p>')
+        for mid in mods:
+            m = jload('modules', mid, 'manifest.json')
+            p = m.get('padrao', {})
+            for l in m['layouts']:
+                corpo.append('<h3>%s: %s</h3><p>%s</p>' % (e(m['nome']), e(l['nome']), e(l.get('descricao', ''))))
+                corpo.append(tv('modulo=%s&assunto=%s&layout=%s&tema=%s' % (mid, p.get('assunto', ''), l['id'], p.get('tema', '')), m['nome'] + ' · ' + l['nome']))
+            assuntos = [a['nome'] for a in m.get('assuntos', []) if a.get('id') != 'exemplo']
+            if len(assuntos) > 1 and mid != 'clima':
+                corpo.append('<h3>%s: o que dá para escolher</h3><ul>%s</ul>' % (e(m['nome']), ''.join('<li>%s</li>' % e(x) for x in assuntos)))
+            if m.get('sites'):
+                corpo.append('<p>As notícias vêm de <b>%d sites brasileiros</b>, entre eles %s.</p>' % (len(m['sites']), e(', '.join(x['nome'] for x in m['sites'][:12]))))
+        corpo.append('<h2>Como colocar na sua TV</h2><ol>%s</ol>' % ''.join('<li>%s</li>' % e(x) for x in s['como']))
+        corpo.append('<h2>O que você precisa</h2><ul><li><b>Uma TV com navegador, uma TV Box ou um sistema de mídia indoor</b> que abra páginas da internet (URL).</li>'
+                     '<li><b>Internet no ponto:</b> o consumo é baixo; se cair, a tela continua com o último conteúdo.</li>'
+                     '<li><b>Nada para instalar:</b> é um link que abre em tela cheia.</li></ul>')
+        corpo.append('<p><b>Em qual plano:</b> %s. Também dá para juntar esta tela com outras (notícias, clima, anúncios) num <b>link único</b>.</p>' % e(s['plano']))
+        corpo.append('<h2>Perguntas frequentes</h2>' + ''.join('<details><summary>%s<i data-icon="chevron"></i></summary><p>%s</p></details>' % (e(q), e(a)) for q, a in s['faq']))
+        corpo.append(cta('Olá! Vi a página "%s" e quero isso nas minhas telas.' % s['h1'], 'Quero na minha TV'))
+        out.append({'slug': 'solucoes/' + s['slug'], 'tipo': 'colecao', 'pai': ('Soluções', 'solucoes'), 'ordem': 50 + i, 'icone': 'monitor',
+                    'titulo': s['titulo'][:68], 'descricao': s['descricao'][:158], 'h1': s['h1'],
+                    'lead': 'Funciona em qualquer TV, TV Box ou sistema de mídia indoor. Atualiza sozinho, 24 horas por dia.',
+                    'cartao': s['descricao'].split('.')[0][:80], 'corpo': '\n'.join(corpo)})
+    return out
+
+
 def todas():
     a, t, c = paginas_anuncios(), paginas_tabelas(), paginas_calendario()
-    return indices(a, t, c) + t + a + c
+    sol = paginas_solucoes()
+    hub_sol = {'slug': 'solucoes', 'tipo': 'hub', 'ordem': 89, 'icone': 'monitor',
+               'titulo': 'O que colocar na TV do comércio: soluções prontas',
+               'descricao': 'Notícias, previsão do tempo, loterias, cotações, futebol e QR Code do Wi-Fi na TV do comércio ou mídia indoor, funcionando ao vivo e atualizando sozinhos.',
+               'h1': 'Soluções prontas para a TV do comércio', 'lead': 'Escolha o que quer mostrar e veja a tela funcionando ao vivo.',
+               'cartao': 'Notícias, clima, loterias, cotações, futebol',
+               'corpo': '<div class="cards">%s</div><h2>Também prontos</h2><div class="cards">%s</div>' % (
+                   ''.join(card(x, '../') for x in sol),
+                   card({'slug': 'modelos', 'h1': 'Tabelas de preços, cardápios e anúncios', 'cartao': 'Modelos prontos por tipo de comércio', 'icone': 'tag'}, '../'))}
+    return [hub_sol] + sol + indices(a, t, c) + t + a + c

@@ -1,0 +1,109 @@
+# rsscreen
+
+> rsscreen é um sistema brasileiro de conteúdo automático para mídia indoor e TVs comerciais. Gera links de tela (notícias, previsão do tempo, cotações, futebol, loterias, anúncios, tabelas de preços e cardápios) que abrem em qualquer TV com navegador, TV Box ou sistema de mídia indoor e se atualizam sozinhos, 24 horas por dia.
+
+## Para quem é
+- Operadores de mídia indoor que vendem anúncios em TVs instaladas em comércios.
+- Comércios (padarias, açougues, hortifrútis, lanchonetes, clínicas, academias, salões) que querem uma TV com conteúdo e ofertas.
+
+## O que o sistema faz
+- Notícias em tempo real de mais de 90 sites brasileiros, separadas por assunto (últimas, esportes, economia, entretenimento, saúde e outros).
+- Previsão do tempo de qualquer cidade do Brasil, cotações (dólar, euro, bitcoin) e cotações do agronegócio (CEPEA).
+- Resultados das loterias da Caixa, futebol (jogos, placares e tabela), horóscopo, datas comemorativas, frases e relógio.
+- Anúncios dos anunciantes do operador, com mais de 40 modelos prontos por tipo de comércio.
+- Tabela de preços e cardápio que o próprio comerciante edita pelo celular, com catálogo de mais de 450 produtos com descrição.
+- Boas-vindas com QR Code do Wi-Fi e mural de aniversariantes e avisos.
+- Link único: várias telas em sequência num só link, com tempo de cada uma e anúncios entre elas.
+- Modelos de tela horizontais e verticais, sem marca do rsscreen na tela.
+- Monitoramento de cada tela (aparelhos, cidades) com relatório em PDF.
+
+## Como funciona
+1. O operador gera os links no painel (ou recebe prontos).
+2. Abre o link no navegador da TV, na TV Box ou cadastra no sistema de mídia indoor que já usa.
+3. A tela se atualiza sozinha; se a internet cair, continua mostrando o último conteúdo.
+
+## Planos
+Planos mensais por faixa de telas (até 10, até 50 e até 200 telas): Notícias (conteúdo automático) e Completo (tudo, inclusive anúncios, tabelas e cardápios). Teste grátis de 7 dias. Contratação e valores pelo WhatsApp do site.
+
+## Guia da mídia indoor (artigos)
+- [O que é mídia indoor e como funciona](https://rsscreen.com.br/guia/o-que-e-midia-indoor/): O que é mídia indoor, como funciona a propaganda em TVs dentro de comércios, quem ganha com ela, exemplos por tipo de ponto, equipamentos necessários e quanto custa.
+- [Como ganhar dinheiro com mídia indoor: o guia para quem está começando](https://rsscreen.com.br/guia/como-ganhar-dinheiro-com-midia-indoor/): Como funciona o negócio de mídia indoor, quanto dá para ganhar, quanto custa começar, se precisa de MEI e o passo a passo para conseguir o primeiro ponto e o primeiro anunciante.
+- [Quanto cobrar por anúncio em TV de mídia indoor](https://rsscreen.com.br/guia/quanto-cobrar-por-anuncio-em-tv/): Como definir o preço do anúncio em TV de mídia indoor: o que influencia o valor, como montar a tabela de preços, pacotes, desconto por tempo e como vender anúncio para o comércio.
+- [Sistema de mídia indoor: como escolher o player certo](https://rsscreen.com.br/guia/sistema-de-midia-indoor/): O que um sistema de mídia indoor precisa ter, quanto custa, se existe opção grátis, diferença entre player e conteúdo e como controlar várias TVs pela internet.
+- [Conteúdo para mídia indoor: o que passar na TV](https://rsscreen.com.br/guia/conteudo-para-midia-indoor/): Que conteúdo passar na TV de mídia indoor: notícias, previsão do tempo, futebol, loterias, datas comemorativas e frases. Como montar a programação e intercalar com os anúncios.
+- [TV Box para mídia indoor: qual comprar e como configurar](https://rsscreen.com.br/guia/tv-box-para-midia-indoor/): Qual TV Box comprar para mídia indoor, o que olhar nas especificações, TV Box ou mini PC, como configurar para ligar sozinha e por que evitar o pen drive.
+- [TV com propaganda no comércio: ideias por tipo de ponto](https://rsscreen.com.br/guia/tv-com-propaganda-no-comercio/): Como usar TV com propaganda em padaria, salão de beleza, consultório, academia, farmácia, bar e barbearia: o que passar na tela, quem anuncia e como abordar o dono do ponto.
+- [Como transformar uma TV em painel digital](https://rsscreen.com.br/guia/como-transformar-tv-em-painel-digital/): Passo a passo para transformar uma TV comum ou Smart TV em painel digital de comércio: o que comprar, como configurar para ligar sozinha, o que exibir e erros comuns.
+
+## Ferramentas grátis
+- [Calculadora de mídia indoor: quanto posso ganhar?](https://rsscreen.com.br/ferramentas/calculadora-midia-indoor/): Simule quanto dá para ganhar com mídia indoor: faturamento, custos, lucro por mês, em quantos meses o investimento se paga e quantas vezes cada anúncio aparece por dia.
+- [Modelo de proposta comercial para mídia indoor](https://rsscreen.com.br/ferramentas/proposta-comercial/): Gere uma proposta comercial de anúncio em TV de mídia indoor pronta para imprimir, salvar em PDF ou mandar no WhatsApp: pontos, exibições, valor, período e condições.
+- [Tabela de preços de mídia indoor](https://rsscreen.com.br/ferramentas/tabela-de-precos/): Monte a sua tabela de preços de anúncio em TV de mídia indoor com pacotes por quantidade de telas, desconto por tempo de contrato e serviços extras. Pronta para imprimir ou salvar em PDF.
+- [Teste da TV: este aparelho roda mídia indoor?](https://rsscreen.com.br/ferramentas/teste-da-tv/): Abra um endereço curto na TV, TV Box ou Smart TV e descubra em 20 segundos se o aparelho roda telas de mídia indoor: resolução, navegador, internet e desempenho.
+- [Calculadora de tamanho de TV para mídia indoor](https://rsscreen.com.br/ferramentas/tamanho-de-tv-ideal/): Descubra o tamanho de TV ideal para o seu ponto pela distância de quem assiste, em horizontal e vertical, e o tamanho mínimo de letra para o anúncio ser lido.
+- [Gerador de anúncio para TV com QR Code](https://rsscreen.com.br/ferramentas/gerador-de-anuncio/): Crie grátis a arte de um anúncio para TV de mídia indoor, com preço, foto e QR Code do WhatsApp do anunciante. Baixe a imagem pronta em horizontal, vertical ou quadrada.
+- [Gerador de mídia kit do ponto](https://rsscreen.com.br/ferramentas/midia-kit/): Monte grátis o mídia kit do seu ponto de mídia indoor: movimento, público, exibições por dia, fotos do local e investimento. Pronto para imprimir, salvar em PDF ou mandar no WhatsApp.
+- [Mensagens prontas para vender anúncio em TV](https://rsscreen.com.br/ferramentas/mensagens-de-abordagem/): Mensagens prontas de WhatsApp para vender anúncio de mídia indoor por segmento: primeiro contato, depois da visita, proposta sem resposta, fechamento, renovação, indicação e abordagem ao dono do ponto.
+
+## Soluções prontas para a TV do comércio
+- [Soluções prontas para a TV do comércio](https://rsscreen.com.br/solucoes/): Notícias, previsão do tempo, loterias, cotações, futebol e QR Code do Wi-Fi na TV do comércio ou mídia indoor, funcionando ao vivo e atualizando sozinhos.
+- [Notícias na TV do comércio, atualizadas sozinhas](https://rsscreen.com.br/solucoes/noticias-na-tv/)
+- [Previsão do tempo na TV, de qualquer cidade do Brasil](https://rsscreen.com.br/solucoes/previsao-do-tempo-na-tv/)
+- [Resultados das loterias na TV, logo depois do sorteio](https://rsscreen.com.br/solucoes/resultados-de-loterias-na-tv/)
+- [Cotações na TV: dólar, euro, bitcoin e agronegócio](https://rsscreen.com.br/solucoes/cotacoes-na-tv/)
+- [Futebol na TV: placares, próximos jogos e tabela](https://rsscreen.com.br/solucoes/futebol-na-tv/)
+- [QR Code do Wi-Fi na TV da recepção](https://rsscreen.com.br/solucoes/qr-code-wifi-na-tv/)
+
+## Modelos prontos para TV e mídia indoor
+- [Modelos prontos para TV e mídia indoor](https://rsscreen.com.br/modelos/): Modelos de anúncio por tipo de comércio e tabelas de preços e cardápios prontos para TV, funcionando ao vivo. Escolha, troque o texto e use.
+- [Tabela de preços para açougue na TV](https://rsscreen.com.br/modelos/tabela-de-precos-para-acougue/)
+- [Tabela de preços para hortifrúti na TV](https://rsscreen.com.br/modelos/tabela-de-precos-para-hortifruti/)
+- [Tabela de preços para padaria na TV](https://rsscreen.com.br/modelos/tabela-de-precos-para-padaria/)
+- [Tabela de preços para mercado na TV](https://rsscreen.com.br/modelos/tabela-de-precos-para-mercado/)
+- [Tabela de preços para adega e bebidas na TV](https://rsscreen.com.br/modelos/tabela-de-precos-para-adega-e-bebidas/)
+- [Cardápio para lanchonete na TV](https://rsscreen.com.br/modelos/cardapio-para-lanchonete/)
+- [Cardápio para pizzaria na TV](https://rsscreen.com.br/modelos/cardapio-para-pizzaria/)
+- [Cardápio para açaí na TV](https://rsscreen.com.br/modelos/cardapio-para-acai/)
+- [Cardápio para cafeteria na TV](https://rsscreen.com.br/modelos/cardapio-para-cafeteria/)
+- [Modelos de anúncio para açougue](https://rsscreen.com.br/modelos/anuncio-para-acougue/)
+- [Modelos de anúncio para hortifrúti](https://rsscreen.com.br/modelos/anuncio-para-hortifruti/)
+- [Modelos de anúncio para padaria](https://rsscreen.com.br/modelos/anuncio-para-padaria/)
+- [Modelos de anúncio para mercado](https://rsscreen.com.br/modelos/anuncio-para-mercado/)
+- [Modelos de anúncio para lanchonete](https://rsscreen.com.br/modelos/anuncio-para-lanchonete/)
+- [Modelos de anúncio para pizzaria](https://rsscreen.com.br/modelos/anuncio-para-pizzaria/)
+- [Modelos de anúncio para açaí](https://rsscreen.com.br/modelos/anuncio-para-acai/)
+- [Modelos de anúncio para cafeteria](https://rsscreen.com.br/modelos/anuncio-para-cafeteria/)
+- [Modelos de anúncio para adega e bebidas](https://rsscreen.com.br/modelos/anuncio-para-adega-e-bebidas/)
+- [Modelos de anúncio para restaurante](https://rsscreen.com.br/modelos/anuncio-para-restaurante/)
+- [Modelos de anúncio para farmácia](https://rsscreen.com.br/modelos/anuncio-para-farmacia/)
+- [Modelos de anúncio para pet shop](https://rsscreen.com.br/modelos/anuncio-para-pet-shop/)
+- [Modelos de anúncio para barbearia e salão](https://rsscreen.com.br/modelos/anuncio-para-barbearia-e-salao/)
+- [Modelos de anúncio para academia](https://rsscreen.com.br/modelos/anuncio-para-academia/)
+- [Modelos de anúncio para clínica e odontologia](https://rsscreen.com.br/modelos/anuncio-para-clinica-e-odontologia/)
+- [Modelos de anúncio para oficina e autopeças](https://rsscreen.com.br/modelos/anuncio-para-oficina-e-autopecas/)
+- [Modelos de anúncio para loja de roupas e calçados](https://rsscreen.com.br/modelos/anuncio-para-loja-de-roupas-e-calcados/)
+- [Modelos de anúncio para ótica](https://rsscreen.com.br/modelos/anuncio-para-otica/)
+- [Modelos de anúncio para material de construção](https://rsscreen.com.br/modelos/anuncio-para-material-de-construcao/)
+- [Modelos de anúncio para imobiliária](https://rsscreen.com.br/modelos/anuncio-para-imobiliaria/)
+- [Modelos de anúncio para escola e cursos](https://rsscreen.com.br/modelos/anuncio-para-escola-e-cursos/)
+- [Modelos de anúncio para avisos gerais](https://rsscreen.com.br/modelos/anuncio-para-avisos-gerais/)
+- [Modelos de anúncio para eventos](https://rsscreen.com.br/modelos/anuncio-para-eventos/)
+
+## Calendário comercial mês a mês
+- [Calendário comercial mês a mês](https://rsscreen.com.br/calendario-comercial/): Datas comemorativas dos próximos 12 meses para o comércio, com ideias de promoção e mensagens prontas para a TV e a mídia indoor.
+- [Datas comemorativas de novembro de 2026](https://rsscreen.com.br/calendario-comercial/novembro/)
+- [Datas comemorativas de dezembro de 2026](https://rsscreen.com.br/calendario-comercial/dezembro/)
+- [Datas comemorativas de janeiro de 2027](https://rsscreen.com.br/calendario-comercial/janeiro/)
+- [Datas comemorativas de fevereiro de 2027](https://rsscreen.com.br/calendario-comercial/fevereiro/)
+- [Datas comemorativas de março de 2027](https://rsscreen.com.br/calendario-comercial/marco/)
+- [Datas comemorativas de abril de 2027](https://rsscreen.com.br/calendario-comercial/abril/)
+- [Datas comemorativas de maio de 2027](https://rsscreen.com.br/calendario-comercial/maio/)
+- [Datas comemorativas de junho de 2027](https://rsscreen.com.br/calendario-comercial/junho/)
+- [Datas comemorativas de julho de 2027](https://rsscreen.com.br/calendario-comercial/julho/)
+- [Datas comemorativas de agosto de 2027](https://rsscreen.com.br/calendario-comercial/agosto/)
+- [Datas comemorativas de setembro de 2027](https://rsscreen.com.br/calendario-comercial/setembro/)
+- [Datas comemorativas de outubro de 2027](https://rsscreen.com.br/calendario-comercial/outubro/)
+
+## Contato
+- Site: https://rsscreen.com.br/
+- WhatsApp: pelo botão em qualquer página do site.
