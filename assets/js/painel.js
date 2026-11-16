@@ -1655,7 +1655,7 @@
   const PLANO_INCLUI = {
     noticias: ['Notícias: 25 assuntos e mais de 90 sites', 'Previsão do tempo de qualquer cidade', 'Cotações e cotações do agro', 'Relógio, datas comemorativas e frases', 'Links separados ou link único', 'Todos os modelos, horizontal e vertical'],
     essencial: ['Notícias: 25 assuntos e mais de 90 sites', 'Previsão do tempo', 'Cotações (dólar, euro, cripto)', 'Relógio, datas comemorativas e frases', 'Todos os modelos, horizontal e vertical', 'Até 3 links por tela'],
-    completo: ['Tudo do Essencial', 'Futebol ao vivo, agenda e tabela', 'Resultados e estatísticas de loterias', 'Horóscopo do dia', 'Tela de anúncios dos anunciantes', 'Tabela de preços e cardápio que o próprio cliente edita', 'Boas-vindas com QR Code do Wi-Fi e mural de aniversariantes', 'Playlist: a programação inteira da TV num link só', 'Módulos novos sem custo extra', 'Links e trocas ilimitadas', 'Suporte prioritário no WhatsApp'],
+    completo: ['Tudo do Notícias', 'Futebol ao vivo, agenda e tabela', 'Resultados e estatísticas de loterias', 'Horóscopo do dia', 'Tela de anúncios dos anunciantes', 'Tabela de preços e cardápio que o próprio cliente edita', 'Boas-vindas com QR Code do Wi-Fi e mural de aniversariantes', 'Playlist: a programação inteira da TV num link só', 'Módulos novos sem custo extra', 'Links e trocas ilimitadas', 'Suporte prioritário no WhatsApp'],
     rede: ['Tudo do Completo', 'Preço por tela a partir de 10 telas', 'Pacotes prontos por segmento', 'Ideal para operadores de mídia indoor'],
     gerenciado: ['Tudo do Completo', 'Você cria os anúncios do estabelecimento', 'Você configura o player do cliente', 'Você monta a programação da TV', 'Ajustes mensais inclusos'],
     cortesia: ['Acesso completo temporário', 'Para teste de 7 dias, permuta ou demonstração']
@@ -1663,7 +1663,11 @@
   const DESTAQUE = 'completo';
 
   function renderGuia() {
-    const precoTxt = p => p.faixas ? 'a partir de ' + money(p.faixas[0].valor) + '<small>/mês (até ' + p.faixas[0].ate + ' telas)</small>' :
+    // faixas em linhas curtas: nada estoura a largura do cartão
+    const precoTxt = p => p.faixas ?
+      '<span class="plan-de">a partir de</span>' + money(p.faixas[0].valor) + '<small>/mês</small>' +
+        '<span class="plan-faixas">' + p.faixas.map(f => 'até ' + f.ate + ' telas: <b>' + money(f.valor) + '</b>').join('<br>') +
+        (p.extra ? '<br>acima de ' + p.faixas[p.faixas.length - 1].ate + ': + ' + money(p.extra) + '/tela' : '') + '</span>' :
       (RS.precoPlano(p, 1).total ? money(RS.precoPlano(p, 1).total) + '<small>/tela/mês</small>' : 'Grátis');
     $('#guiaPlanos').innerHTML = PLANOS.filter(p => !p.antigo).map(p =>
       '<div class="card plan' + (p.id === DESTAQUE ? ' plan-top' : '') + '">' +
@@ -1674,9 +1678,9 @@
         '<ul>' + (PLANO_INCLUI[p.id] || []).map(x => '<li>' + ICON('check') + esc(x) + '</li>').join('') + '</ul>' +
       '</div>').join('');
     const pagos = PLANOS.filter(p => !p.antigo && RS.precoPlano(p, 1).total > 0);
-    const mes = (p, n) => { const v = RS.precoPlano(p, n); return money(v.total) + '<br><small>' + money(v.porTela) + '/tela</small>'; };
+    const mes = (p, n) => { const v = RS.precoPlano(p, n); return '<b class="nowrap">' + money(v.total) + '</b><br><small class="nowrap">' + money(v.porTela) + '/tela</small>'; };
     $('#guiaExemplos').innerHTML = '<thead><tr><th>Plano</th><th>5 telas</th><th>30 telas</th><th>100 telas</th><th>200 telas</th></tr></thead><tbody>' +
-      pagos.map(p => '<tr><td><b>' + esc(p.nome) + '</b></td><td>' + mes(p, 5) + '</td><td>' + mes(p, 30) + '</td><td>' + mes(p, 100) + '</td><td>' + mes(p, 200) + '</td></tr>').join('') + '</tbody>';
+      pagos.filter(p => p.faixas).map(p => '<tr><td><b>' + esc(p.nome) + '</b></td><td>' + mes(p, 5) + '</td><td>' + mes(p, 30) + '</td><td>' + mes(p, 100) + '</td><td>' + mes(p, 200) + '</td></tr>').join('') + '</tbody>';
     $('#calcPlano').innerHTML = pagos.map(p => '<option value="' + esc(p.id) + '"' + (p.id === DESTAQUE ? ' selected' : '') + '>' + esc(p.nome) + '</option>').join('');
     calc();
     hydrateIcons($('#view-guia'));

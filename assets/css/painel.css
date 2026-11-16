@@ -319,7 +319,10 @@ code { background: var(--bg-soft); border: 1px solid var(--line); padding: 1px 6
 .plan { display: flex; flex-direction: column; gap: 8px; position: relative; }
 .plan .badge { position: absolute; top: -10px; right: 14px; }
 .plan h4 { font-size: 16px; }
-.plan-price { white-space: nowrap; font-family: var(--font-display); font-size: 26px; font-weight: 800; letter-spacing: -.02em; }
+.plan-price { font-family: var(--font-display); font-size: 24px; font-weight: 800; letter-spacing: -.02em; line-height: 1.15; min-width: 0; overflow-wrap: anywhere; }
+.plan-price .plan-de { display: block; font-family: var(--font-body, inherit); font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 0; text-transform: uppercase; }
+.plan-price .plan-faixas { display: block; margin-top: 8px; font-family: var(--font-body, inherit); font-size: 13px; font-weight: 500; letter-spacing: 0; line-height: 1.5; color: var(--text-2); }
+.plan { min-width: 0; }
 .plan-price small { font-size: 13px; color: var(--muted); font-weight: 600; margin-left: 2px; }
 .plan p { color: var(--muted); font-size: 13.5px; }
 .plan ul { list-style: none; display: grid; gap: 6px; margin-top: 4px; }
@@ -582,3 +585,4 @@ body.modal-open { overflow: hidden; }
 .table.mon-cli th, .table.mon-cli td { padding: 10px 12px; }
 .table.mon-cli th { white-space: normal; line-height: 1.25; }
 .table.mon-cli td small { overflow-wrap: anywhere; }
+.nowrap { white-space: nowrap; } #guiaExemplos td, #guiaExemplos th { padding-left: 12px; padding-right: 12px; }
