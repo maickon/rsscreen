@@ -1232,7 +1232,7 @@
     const n = $('#adNicho').value;
     const lista = n ? AD_PRONTOS.modelos.filter(m => m.nicho === n) : [];
     $('#adProntos').innerHTML = lista.map(m =>
-      '<button type="button" class="ad-pronto" data-pronto="' + esc(m.id) + '" style="--pc:' + esc(m.cor) + '">' +
+      '<button type="button" class="an-pronto" data-pronto="' + esc(m.id) + '" style="--pc:' + esc(m.cor) + '">' +
         (m.foto ? '<img loading="lazy" alt="" src="' + pexels(m.foto, 200) + '">' : '<i>' + ICON(adModelo(m.modelo).icon) + '</i>') +
         '<span><b>' + esc(m.nome) + '</b><small>' + esc(m.dados.titulo || '') + '</small></span></button>').join('');
   }
@@ -1270,9 +1270,9 @@
       AD.cliente = first ? first.chave : '';
     }
     $('#adCliente').innerHTML = clientOptions(AD.cliente);
-    $('#adModelos').innerHTML = AD_MODELOS.map(m => '<button type="button" class="ad-model" data-m="' + m.id + '">' + ICON(m.icon) + '<span>' + esc(m.nome) + '</span></button>').join('');
-    $('#adCores').innerHTML = '<button type="button" class="ad-color auto" data-c="" title="Automática (cor do tema)">A</button>' +
-      AD_CORES.map(c => '<button type="button" class="ad-color" data-c="' + c + '" style="background:' + c + '" title="' + c + '"></button>').join('');
+    $('#adModelos').innerHTML = AD_MODELOS.map(m => '<button type="button" class="an-model" data-m="' + m.id + '">' + ICON(m.icon) + '<span>' + esc(m.nome) + '</span></button>').join('');
+    $('#adCores').innerHTML = '<button type="button" class="an-color auto" data-c="" title="Automática (cor do tema)">A</button>' +
+      AD_CORES.map(c => '<button type="button" class="an-color" data-c="' + c + '" style="background:' + c + '" title="' + c + '"></button>').join('');
     if (!AD.ready) { adReset(); AD.ready = true; }
     await initProntos();
     if (AD.pendente) {
@@ -1298,9 +1298,9 @@
       const st = adStatus(a);
       const m = adModelo(a.modelo);
       const title = (a.dados && a.dados.titulo) || a.anunciante || m.nome;
-      return '<div class="ad-item' + (AD.editing === a.id ? ' on' : '') + '">' +
-        '<div class="ad-item-thumb">' + (a.midia ? '<img src="' + RS.ROOT_URL + 'api/midia/' + esc(a.midia) + '" alt="">' : ICON(m.icon)) + '</div>' +
-        '<div class="ad-item-txt"><b>' + esc(title) + '</b><small>' + esc(m.nome) + (a.anunciante && a.anunciante !== title ? ' · ' + esc(a.anunciante) : '') + ' · ' + a.duracao + 's' +
+      return '<div class="an-item' + (AD.editing === a.id ? ' on' : '') + '">' +
+        '<div class="an-item-thumb">' + (a.midia ? '<img src="' + RS.ROOT_URL + 'api/midia/' + esc(a.midia) + '" alt="">' : ICON(m.icon)) + '</div>' +
+        '<div class="an-item-txt"><b>' + esc(title) + '</b><small>' + esc(m.nome) + (a.anunciante && a.anunciante !== title ? ' · ' + esc(a.anunciante) : '') + ' · ' + a.duracao + 's' +
           (a.fim ? ' · até ' + esc(a.fim.split('-').reverse().slice(0, 2).join('/')) : '') + '</small></div>' +
         '<span class="badge ' + st[1] + '">' + st[0] + '</span>' +
         '<div class="acts">' +
@@ -1313,7 +1313,7 @@
     const c = clients.find(x => x.chave === AD.cliente);
     $('#adLink').innerHTML = AD.cliente ?
       '<div class="lbl">Link da tela de anúncios deste cliente</div>' +
-      '<div class="ad-link-row"><code>' + esc(adScreenUrl('horizontal')) + '</code></div>' +
+      '<div class="an-link-row"><code>' + esc(adScreenUrl('horizontal')) + '</code></div>' +
       '<div class="acts"><button class="btn btn-dark btn-sm" data-cplink="horizontal">' + ICON('copy') + ' Copiar horizontal</button>' +
       '<button class="btn btn-ghost btn-sm" data-cplink="vertical">' + ICON('copy') + ' Copiar vertical</button>' +
       (c && c.whatsapp ? '<a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="' + esc(RS.whatsappLink(c.whatsapp, 'Olá, ' + c.nome + '! Este é o link da tela de anúncios:\n\nHorizontal: ' + adScreenUrl('horizontal') + '\nVertical: ' + adScreenUrl('vertical'))) + '">' + ICON('whatsapp') + ' Enviar</a>' : '') +
@@ -1322,7 +1322,7 @@
 
   function renderAdForm() {
     const m = adModelo(AD.modelo);
-    $$('#adModelos .ad-model').forEach(b => b.classList.toggle('on', b.dataset.m === m.id));
+    $$('#adModelos .an-model').forEach(b => b.classList.toggle('on', b.dataset.m === m.id));
     const cur = adDados;
     $('#adFields').innerHTML = (AD_CAMPOS[m.id] || []).map(spec => {
       const key = Array.isArray(spec) ? spec[0] : spec;
@@ -1338,7 +1338,7 @@
     $('#adFotoHint').textContent = m.id === 'imagem' ? 'Ideal: 1920×1080 (horizontal) ou 1080×1920 (vertical). A imagem é otimizada automaticamente.' : 'JPG, PNG ou WebP. A imagem é reduzida e otimizada automaticamente.';
     $('#adAjusteWrap').hidden = !(m.id === 'imagem' || m.id === 'video');
     $('#adCorWrap').hidden = m.id === 'imagem' || m.id === 'video';
-    $$('#adCores .ad-color').forEach(b => b.classList.toggle('on', b.dataset.c === AD.cor));
+    $$('#adCores .an-color').forEach(b => b.classList.toggle('on', b.dataset.c === AD.cor));
     renderThumb();
   }
 
@@ -1476,7 +1476,7 @@
     const b = e.target.closest('[data-c]');
     if (!b) return;
     AD.cor = b.dataset.c;
-    $$('#adCores .ad-color').forEach(x => x.classList.toggle('on', x === b));
+    $$('#adCores .an-color').forEach(x => x.classList.toggle('on', x === b));
     schedulePreviewAd();
   });
   $('#adForm').addEventListener('input', schedulePreviewAd);
@@ -1780,9 +1780,9 @@
       const inter = (p.opcoes && p.opcoes.intercalar) || 0;
       const url = plUrl(p.id, 'horizontal', p.cliente);
       const wa = cli && cli.whatsapp ? RS.whatsappLink(cli.whatsapp.length <= 11 ? '55' + cli.whatsapp : cli.whatsapp, unicoMensagem(cli, p.nome, url)) : 'https://wa.me/?text=' + encodeURIComponent(unicoMensagem(cli, p.nome, url));
-      return '<div class="ad-item pl-row">' +
-        '<div class="ad-item-thumb">' + ICON('play') + '</div>' +
-        '<div class="ad-item-txt"><b>' + esc(p.nome) + (PL.cliente ? '' : ' <span class="tag">' + esc(cli ? cli.nome : p.cliente) + '</span>') + '</b><small>' + p.itens.length + ' tela' + (p.itens.length > 1 ? 's' : '') +
+      return '<div class="an-item pl-row">' +
+        '<div class="an-item-thumb">' + ICON('play') + '</div>' +
+        '<div class="an-item-txt"><b>' + esc(p.nome) + (PL.cliente ? '' : ' <span class="tag">' + esc(cli ? cli.nome : p.cliente) + '</span>') + '</b><small>' + p.itens.length + ' tela' + (p.itens.length > 1 ? 's' : '') +
           (inter ? ' + anúncios de ' + inter + ' s' : '') + ' · ciclo de ' + fmtDur(plCycle(p.itens, inter)) + '</small></div>' +
         '<div class="acts">' +
           '<button class="btn btn-dark btn-sm" data-ed="' + esc(p.id) + '">Editar</button>' +
@@ -1796,7 +1796,7 @@
     const p = PL.list.find(x => x.id === PL.editing);
     $('#plLink').innerHTML = p ?
       '<div class="lbl">Link da playlist “' + esc(p.nome) + '”</div>' +
-      '<div class="ad-link-row"><code>' + esc(plUrl(p.id, 'horizontal')) + '</code></div>' +
+      '<div class="an-link-row"><code>' + esc(plUrl(p.id, 'horizontal')) + '</code></div>' +
       '<div class="acts"><button class="btn btn-dark btn-sm" data-cplink="horizontal">' + ICON('copy') + ' Copiar horizontal</button>' +
       '<button class="btn btn-ghost btn-sm" data-cplink="vertical">' + ICON('copy') + ' Copiar vertical</button>' +
       '<a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="' + esc(plUrl(p.id, PL.orient)) + '">' + ICON('external') + ' Abrir</a>' +

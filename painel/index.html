@@ -365,30 +365,30 @@
         <div class="db-banner muted" id="adNoDb" hidden><div><b>Anúncios precisam do banco de dados.</b> Eles funcionam no site publicado na Cloudflare (o banco D1 é criado no deploy).</div></div>
 
         <div id="adsGrid">
-          <div class="card ad-cli-card">
+          <div class="card an-cli-card">
             <div class="card-head">
               <div><h3>Cliente</h3><p id="adCount"></p></div>
               <button class="btn btn-primary btn-sm" id="adNew" type="button"><i data-icon="plus"></i> Novo anúncio</button>
             </div>
             <select class="select" id="adCliente"></select>
-            <div class="ad-list" id="adList"></div>
-            <div class="ad-link" id="adLink"></div>
+            <div class="an-list" id="adList"></div>
+            <div class="an-link" id="adLink"></div>
           </div>
-          <div class="ads-grid">
-            <form class="card ad-form" id="adForm" autocomplete="off">
+          <div class="ans-grid">
+            <form class="card an-form" id="adForm" autocomplete="off">
             <div class="card-head"><div><h3 id="adFormTitle">Novo anúncio</h3><p>Escolha o modelo e preencha. Campos vazios não aparecem na tela.</p></div></div>
-            <div class="field ad-prontos-wrap"><span>Começar de um anúncio pronto</span>
+            <div class="field an-prontos-wrap"><span>Começar de um anúncio pronto</span>
               <p class="hint">Escolha o tipo de comércio e clique num modelo: o anúncio vem completo (textos, cores, preço e foto) e aparece na prévia ao lado. Depois é só ajustar o que quiser.</p>
               <select class="select" id="adNicho"><option value="">Escolha o nicho…</option></select>
-              <div class="ad-prontos" id="adProntos"></div>
+              <div class="an-prontos" id="adProntos"></div>
             </div>
-            <div class="field"><span>Modelo</span><div class="ad-models" id="adModelos"></div></div>
+            <div class="field"><span>Modelo</span><div class="an-models" id="adModelos"></div></div>
             <label class="field"><span>Anunciante (quem paga o anúncio)</span><input class="input" id="adAnunciante" maxlength="80" placeholder="Ex.: Açougue do Zé" /></label>
             <div id="adFields"></div>
             <div class="field" id="adFotoWrap">
               <span id="adFotoLabel">Foto</span>
-              <div class="ad-photo-pick">
-                <div class="ad-thumb" id="adThumb"></div>
+              <div class="an-photo-pick">
+                <div class="an-thumb" id="adThumb"></div>
                 <div>
                   <label class="btn btn-ghost btn-sm"><i data-icon="upload"></i> Escolher imagem<input type="file" id="adFoto" accept="image/*" hidden /></label>
                   <button class="btn btn-ghost btn-sm" type="button" id="adFotoDel" hidden>Remover</button>
@@ -396,7 +396,7 @@
                 </div>
               </div>
             </div>
-            <div class="field" id="adCorWrap"><span>Cor de destaque</span><div class="ad-colors" id="adCores"></div></div>
+            <div class="field" id="adCorWrap"><span>Cor de destaque</span><div class="an-colors" id="adCores"></div></div>
             <div class="row-2">
               <label class="field"><span>Tempo na tela (segundos)</span><input class="input" id="adDuracao" type="number" min="4" max="120" value="10" /></label>
               <label class="field" id="adAjusteWrap"><span>Encaixe</span><select class="select" id="adAjuste"><option value="cobrir">Preencher a tela (corta as bordas)</option><option value="conter">Mostrar inteira (com fundo)</option></select></label>
@@ -412,7 +412,7 @@
               <button class="btn btn-ghost" type="button" id="adDelete" hidden><i data-icon="trash"></i> Excluir</button>
             </div>
           </form>
-            <div class="card ad-pv-card">
+            <div class="card an-pv-card">
               <div class="card-head">
                 <div><h3>Prévia ao vivo</h3><p>Muda enquanto você edita, antes de salvar.</p></div>
                 <div class="chips" id="adOrient">
@@ -437,8 +437,8 @@
         </div>
         <div class="db-banner muted" id="plNoDb" hidden><div><b>Playlists precisam do banco de dados.</b> Elas funcionam no site publicado na Cloudflare (o banco D1 é criado no deploy).</div></div>
 
-        <div class="ads-grid pl-grid pl-so-lista" id="plGrid">
-          <div class="ads-col">
+        <div class="ans-grid pl-grid pl-so-lista" id="plGrid">
+          <div class="ans-col">
             <div class="card">
               <div class="card-head">
                 <div><h3>Seus links únicos</h3><p id="plCount"></p></div>
@@ -446,8 +446,8 @@
                 <button id="plNew" type="button" hidden></button>
               </div>
               <select class="select" id="plCliente"></select>
-              <div class="ad-list" id="plList"></div>
-              <div class="ad-link" id="plLink"></div>
+              <div class="an-list" id="plList"></div>
+              <div class="an-link" id="plLink"></div>
             </div>
             <div class="card" hidden>
               <div class="card-head">
@@ -465,7 +465,7 @@
             </div>
           </div>
 
-          <form class="card ad-form" id="plForm" autocomplete="off" hidden>
+          <form class="card an-form" id="plForm" autocomplete="off" hidden>
             <div class="card-head"><div><h3 id="plFormTitle">Nova playlist</h3><p>Adicione os conteúdos na ordem em que devem passar. A sequência se repete o dia todo.</p></div></div>
             <div class="row-2">
               <label class="field"><span>Nome da playlist</span><input class="input" id="plNome" maxlength="80" placeholder="Ex.: Recepção, TV do balcão" /></label>
