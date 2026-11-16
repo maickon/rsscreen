@@ -202,4 +202,62 @@
     });
     $('tPrint').addEventListener('click', () => window.print());
   }
+
+  /* =================== CALCULADORA DE EXIBIÇÕES =================== */
+  // Quantas vezes o anúncio aparece: volta = (anúncios na volta) × (duração + conteúdo entre eles).
+  const ex = $('exib');
+  if (ex) {
+    const hm = v => { const m = String(v || '').match(/^(\d{1,2}):(\d{2})/); return m ? Number(m[1]) * 60 + Number(m[2]) : 0; };
+    const dur = s => { s = Math.round(s); if (s < 60) return s + ' s'; const m = Math.floor(s / 60), r = s % 60; return m + ' min' + (r ? ' ' + r + ' s' : ''); };
+    const hora = min => { const h = Math.floor(min / 60), m = min % 60; return h + 'h' + (m ? String(m).padStart(2, '0') : ''); };
+    let texto = '';
+    wire(ex, 'rs_exib_v1', () => {
+      const n = Math.max(1, Math.round(num('xAnun'))), d = Math.max(3, num('xDur')), c = Math.max(0, num('xConteudo'));
+      const vezes = Math.max(1, Number($('xVezes').value) || 1), tvs = Math.max(1, Math.round(num('xTvs'))), dias = Math.min(7, Math.max(1, num('xDias')));
+      let aberto = hm($('xFecha').value) - hm($('xAbre').value);
+      if (aberto <= 0) aberto += 24 * 60;                       // fecha depois da meia-noite
+      const slots = n + (vezes - 1);                            // anúncios numa volta (o vendido entra "vezes" vezes)
+      const ciclo = slots * (d + c);
+      const porDia = aberto * 60 / ciclo * vezes;
+      const porMes = porDia * dias * 4.33;
+      const intervalo = ciclo / vezes;
+      $('xDia').textContent = fmtN(porDia * tvs);
+      $('xCada').textContent = dur(intervalo);
+      $('xMes').textContent = fmtN(porMes * tvs);
+      $('xTela').textContent = dur(porDia * d);
+      $('xCiclo').textContent = dur(ciclo);
+
+      // barra de uma volta: o anúncio vendido espaçado, os outros anunciantes e o conteúdo entre eles
+      const seus = new Set(Array.from({ length: vezes }, (_, i) => Math.round(i * slots / vezes)));
+      const partes = [];
+      for (let i = 0; i < slots && partes.length < 160; i++) {
+        partes.push('<i class="' + (seus.has(i) ? 'c-seu' : 'c-anun') + '" style="flex:' + d + '"></i>');
+        if (c) partes.push('<i class="c-cont" style="flex:' + c + '"></i>');
+      }
+      $('xBarra').innerHTML = partes.join('');
+      const pctAnun = Math.round(slots * d / ciclo * 100);
+      $('xResumo').innerHTML = 'Numa volta passam <b>' + slots + ' anúncio' + (slots > 1 ? 's' : '') + '</b> (' + pctAnun + '% do tempo) e <b>' + dur(slots * c) + '</b> de conteúdo. ' +
+        'Com o ponto aberto das <b>' + hora(hm($('xAbre').value)) + '</b> às <b>' + hora(hm($('xFecha').value)) + '</b>, a programação dá cerca de <b>' + fmtN(aberto * 60 / ciclo) + ' voltas</b> por dia' +
+        (tvs > 1 ? ', em cada uma das <b>' + tvs + ' TVs</b>' : '') + '.';
+
+      // avisos de programação ruim
+      const alertas = [];
+      if (ciclo > 600) alertas.push('A volta passa de 10 minutos: quem fica pouco tempo no ponto pode sair sem ver o anúncio. Com esses tempos, cabem até ' + Math.max(1, Math.floor(300 / (d + c))) + ' anunciantes numa volta de 5 minutos; divida em duas programações ou coloque outra TV.');
+      else if (ciclo > 300) alertas.push('A volta tem mais de 5 minutos. Funciona em lugares de espera longa (clínica, salão), mas em padaria ou lanchonete o ideal é até 5 minutos.');
+      if (pctAnun > 50) alertas.push('Mais da metade do tempo é anúncio: a TV vira intervalo comercial e as pessoas param de olhar. Aumente o conteúdo entre os anúncios (notícias, clima, futebol).');
+      if (d > 30) alertas.push('Anúncios acima de 30 segundos cansam na mídia indoor; 10 a 15 segundos costumam bastar.');
+      $('xAlerta').hidden = !alertas.length;
+      $('xAlertaTxt').innerHTML = alertas.join('<br><br>');
+
+      const nome = $('xNome').value.trim();
+      texto = (nome ? nome + ', seu' : 'Seu') + ' anúncio de ' + Math.round(d) + ' segundos aparece a cada ' + dur(intervalo) + ', das ' + hora(hm($('xAbre').value)) + ' às ' + hora(hm($('xFecha').value)) +
+        ', o que dá cerca de ' + fmtN(porDia * tvs) + ' exibições por dia e ' + fmtN(porMes * tvs) + ' por mês' + (tvs > 1 ? ' nas ' + tvs + ' TVs' : '') +
+        '. Entre os anúncios passam notícias e informações que fazem as pessoas olharem para a tela. ' +
+        '(Estimativa pela programação, com a TV ligada durante o horário de funcionamento.)';
+      $('xTexto').textContent = texto;
+    });
+    $('xCopiar').addEventListener('click', () => {
+      (navigator.clipboard ? navigator.clipboard.writeText(texto) : Promise.reject()).then(() => toast('Texto copiado'), () => toast('Selecione o texto e copie'));
+    });
+  }
 })();

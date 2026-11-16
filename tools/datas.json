@@ -1,7 +1,7 @@
 {
  "blog": {
   "atualizado": "2026-11-16",
-  "hash": "51305dd4ce275c13",
+  "hash": "daa662b35c8b4b76",
   "publicado": "2026-11-16"
  },
  "blog/comecar": {
@@ -94,6 +94,11 @@
   "hash": "29febaa3cc2697a2",
   "publicado": "2026-11-16"
  },
+ "ferramentas/calculadora-de-exibicoes": {
+  "atualizado": "2026-11-16",
+  "hash": "1c6f2caf6def4ae7",
+  "publicado": "2026-11-16"
+ },
  "ferramentas/calculadora-midia-indoor": {
   "atualizado": "2026-11-16",
   "hash": "e5f6af9e34efadcf",
@@ -136,7 +141,7 @@
  },
  "guia": {
   "atualizado": "2026-11-16",
-  "hash": "9d68923d988b4826",
+  "hash": "b22d31e19526f99d",
   "publicado": "2026-11-16"
  },
  "guia/como-ganhar-dinheiro-com-midia-indoor": {

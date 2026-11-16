@@ -202,3 +202,13 @@
 .prose .rs-cta p { margin-top: 8px; font-size: 16px; }
 .prose .rs-cta-acts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
 .prose .autor { font-size: 14px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; margin-top: 28px; }
+
+/* calculadora de exibições: barra de uma volta da programação */
+.ciclo { display: flex; height: 26px; border-radius: 8px; overflow: hidden; gap: 1px; background: var(--line); margin: 10px 0 6px; }
+.ciclo i { display: block; min-width: 1px; }
+.ciclo .c-anun, .ciclo-leg .c-anun { background: #9ca3af; }
+.ciclo .c-seu, .ciclo-leg .c-seu { background: var(--brand); }
+.ciclo .c-cont, .ciclo-leg .c-cont { background: #dbeafe; }
+.ciclo-leg { font-size: 12.5px; color: var(--muted); display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+.ciclo-leg i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 4px; }
+.x-texto { background: var(--bg-soft); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin: 6px 0 10px; }

@@ -1,0 +1,84 @@
+<!--
+slug: ferramentas/calculadora-de-exibicoes
+titulo: Calculadora de exibições: quantas vezes o anúncio aparece na TV
+descricao: Calcule quantas vezes por dia, por hora e por mês o anúncio aparece na TV de mídia indoor, o tamanho do ciclo e o tempo de tela, e gere um texto pronto para o anunciante.
+h1: Calculadora de exibições do anúncio na TV
+lead: Responda com números a pergunta que todo anunciante faz: "quantas vezes o meu anúncio vai aparecer?". Informe a programação e o horário do ponto.
+cartao: Quantas vezes o anúncio aparece por dia, ciclo e tempo de tela.
+icone: clock
+tipo: ferramenta
+ordem: 18
+script: {raiz}assets/js/ferramentas.js
+-->
+<div class="tool" id="exib">
+  <form class="tool-form" autocomplete="off" onsubmit="return false">
+    <h2>A programação</h2>
+    <div class="row-2">
+      <label class="field"><span>Quantos anunciantes na TV</span><input class="input" type="number" min="1" max="60" id="xAnun" value="8"></label>
+      <label class="field"><span>Duração de cada anúncio (segundos)</span><input class="input" type="number" min="3" max="120" id="xDur" value="15"></label>
+    </div>
+    <label class="field"><span>Conteúdo entre um anúncio e outro (segundos)</span><input class="input" type="number" min="0" max="600" id="xConteudo" value="30"></label>
+    <p class="hint">Tempo de notícias, previsão do tempo, futebol ou cardápio que passa entre dois anúncios. Use 0 se a TV só passa anúncios.</p>
+    <label class="field"><span>Vezes que o anúncio que você está vendendo aparece em cada volta</span><select class="select" id="xVezes"><option value="1">1 vez por volta (plano normal)</option><option value="2">2 vezes por volta (plano destaque)</option><option value="3">3 vezes por volta (plano premium)</option></select></label>
+    <h2>O ponto</h2>
+    <div class="row-2">
+      <label class="field"><span>Abre às</span><input class="input" type="time" id="xAbre" value="07:00"></label>
+      <label class="field"><span>Fecha às</span><input class="input" type="time" id="xFecha" value="20:00"></label>
+    </div>
+    <div class="row-2">
+      <label class="field"><span>Dias abertos por semana</span><input class="input" type="number" min="1" max="7" id="xDias" value="6"></label>
+      <label class="field"><span>Quantas TVs com essa programação</span><input class="input" type="number" min="1" max="500" id="xTvs" value="1"></label>
+    </div>
+    <label class="field"><span>Nome do anunciante (opcional, para o texto)</span><input class="input" type="text" maxlength="60" id="xNome" placeholder="Ex.: Pizzaria do Bairro"></label>
+  </form>
+  <div class="tool-out">
+    <div class="kpi-grid">
+      <div class="kpi hl"><small>Exibições por dia</small><b id="xDia">-</b></div>
+      <div class="kpi"><small>A cada</small><b id="xCada">-</b></div>
+      <div class="kpi"><small>Exibições por mês</small><b id="xMes">-</b></div>
+      <div class="kpi"><small>Tempo de tela por dia</small><b id="xTela">-</b></div>
+    </div>
+    <div class="box">
+      <h3>Uma volta da programação: <span id="xCiclo">-</span></h3>
+      <div class="ciclo" id="xBarra" aria-label="Distribuição de uma volta da programação"></div>
+      <p class="ciclo-leg"><i class="c-anun"></i> anúncios <i class="c-seu"></i> o anúncio vendido <i class="c-cont"></i> conteúdo</p>
+      <p id="xResumo">-</p>
+    </div>
+    <div class="box" id="xAlerta" hidden><h3>Atenção</h3><p id="xAlertaTxt"></p></div>
+    <div class="box">
+      <h3>Texto pronto para o anunciante</h3>
+      <p id="xTexto" class="x-texto">-</p>
+      <div class="tool-actions"><button class="btn btn-dark btn-sm" type="button" id="xCopiar"><i data-icon="copy"></i> Copiar texto</button></div>
+    </div>
+  </div>
+</div>
+<div class="prose" style="margin-top:48px">
+  <h2>Como a conta é feita</h2>
+  <p>Uma <strong>volta</strong> (ou ciclo) é a programação inteira, do primeiro ao último anunciante, com o conteúdo que passa entre eles. Depois ela recomeça. Por isso:</p>
+  <ul>
+    <li><strong>Duração da volta</strong> = (quantidade de anúncios na volta) × (duração do anúncio + conteúdo entre anúncios).</li>
+    <li><strong>Exibições por dia</strong> = horas abertas × 3.600 ÷ duração da volta × vezes que o anúncio aparece na volta.</li>
+    <li><strong>Exibições por mês</strong> = exibições por dia × dias abertos por semana × 4,33 semanas.</li>
+  </ul>
+  <p>Com várias TVs passando a mesma programação, as exibições são multiplicadas pelo número de TVs.</p>
+
+  <h2>Qual o tamanho ideal da volta</h2>
+  <p>Quanto mais anunciantes, maior a volta e mais tempo cada anúncio demora para voltar. Uma referência prática:</p>
+  <ul>
+    <li><strong>Até 5 minutos:</strong> ótimo. Quem fica 10 minutos no ponto vê o anúncio pelo menos duas vezes.</li>
+    <li><strong>De 5 a 10 minutos:</strong> aceitável em lugares onde as pessoas esperam mais (clínicas, salões).</li>
+    <li><strong>Acima de 10 minutos:</strong> o cliente pode sair sem ver o anúncio. Divida em duas programações ou coloque outra TV.</li>
+  </ul>
+  <p>Também vale cuidar da proporção: se mais da metade do tempo é anúncio, a TV vira "intervalo comercial" e as pessoas param de olhar. Por isso o conteúdo entre os anúncios (notícias, clima, futebol) é o que segura a atenção. Veja <a href="{raiz}guia/conteudo-para-midia-indoor/">o que passar na TV</a>.</p>
+
+  <h2>Estimativa não é comprovação</h2>
+  <p>Os números desta calculadora são uma <strong>estimativa pela programação</strong>, considerando a TV ligada durante todo o horário de funcionamento. Para comprovar exibições de verdade é preciso um player que registre cada reprodução. Deixe isso claro ao anunciante: venda a frequência ("aparece a cada 4 minutos, das 7h às 20h"), não um número exato.</p>
+  <p>Para definir o preço de cada plano, use o guia de <a href="{raiz}guia/quanto-cobrar-por-anuncio-em-tv/">quanto cobrar por anúncio</a> e a <a href="{raiz}ferramentas/tabela-de-precos/">tabela de preços pronta</a>.</p>
+
+  <h2>Perguntas frequentes</h2>
+  <div class="faq">
+    <details><summary>Quantos anunciantes cabem numa TV?<i data-icon="chevron"></i></summary><p>Com anúncios de 15 segundos e 30 segundos de conteúdo entre eles, cabem 6 anunciantes numa volta de até 5 minutos, e até 13 numa volta de 10 minutos.</p></details>
+    <details><summary>Anúncio de 15 ou de 30 segundos?<i data-icon="chevron"></i></summary><p>Na mídia indoor, 10 a 15 segundos costumam bastar: a pessoa lê a oferta e o contato. Anúncios de 30 segundos fazem sentido para vídeo ou para planos mais caros.</p></details>
+    <details><summary>Como vender o plano destaque?<i data-icon="chevron"></i></summary><p>O anúncio aparece duas ou três vezes por volta, então é visto com mais frequência. Use esta calculadora para mostrar a diferença de exibições entre os planos.</p></details>
+  </div>
+</div>
