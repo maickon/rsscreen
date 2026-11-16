@@ -234,3 +234,12 @@
   .ctr-doc .sign { break-inside: avoid; }
 }
 .ctr-dica { color: #888; font-size: 11px; }
+
+/* perguntas frequentes soltas dentro dos artigos e páginas de soluções (mesmo visual do .faq) */
+.prose > details { background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius); padding: 0 20px; }
+.prose > details + details { margin-top: 10px; }
+.prose > details summary { list-style: none; cursor: pointer; padding: 16px 0; font-weight: 700; color: var(--text); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.prose > details summary::-webkit-details-marker { display: none; }
+.prose > details summary .ico { transition: transform .2s; color: var(--muted); flex: none; }
+.prose > details[open] summary .ico { transform: rotate(180deg); color: var(--brand-700); }
+.prose > details p { padding: 0 0 16px; margin: 0; }
