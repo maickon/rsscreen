@@ -355,6 +355,10 @@
 
     const n = combos().length;
     $('#gSummary').innerHTML = n ? (n > 1 ? '<b>' + n + ' telas</b> (todas as combinações)' : '<b>1 tela</b>') + ' para <b>' + esc(c ? c.nome : '—') + '</b>' + (n > MAX_COMBOS ? ' <span class="warn">(máximo ' + MAX_COMBOS + ' por vez)</span>' : '') : 'Selecione ao menos um item em cada etapa.';
+    if (c && c.plano && !RS.planoInclui(c.plano, m.id)) {
+      const pl = RS.planoDe(c.plano);
+      $('#gSummary').innerHTML += '<br><span class="warn">' + esc(m.nome) + ' não está no plano ' + esc(pl ? pl.nome : c.plano) + ' deste cliente: a tela vai mostrar "não incluso no plano". Mude o plano em Clientes, se for o caso.</span>';
+    }
     $('#gGenerate').disabled = !n || n > MAX_COMBOS || !G.cliente;
     $('#gGenerate span').textContent = n > 1 ? 'Adicionar ' + n + ' telas à seleção' : 'Adicionar à seleção';
     schedulePreview();
@@ -854,8 +858,8 @@
     if (!e.target.closest('[data-import]')) return;
     try {
       const list = RS.clients().map(c => {
-        const pl = c.demo ? 'cortesia' : ((PLANOS[0] && PLANOS[0].id) || '');
-        return { chave: c.chave, nome: c.nome, whatsapp: c.whatsapp, ativo: c.ativo, demo: c.demo, plano: pl, telas: 1, valor: c.demo ? 0 : ((planoById(pl) || {}).valor || 0) };
+        const pl = c.demo ? 'cortesia' : 'completo';
+        return { chave: c.chave, nome: c.nome, whatsapp: c.whatsapp, ativo: c.ativo, demo: c.demo, plano: pl, telas: 1, valor: c.demo ? 0 : ((RS.precoPlano(pl, 1) || {}).total || 0) };
       });
       const r = await api('api/admin/clientes/importar', { method: 'POST', headers: { 'X-Admin-Senha': adminSenha(), 'Content-Type': 'application/json' }, body: JSON.stringify({ clientes: list }) });
       toast(r.importados + ' clientes importados');
@@ -931,19 +935,24 @@
   let editing = null;   // chave em edição (null = cliente novo)
 
   function fillPlanos(sel) {
-    $('#dbPlano').innerHTML = PLANOS.map(p => '<option value="' + esc(p.id) + '"' + (p.id === sel ? ' selected' : '') + '>' + esc(p.nome) + (p.valor ? ' · ' + money(p.valor) + '/tela' : '') + '</option>').join('') +
+    $('#dbPlano').innerHTML = PLANOS.filter(p => !p.antigo || p.id === sel).map(p => '<option value="' + esc(p.id) + '"' + (p.id === sel ? ' selected' : '') + '>' + esc(p.nome) + '</option>').join('') +
       (sel && !planoById(sel) ? '<option value="' + esc(sel) + '" selected>' + esc(sel) + '</option>' : '');
   }
 
+  // valor do plano pela faixa de telas (config/clientes.js)
   function planoHint() {
     const p = planoById($('#dbPlano').value);
-    const n = Number($('#dbTelas').value) || 0;
-    $('#dbPlanoInfo').textContent = p ? p.descricao + (p.valor ? ' Sugestão: ' + money(p.valor) + ' × ' + n + ' tela(s) = ' + money(p.valor * n) + '/mês.' : '') : '';
+    const n = Math.max(1, Number($('#dbTelas').value) || 1);
+    const v = p ? RS.precoPlano(p, n) : null;
+    $('#dbPlanoInfo').innerHTML = p ? esc(p.descricao || '') + (v && v.total ? '<br><b>Tabela: ' + money(v.total) + '/mês</b> para ' + n + ' tela' + (n > 1 ? 's' : '') +
+      (v.faixa ? ' (' + esc(v.faixa) + ')' : '') + ' · ' + money(v.porTela) + ' por tela' + (v.consulta ? ' · acima da última faixa: preço sob consulta' : '') +
+      '. O valor mensal abaixo pode ter desconto negociado.' : '') : '';
   }
 
   function suggestValor() {
     const p = planoById($('#dbPlano').value);
-    if (p) $('#dbValor').value = (p.valor * (Number($('#dbTelas').value) || 0)).toFixed(2);
+    const v = p ? RS.precoPlano(p, Number($('#dbTelas').value) || 1) : null;
+    if (v) $('#dbValor').value = v.total.toFixed(2);
     planoHint();
   }
 
@@ -1644,6 +1653,7 @@
   $('#gPlanosCopy').addEventListener('click', () => copy(RS.ROOT_URL + 'planos/', 'Link da página de planos copiado'));
 
   const PLANO_INCLUI = {
+    noticias: ['Notícias: 25 assuntos e mais de 90 sites', 'Previsão do tempo de qualquer cidade', 'Cotações e cotações do agro', 'Relógio, datas comemorativas e frases', 'Links separados ou link único', 'Todos os modelos, horizontal e vertical'],
     essencial: ['Notícias: 25 assuntos e mais de 90 sites', 'Previsão do tempo', 'Cotações (dólar, euro, cripto)', 'Relógio, datas comemorativas e frases', 'Todos os modelos, horizontal e vertical', 'Até 3 links por tela'],
     completo: ['Tudo do Essencial', 'Futebol ao vivo, agenda e tabela', 'Resultados e estatísticas de loterias', 'Horóscopo do dia', 'Tela de anúncios dos anunciantes', 'Tabela de preços e cardápio que o próprio cliente edita', 'Boas-vindas com QR Code do Wi-Fi e mural de aniversariantes', 'Playlist: a programação inteira da TV num link só', 'Módulos novos sem custo extra', 'Links e trocas ilimitadas', 'Suporte prioritário no WhatsApp'],
     rede: ['Tudo do Completo', 'Preço por tela a partir de 10 telas', 'Pacotes prontos por segmento', 'Ideal para operadores de mídia indoor'],
@@ -1653,18 +1663,21 @@
   const DESTAQUE = 'completo';
 
   function renderGuia() {
-    $('#guiaPlanos').innerHTML = PLANOS.map(p =>
+    const precoTxt = p => p.faixas ? 'a partir de ' + money(p.faixas[0].valor) + '<small>/mês (até ' + p.faixas[0].ate + ' telas)</small>' :
+      (RS.precoPlano(p, 1).total ? money(RS.precoPlano(p, 1).total) + '<small>/tela/mês</small>' : 'Grátis');
+    $('#guiaPlanos').innerHTML = PLANOS.filter(p => !p.antigo).map(p =>
       '<div class="card plan' + (p.id === DESTAQUE ? ' plan-top' : '') + '">' +
         (p.id === DESTAQUE ? '<span class="badge badge-dark">Mais vendido</span>' : '') +
         '<h4>' + esc(p.nome) + '</h4>' +
-        '<div class="plan-price">' + (p.valor ? money(p.valor) + '<small>/tela/mês</small>' : 'Grátis') + '</div>' +
+        '<div class="plan-price">' + precoTxt(p) + '</div>' +
         '<p>' + esc(p.descricao || '') + '</p>' +
         '<ul>' + (PLANO_INCLUI[p.id] || []).map(x => '<li>' + ICON('check') + esc(x) + '</li>').join('') + '</ul>' +
       '</div>').join('');
-    const pagos = PLANOS.filter(p => p.valor > 0);
-    $('#guiaExemplos').innerHTML = '<thead><tr><th>Plano</th><th>1 tela</th><th>3 telas</th><th>10 telas</th><th>Anual (1 tela)</th></tr></thead><tbody>' +
-      pagos.map(p => '<tr><td><b>' + esc(p.nome) + '</b></td><td>' + money(p.valor) + '</td><td>' + money(p.valor * 3) + '</td><td>' + money(p.valor * 10) + '</td><td>' + money(p.valor * 10) + '</td></tr>').join('') + '</tbody>';
-    $('#calcPlano').innerHTML = pagos.map(p => '<option value="' + esc(p.id) + '"' + (p.id === DESTAQUE ? ' selected' : '') + '>' + esc(p.nome) + ' · ' + money(p.valor) + '</option>').join('');
+    const pagos = PLANOS.filter(p => !p.antigo && RS.precoPlano(p, 1).total > 0);
+    const mes = (p, n) => { const v = RS.precoPlano(p, n); return money(v.total) + '<br><small>' + money(v.porTela) + '/tela</small>'; };
+    $('#guiaExemplos').innerHTML = '<thead><tr><th>Plano</th><th>5 telas</th><th>30 telas</th><th>100 telas</th><th>200 telas</th></tr></thead><tbody>' +
+      pagos.map(p => '<tr><td><b>' + esc(p.nome) + '</b></td><td>' + mes(p, 5) + '</td><td>' + mes(p, 30) + '</td><td>' + mes(p, 100) + '</td><td>' + mes(p, 200) + '</td></tr>').join('') + '</tbody>';
+    $('#calcPlano').innerHTML = pagos.map(p => '<option value="' + esc(p.id) + '"' + (p.id === DESTAQUE ? ' selected' : '') + '>' + esc(p.nome) + '</option>').join('');
     calc();
     hydrateIcons($('#view-guia'));
   }
@@ -1673,10 +1686,10 @@
     const telas = Math.max(1, Number($('#calcTelas').value) || 1);
     const anunc = Math.max(0, Number($('#calcAnunc').value) || 0);
     const preco = Math.max(0, Number($('#calcPreco').value) || 0);
-    const p = planoById($('#calcPlano').value) || { valor: 0 };
+    const p = planoById($('#calcPlano').value);
     // o mesmo anunciante costuma aparecer em todas as telas da rede: receita = anunciantes × preço
     const receita = anunc * preco;
-    const custo = p.valor * telas;
+    const custo = p ? RS.precoPlano(p, telas).total : 0;
     $('#calcOut').innerHTML =
       '<div><span>Receita com anúncios</span><b>' + money(receita) + '</b></div>' +
       '<div><span>Conteúdo rsscreen (' + telas + ' tela' + (telas > 1 ? 's' : '') + ')</span><b>− ' + money(custo) + '</b></div>' +

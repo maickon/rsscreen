@@ -3,20 +3,18 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const esc = RS.esc;
-  const PLANOS = (RS.CFG.planos || []).filter(p => p.id !== 'cortesia' && p.valor > 0);
+  const PLANOS = (RS.CFG.planos || []).filter(p => !p.antigo && (RS.precoPlano(p, 1) || {}).total > 0);
   const plano = id => PLANOS.find(p => p.id === id);
   const money = v => Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   const INCLUI = {
-    essencial: ['Notícias: 25 assuntos e mais de 90 sites', 'Previsão do tempo e cotações', 'Relógio, datas comemorativas e frases', 'Todos os modelos, horizontal e vertical'],
-    completo: ['Tudo do Essencial', 'Futebol ao vivo, agenda e tabela', 'Resultados e estatísticas de loterias', 'Horóscopo do dia', 'Criador de anúncios dos seus anunciantes', 'Tabela de preços e cardápio que o cliente edita pelo celular', 'Boas-vindas com QR Code do Wi-Fi e mural de aniversariantes', 'Playlist: a programação inteira num link', 'Conteúdos novos sem custo extra'],
-    rede: ['Tudo do plano Completo', 'Preço especial a partir de 10 telas', 'Pacotes prontos por segmento', 'Atendimento prioritário'],
+    noticias: ['Notícias: 25 assuntos e mais de 90 sites', 'Previsão do tempo de qualquer cidade', 'Cotações e cotações do agro', 'Relógio, datas comemorativas e frases', 'Um link por tela ou tudo num link só', 'Todos os modelos, horizontal e vertical'],
+    completo: ['Tudo do Notícias', 'Futebol ao vivo, agenda e tabela', 'Resultados e estatísticas de loterias', 'Horóscopo do dia', 'Criador de anúncios dos seus anunciantes', 'Tabela de preços e cardápio que o cliente edita pelo celular', 'Boas-vindas com QR Code do Wi-Fi e mural de aniversariantes', 'Relatório de uso por tela e cidade', 'Conteúdos novos sem custo extra'],
     gerenciado: ['Tudo do plano Completo', 'Nós montamos a programação da TV', 'Criamos os anúncios do estabelecimento', 'Configuração do player incluída']
   };
   const CHAMADA = {
-    essencial: 'Para começar com o básico bem feito.',
+    noticias: 'Só o conteúdo automático, pelo menor preço.',
     completo: 'O mais escolhido: tudo para vender anúncio.',
-    rede: 'Para quem já tem uma rede de telas.',
     gerenciado: 'Para o estabelecimento que não quer mexer em nada.'
   };
 
@@ -35,8 +33,7 @@
   const num = id => Math.max(0, Number($(id).value) || 0);
   function conta() {
     const telas = Math.max(1, num('qTelas')), fat = telas * num('qAnun') * num('qPreco');
-    const p = telas >= 10 && plano('rede') ? plano('rede') : plano('completo') || PLANOS[0];
-    const custo = telas * (p ? p.valor : 0);
+    const custo = (RS.precoPlano(plano('completo') || PLANOS[0], telas) || { total: 0 }).total;
     $('qFat').textContent = 'R$ ' + money(fat);
     $('qCusto').textContent = 'R$ ' + money(custo);
     $('qSobra').textContent = 'R$ ' + money(fat - custo);
@@ -49,23 +46,30 @@
   /* ---------- planos ---------- */
   function cards() {
     const n = Math.max(1, Math.min(500, Number($('tQtd').value) || 1));
-    const destaque = n >= 10 && plano('rede') ? 'rede' : 'completo';
+    const destaque = 'completo';
     $('plCards').innerHTML = PLANOS.map(p => {
-      const so10 = p.id === 'rede' && n < 10;
+      const v = RS.precoPlano(p, n);
       const msg = 'Olá! Quero o plano ' + p.nome + ' do rsscreen para ' + n + (n > 1 ? ' telas' : ' tela') + '.';
-      return '<article class="pl-card' + (p.id === destaque ? ' hot' : '') + (so10 ? ' off' : '') + '">' +
-        (p.id === destaque ? '<span class="pl-flag">' + (p.id === 'rede' ? 'Melhor preço para você' : 'Mais escolhido') + '</span>' : '') +
+      const faixas = p.faixas ? '<div class="pl-faixas">' + p.faixas.map(f => '<span' + (v.ate === f.ate ? ' class="on"' : '') + '>até ' + f.ate + ' telas: <b>R$ ' + money(f.valor) + '</b></span>').join('') +
+        (p.extra ? '<span' + (n > p.faixas[p.faixas.length - 1].ate ? ' class="on"' : '') + '>+ R$ ' + money(p.extra) + ' por tela acima de ' + p.faixas[p.faixas.length - 1].ate + '</span>' : '') + '</div>' : '';
+      return '<article class="pl-card' + (p.id === destaque ? ' hot' : '') + '">' +
+        (p.id === destaque ? '<span class="pl-flag">Mais escolhido</span>' : '') +
         '<h3>' + esc(p.nome) + '</h3>' +
         '<p class="pl-call">' + esc(CHAMADA[p.id] || p.descricao || '') + '</p>' +
-        '<div class="pl-price"><small>R$</small><b>' + money(p.valor) + '</b><span>por tela/mês</span></div>' +
-        '<div class="pl-total">' + (so10 ? 'A partir de 10 telas' : n + (n > 1 ? ' telas' : ' tela') + ': <b>R$ ' + money(p.valor * n) + '/mês</b>') + '</div>' +
+        (p.faixas ?
+          '<div class="pl-price"><small>R$</small><b>' + money(v.total) + '</b><span>por mês</span></div>' +
+          '<div class="pl-total">' + n + (n > 1 ? ' telas' : ' tela') + ' · <b>R$ ' + money(v.porTela) + ' por tela</b>' + (v.consulta ? ' · acima disso, sob consulta' : '') + '</div>' :
+          // plano por tela (gerenciado): pensado para um estabelecimento, não para redes
+          '<div class="pl-price"><small>R$</small><b>' + money(v.porTela) + '</b><span>por tela/mês</span></div>' +
+          '<div class="pl-total">' + (n <= 5 ? n + (n > 1 ? ' telas' : ' tela') + ': <b>R$ ' + money(v.total) + '/mês</b>' : 'Para um estabelecimento. Para redes, o Completo sai bem mais em conta.') + '</div>') +
+        faixas +
         '<ul>' + (INCLUI[p.id] || [p.descricao]).map(i => '<li>' + ICON('check') + '<span>' + esc(i) + '</span></li>').join('') + '</ul>' +
         '<a class="btn ' + (p.id === destaque ? 'btn-primary' : 'btn-dark') + ' js-wa" data-msg="' + esc(msg) + '" href="#">' + ICON('whatsapp') + ' Quero este plano</a>' +
       '</article>';
     }).join('');
     wireWhatsApp($('plCards'));
-    const menor = Math.min.apply(null, PLANOS.map(p => p.valor));
-    $('cmpPreco').textContent = 'a partir de R$ ' + money(menor);
+    const menor = Math.min.apply(null, PLANOS.map(p => RS.precoPlano(p, 1).total));
+    $('cmpPreco').textContent = 'a partir de R$ ' + money(menor) + '/mês';
     $('ctaFinal').setAttribute('data-msg', 'Olá! Quero testar o rsscreen grátis por 7 dias em ' + n + (n > 1 ? ' telas' : ' tela') + '.');
     wireWhatsApp(document.querySelector('.cta-final'));
   }

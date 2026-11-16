@@ -65,7 +65,7 @@ export async function countClientes(env) {
 
 export async function getCliente(env, chave) {
   if (!(await ensureSchema(env))) return null;
-  return env.DB.prepare('SELECT chave, nome, ativo, demo, telas, aviso FROM clientes WHERE chave = ?').bind(chave).first();
+  return env.DB.prepare('SELECT chave, nome, ativo, demo, telas, aviso, plano FROM clientes WHERE chave = ?').bind(chave).first();
 }
 
 // Cria ou atualiza (a chave nunca muda, para não quebrar links já enviados)

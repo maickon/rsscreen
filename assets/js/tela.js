@@ -442,7 +442,7 @@
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const r = await res.json();
       if (r && r.banco) {
-        const c = r.cliente ? { nome: r.cliente.nome, chave: r.cliente.chave, ativo: r.cliente.ativo, demo: r.cliente.demo, fora: !!r.cliente.fora } : null;
+        const c = r.cliente ? { nome: r.cliente.nome, chave: r.cliente.chave, ativo: r.cliente.ativo, demo: r.cliente.demo, fora: !!r.cliente.fora, plano: r.cliente.plano || '' } : null;
         try { if (c) localStorage.setItem(memKey, JSON.stringify({ c, t: Date.now() })); else localStorage.removeItem(memKey); } catch (_) {}
         return c;
       }
@@ -487,6 +487,12 @@
     }
     if (manifest.status !== 'ativo' || !manifest.script) {
       statusScreen('Em breve', 'O conteúdo "' + manifest.nome + '" ainda não está disponível.');
+      return;
+    }
+    // conteúdo fora do plano do cliente (ex.: plano Notícias abrindo a tela de anúncios)
+    if (client.plano && RS.planoInclui && !RS.planoInclui(client.plano, manifest.id)) {
+      const pl = RS.planoDe(client.plano);
+      statusScreen('Não incluso no plano', 'O conteúdo "' + manifest.nome + '" não faz parte do plano ' + (pl ? pl.nome : client.plano) + '. Fale com o seu fornecedor de conteúdo.');
       return;
     }
     ctx.manifest = manifest;

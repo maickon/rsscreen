@@ -344,7 +344,7 @@ export default {
         const n = await countClientes(env);
         if (n <= 0) return new Response(JSON.stringify({ banco: false }), { headers });
         const c = chave ? await getCliente(env, chave) : null;
-        const out = c ? { chave: c.chave, nome: c.nome, ativo: !!c.ativo, demo: !!c.demo } : null;
+        const out = c ? { chave: c.chave, nome: c.nome, ativo: !!c.ativo, demo: !!c.demo, plano: c.plano || '' } : null;
         // aviso de "tela fora do plano": só quando o operador ligou no cadastro. As telas mais antigas
         // (até o número contratado) ficam dentro do plano; as que entraram depois mostram o aviso discreto.
         const dev = String(url.searchParams.get('rd') || '').slice(0, 120);

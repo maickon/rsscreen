@@ -40,15 +40,28 @@ window.RSSCREEN_CONFIG = {
     'Qualquer dúvida é só chamar por aqui. 🚀',
 
   // ------------------------------------------------------------------
-  // PLANOS — aparecem no cadastro de clientes e no Guia do painel.
-  // valor = preço sugerido POR TELA por mês (mude à vontade).
+  // PLANOS — aparecem no cadastro de clientes, na página /planos/ e no Guia do painel.
+  // Preço por faixa de telas (pacote mensal, mude à vontade):
+  //   faixas: [{ ate: <telas>, valor: <R$ por mês> }]  → o cliente paga a faixa em que cabe
+  //   extra:  R$ por tela acima da última faixa (sem extra = "sob consulta")
+  //   porTela: preço por tela (planos que não usam faixa)
+  // modulos: conteúdos incluídos ('todos' ou a lista de ids). A tela de um conteúdo fora do
+  // plano mostra "não incluso no plano". Os ids antigos ficam em 'antigo: true' (só para quem já tem).
   // ------------------------------------------------------------------
   planos: [
-    { id: 'essencial',  nome: 'Essencial',      valor: 19.90, descricao: 'Notícias de todos os assuntos, clima, cotações, relógio, datas comemorativas e frases, em todos os modelos de tela.' },
-    { id: 'completo',   nome: 'Completo',       valor: 29.90, descricao: 'Tudo do Essencial + futebol, loterias, horóscopo, tela de anúncios, tabelas de preços e cardápios e playlist + os módulos novos assim que lançados, com trocas à vontade.' },
-    { id: 'rede',       nome: 'Rede (10+ telas)', valor: 14.90, descricao: 'Plano Completo com preço por tela para operadores com 10 telas ou mais.' },
-    { id: 'gerenciado', nome: 'Tela gerenciada', valor: 79.90, descricao: 'Você monta e cuida da programação do estabelecimento (configuração do player incluída, equipamento à parte).' },
-    { id: 'cortesia',   nome: 'Cortesia / teste', valor: 0, descricao: 'Sem cobrança: período de teste, permuta ou demonstração.' }
+    { id: 'noticias', nome: 'Notícias', modulos: ['rss', 'clima', 'cotacoes', 'agro', 'relogio', 'datas', 'frases'],
+      faixas: [{ ate: 10, valor: 49 }, { ate: 50, valor: 129 }, { ate: 200, valor: 199 }], extra: 0.9,
+      descricao: 'Conteúdo automático: notícias de todos os assuntos, previsão do tempo, cotações, agro, relógio, datas comemorativas e frases.' },
+    { id: 'completo', nome: 'Completo', modulos: 'todos',
+      faixas: [{ ate: 10, valor: 79 }, { ate: 50, valor: 179 }, { ate: 200, valor: 249 }], extra: 1.2,
+      descricao: 'Tudo do Notícias + anúncios dos seus anunciantes, tabelas de preço e cardápios, boas-vindas com Wi-Fi, futebol, loterias, horóscopo e relatórios.' },
+    { id: 'gerenciado', nome: 'Tela gerenciada', modulos: 'todos', porTela: 79.90,
+      descricao: 'Você monta e cuida da programação do estabelecimento (configuração do player incluída, equipamento à parte).' },
+    { id: 'cortesia', nome: 'Cortesia / teste', modulos: 'todos', porTela: 0,
+      descricao: 'Sem cobrança: período de teste, permuta ou demonstração.' },
+    // planos antigos: continuam valendo para quem já tem, mas não aparecem para clientes novos
+    { id: 'essencial', nome: 'Essencial (antigo)', antigo: true, modulos: 'todos', porTela: 19.90, descricao: 'Plano antigo.' },
+    { id: 'rede', nome: 'Rede (antigo)', antigo: true, modulos: 'todos', porTela: 14.90, descricao: 'Plano antigo.' }
   ],
 
   // ------------------------------------------------------------------

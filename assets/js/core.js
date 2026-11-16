@@ -161,6 +161,30 @@
     }
   }
 
+  /* ---------- planos ---------- */
+  const planoDe = id => (CFG.planos || []).find(p => p.id === id) || null;
+  // Valor mensal de um plano para N telas: { total, porTela, faixa, consulta }
+  function precoPlano(p, telas) {
+    if (typeof p === 'string') p = planoDe(p);
+    if (!p) return null;
+    telas = Math.max(1, Math.round(Number(telas) || 1));
+    if (p.faixas && p.faixas.length) {
+      const f = p.faixas.find(x => telas <= x.ate);
+      if (f) return { total: f.valor, porTela: f.valor / telas, faixa: 'até ' + f.ate + ' telas', ate: f.ate };
+      const u = p.faixas[p.faixas.length - 1];
+      if (!p.extra) return { total: u.valor, porTela: u.valor / telas, faixa: 'acima de ' + u.ate + ' telas', consulta: true };
+      const total = u.valor + (telas - u.ate) * p.extra;
+      return { total, porTela: total / telas, faixa: u.ate + ' telas + ' + (telas - u.ate) + ' extra', ate: telas };
+    }
+    const v = Number(p.porTela != null ? p.porTela : p.valor) || 0;
+    return { total: v * telas, porTela: v, faixa: '' };
+  }
+  // O plano inclui este conteúdo? (cliente sem plano ou plano desconhecido: inclui tudo)
+  function planoInclui(planoId, modulo) {
+    const p = planoDe(planoId);
+    return !p || !p.modulos || p.modulos === 'todos' || p.modulos.indexOf(modulo) >= 0;
+  }
+
   function registerSW() {
     if ('serviceWorker' in navigator && location.protocol !== 'file:') {
       // Quando sai uma versão nova, o painel e o editor recarregam sozinhos uma vez para usar os
@@ -186,6 +210,6 @@
     normalize, slugify, hash, esc,
     clientKey, passwordHash, clients, findClient, demoClient,
     theme, loadManifest, loadModules, fetchJson,
-    buildScreenUrl, whatsappLink, copyText, registerSW
+    buildScreenUrl, whatsappLink, copyText, registerSW, planoDe, precoPlano, planoInclui
   };
 })();
