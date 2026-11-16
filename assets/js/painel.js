@@ -1695,8 +1695,8 @@
   const PL = { cliente: '', list: [], editing: null, itens: [], orient: 'horizontal', ready: false, pvItem: null };
   let plTimer;
 
-  function plUrl(id, orient) {
-    return RS.ROOT_URL + 'tela/?cliente=' + encodeURIComponent(PL.cliente) + '&playlist=' + encodeURIComponent(id) +
+  function plUrl(id, orient, cliente) {
+    return RS.ROOT_URL + 'tela/?cliente=' + encodeURIComponent(cliente || PL.cliente) + '&playlist=' + encodeURIComponent(id) +
       (orient === 'vertical' ? '&orientacao=vertical' : '');
   }
   const fmtDur = s => { s = Math.round(s); const m = Math.floor(s / 60), r = s % 60; return m ? m + ' min' + (r ? ' ' + r + ' s' : '') : r + ' s'; };
@@ -1732,11 +1732,10 @@
     $('#plNoDb').hidden = dbMode;
     $('#plGrid').hidden = !dbMode;
     if (!dbMode) return;
-    if (!PL.cliente || !activeClients.some(c => c.chave === PL.cliente)) {
-      const first = activeClients.find(c => !c.demo) || activeClients[0];
-      PL.cliente = first ? first.chave : '';
-    }
-    $('#plCliente').innerHTML = clientOptions(PL.cliente);
+    // Links únicos: começa mostrando os de todos os clientes
+    if (PL.cliente && !activeClients.some(c => c.chave === PL.cliente)) PL.cliente = '';
+    $('#plCliente').innerHTML = '<option value="">Todos os clientes</option>' + clientOptions(PL.cliente);
+    $('#plCliente').value = PL.cliente;
     $('#plTema').innerHTML = '<option value="">Padrão de cada conteúdo</option>' + RS.THEMES.map(t => '<option value="' + esc(t.id) + '">' + esc(t.nome) + '</option>').join('');
     $('#plPacote').innerHTML = '<option value="">Escolha um pacote…</option>' + pacotes.map(p => '<option value="' + esc(p.id) + '">' + esc(p.nome) + '</option>').join('');
     if (!PL.ready) { plReset(); PL.ready = true; }
@@ -1760,9 +1759,13 @@
   }
 
   async function loadPlaylists() {
-    if (!PL.cliente) { PL.list = []; renderPlList(); return; }
-    try { PL.list = (await api('api/admin/playlists?cliente=' + encodeURIComponent(PL.cliente))).playlists || []; }
-    catch (e) { PL.list = []; toast(e.message, 'x'); }
+    const chaves = PL.cliente ? [PL.cliente] : activeClients.map(c => c.chave);
+    try {
+      const partes = await Promise.all(chaves.map(k => api('api/admin/playlists?cliente=' + encodeURIComponent(k))
+        .then(r => (r.playlists || []).map(p => Object.assign({ cliente: k }, p))).catch(() => [])));
+      PL.list = [].concat.apply([], partes);
+    } catch (e) { PL.list = []; toast(e.message, 'x'); }
+    if (!PL.cliente) { PL.listas = []; renderPlList(); return; }
     try { PL.listas = ((await api('api/admin/listas?cliente=' + encodeURIComponent(PL.cliente))).listas || []).map(l => ({ id: l.id, nome: l.nome, tipo: l.tipo })); }
     catch (_) { PL.listas = []; }
     renderPlItems();
@@ -1771,24 +1774,24 @@
 
   function renderPlList() {
     const n = PL.list.length;
-    $('#plCount').textContent = n ? n + ' link' + (n > 1 ? 's' : '') + ' único' + (n > 1 ? 's' : '') : 'Nenhum link único ainda';
-    const cli = clients.find(x => x.chave === PL.cliente);
+    $('#plCount').textContent = n ? n + ' link' + (n > 1 ? 's' : '') + ' único' + (n > 1 ? 's' : '') + (PL.cliente ? '' : ' de ' + new Set(PL.list.map(p => p.cliente)).size + ' cliente(s)') : 'Nenhum link único ainda';
     $('#plList').innerHTML = n ? PL.list.map(p => {
+      const cli = clients.find(x => x.chave === p.cliente);
       const inter = (p.opcoes && p.opcoes.intercalar) || 0;
-      const url = plUrl(p.id, 'horizontal');
+      const url = plUrl(p.id, 'horizontal', p.cliente);
       const wa = cli && cli.whatsapp ? RS.whatsappLink(cli.whatsapp.length <= 11 ? '55' + cli.whatsapp : cli.whatsapp, unicoMensagem(cli, p.nome, url)) : 'https://wa.me/?text=' + encodeURIComponent(unicoMensagem(cli, p.nome, url));
       return '<div class="ad-item pl-row">' +
         '<div class="ad-item-thumb">' + ICON('play') + '</div>' +
-        '<div class="ad-item-txt"><b>' + esc(p.nome) + '</b><small>' + p.itens.length + ' tela' + (p.itens.length > 1 ? 's' : '') +
+        '<div class="ad-item-txt"><b>' + esc(p.nome) + (PL.cliente ? '' : ' <span class="tag">' + esc(cli ? cli.nome : p.cliente) + '</span>') + '</b><small>' + p.itens.length + ' tela' + (p.itens.length > 1 ? 's' : '') +
           (inter ? ' + anúncios de ' + inter + ' s' : '') + ' · ciclo de ' + fmtDur(plCycle(p.itens, inter)) + '</small></div>' +
         '<div class="acts">' +
           '<button class="btn btn-dark btn-sm" data-ed="' + esc(p.id) + '">Editar</button>' +
           '<a class="btn btn-ghost btn-sm btn-icon" target="_blank" rel="noopener" title="Abrir na TV" href="' + esc(url) + '">' + ICON('external') + '</a>' +
-          '<button class="btn btn-ghost btn-sm btn-icon" data-cpu="' + esc(p.id) + '" title="Copiar link (horizontal)">' + ICON('copy') + '</button>' +
+          '<button class="btn btn-ghost btn-sm btn-icon" data-cpu="' + esc(p.id) + '" data-cli="' + esc(p.cliente) + '" title="Copiar link (horizontal)">' + ICON('copy') + '</button>' +
           '<a class="btn btn-ghost btn-sm btn-icon" target="_blank" rel="noopener" title="Enviar no WhatsApp" href="' + esc(wa) + '">' + ICON('whatsapp') + '</a>' +
-          '<button class="btn btn-ghost btn-sm btn-icon" data-del="' + esc(p.id) + '" title="Excluir">' + ICON('trash') + '</button>' +
+          '<button class="btn btn-ghost btn-sm btn-icon" data-del="' + esc(p.id) + '" data-cli="' + esc(p.cliente) + '" title="Excluir">' + ICON('trash') + '</button>' +
         '</div></div>';
-    }).join('') : '<div class="empty">Este cliente ainda não tem link único. Crie em <a href="#gerar">Gerar links</a> ou num <a href="#pacotes">pacote pronto</a>.</div>';
+    }).join('') : '<div class="empty">' + (PL.cliente ? 'Este cliente ainda não tem link único.' : 'Você ainda não criou nenhum link único.') + ' Crie em <a href="#gerar">Gerar links</a> ou num <a href="#pacotes">pacote pronto</a>.</div>';
     const c = clients.find(x => x.chave === PL.cliente);
     const p = PL.list.find(x => x.id === PL.editing);
     $('#plLink').innerHTML = p ?
@@ -2018,17 +2021,17 @@
       // editar abre o Gerar links com as telas do link único na seleção
       const p = PL.list.find(x => x.id === ed.dataset.ed); if (!p) return;
       const o = p.opcoes || {};
-      const itens = p.itens.map(it => { const m = modById(it.modulo) || {}; return { cliente: PL.cliente, modulo: it.modulo, assunto: it.assunto, fonte: it.fonte || '', layout: it.layout, orientacao: 'horizontal', tema: o.tema || ((m.padrao || {}).tema) || 'noite', tempo: '', girar: '', duracao: it.duracao || 30 }; });
+      const itens = p.itens.map(it => { const m = modById(it.modulo) || {}; return { cliente: p.cliente, modulo: it.modulo, assunto: it.assunto, fonte: it.fonte || '', layout: it.layout, orientacao: 'horizontal', tema: o.tema || ((m.padrao || {}).tema) || 'noite', tempo: '', girar: '', duracao: it.duracao || 30 }; });
       location.hash = '#gerar';
-      await selCarregar(PL.cliente, itens, 'unico', { editing: p.id, nome: p.nome, tema: o.tema || '', intercalar: o.intercalar || 0, anuncio: o.anuncio || '' });
+      await selCarregar(p.cliente, itens, 'unico', { editing: p.id, nome: p.nome, tema: o.tema || '', intercalar: o.intercalar || 0, anuncio: o.anuncio || '' });
       setTimeout(() => $('#selCard').scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
       return;
     }
-    const cp = e.target.closest('[data-cpu]'); if (cp) return copy(plUrl(cp.dataset.cpu, 'horizontal'), 'Link copiado');
+    const cp = e.target.closest('[data-cpu]'); if (cp) return copy(plUrl(cp.dataset.cpu, 'horizontal', cp.dataset.cli), 'Link copiado');
     const del = e.target.closest('[data-del]');
     if (del) {
       if (!confirm('Excluir este link único? As TVs que usam esse link vão parar de mostrar a programação.')) return;
-      try { await api('api/admin/playlists?id=' + encodeURIComponent(del.dataset.del) + '&cliente=' + encodeURIComponent(PL.cliente), { method: 'DELETE' }); toast('Link único excluído'); await loadPlaylists(); }
+      try { await api('api/admin/playlists?id=' + encodeURIComponent(del.dataset.del) + '&cliente=' + encodeURIComponent(del.dataset.cli), { method: 'DELETE' }); toast('Link único excluído'); await loadPlaylists(); }
       catch (err) { toast(err.message, 'x'); }
     }
   });

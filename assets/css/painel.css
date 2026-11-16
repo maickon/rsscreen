@@ -574,3 +574,11 @@ body.modal-open { overflow: hidden; }
 .sel-dur input.input { width: 62px; min-width: 0; height: 32px; padding: 0 8px; }
 .sel-item .btn-icon { width: 32px; height: 32px; padding: 0; justify-content: center; }
 .sel-list { overflow-x: hidden; }
+
+/* monitoramento: nada passa da largura da tela (a tabela larga rola dentro do próprio cartão) */
+#monBody { grid-template-columns: minmax(0, 1fr); }
+#monBody > *, .mon-stack > * { min-width: 0; max-width: 100%; }
+.mon-alerta > div { min-width: 0; overflow-wrap: anywhere; }
+.table.mon-cli th, .table.mon-cli td { padding: 10px 12px; }
+.table.mon-cli th { white-space: normal; line-height: 1.25; }
+.table.mon-cli td small { overflow-wrap: anywhere; }

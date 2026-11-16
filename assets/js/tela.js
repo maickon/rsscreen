@@ -54,12 +54,20 @@
     return pad(dt.getDate()) + '/' + pad(dt.getMonth() + 1);
   }
 
+  // Prévias do painel e do editor (dentro deles, ou abertas por eles em nova aba) e o modo teste não são
+  // uma TV: não contam como aparelho e não entram na proteção de "pedidos demais", senão o próprio
+  // operador, com várias prévias abertas, travaria as prévias dele.
+  const noPainel = (() => {
+    if (P.get('previa') === '1' || P.get('modo') === 'teste') return true;
+    try { const t = window.top !== window ? window.top : window.opener; return !!t && /\/(painel|editar)\//.test(t.location.pathname); } catch (_) { return false; }
+  })();
+
   // pedidos ao próprio servidor levam o cliente (rc) e o aparelho (rd): o painel mostra o consumo de cada um
   function identificar(url) {
     if (typeof url !== 'string' || url.indexOf(RS.ROOT_URL + 'api/') !== 0 || /[?&]rc=/.test(url)) return url;
     const c = (ctx.client && ctx.client.chave) || state.cliente;
     if (!c) return url;
-    return url + (url.indexOf('?') < 0 ? '?' : '&') + 'rc=' + encodeURIComponent(c) + '&rd=' + encodeURIComponent(deviceId());
+    return url + (url.indexOf('?') < 0 ? '?' : '&') + 'rc=' + encodeURIComponent(c) + (noPainel ? '' : '&rd=' + encodeURIComponent(deviceId()));
   }
 
   // Servidor pediu uma pausa (429: este aparelho fez pedidos demais): até o fim dela, a tela não pede
@@ -69,13 +77,13 @@
   function fetchWithTimeout(url, ms) {
     url = identificar(url);
     const proprio = typeof url === 'string' && url.indexOf(RS.ROOT_URL + 'api/') === 0;
-    if (proprio && emPausa()) return Promise.reject(new Error('Pausa pedida pelo servidor'));
+    if (proprio && !noPainel && emPausa()) return Promise.reject(new Error('Pausa pedida pelo servidor'));
     const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
     const t = setTimeout(() => ctrl && ctrl.abort(), ms || 15000);
     return fetch(url, ctrl ? { signal: ctrl.signal } : {}).then(
       r => {
         clearTimeout(t);
-        if (proprio && r.status === 429) {
+        if (proprio && !noPainel && r.status === 429) {
           const s = Math.max(60, Math.min(7200, parseInt(r.headers.get('Retry-After'), 10) || 1800));
           try { localStorage.setItem(PAUSA, String(Date.now() + s * 1000)); } catch (_) {}
         }
