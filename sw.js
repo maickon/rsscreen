@@ -1,7 +1,7 @@
 /* rsscreen — service worker
    - Painel instalável (PWA) e funcionando offline
    - Telas continuam rodando se a internet do ponto cair */
-const VERSION = 'rsscreen-v41';
+const VERSION = 'rsscreen-v42';
 const SHELL = [
   './',
   './index.html',

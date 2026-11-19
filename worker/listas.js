@@ -1,9 +1,9 @@
 // Tabelas de preços e cardápios dos clientes (D1).
 // O cliente edita pelo celular com um link secreto (/editar/?c=<chave>&t=<token>), sem login.
-// Limites por cliente (para caber com folga no plano gratuito): 10 listas e 200 itens por lista.
+// Limites por cliente: 30 listas e 500 itens por lista (folga de sobra no plano pago).
 
 let schemaOk = false;
-export const LIMITES = { listas: 10, itens: 200, bytes: 60000 };
+export const LIMITES = { listas: 30, itens: 500, bytes: 150000 };
 const TIPOS = ['precos', 'cardapio', 'boasvindas', 'mural'];
 const TEMAS = ['acougue', 'hortifruti', 'padaria', 'lanchonete', 'pizzaria', 'acai', 'cafeteria', 'bebidas', 'mercado', 'clinica', 'festa', 'elegante', 'geral'];
 const slug = v => String(v == null ? '' : v).toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 60);

@@ -122,7 +122,7 @@ async function readJson(request) {
 }
 
 /* ---------- proteção contra aparelho com pedidos demais ----------
-   Um player com defeito (recarregando sem parar) pode gastar sozinho a cota do dia de todos os clientes.
+   Um player com defeito (recarregando sem parar) pode gerar milhares de pedidos inúteis por dia.
    Cada aparelho tem um limite de pedidos a cada 10 minutos; passou, recebe 429 com Retry-After e a tela
    para de pedir por 30 minutos, mostrando o conteúdo que já tem guardado. A contagem é por instância do
    Worker (aproximada), o que basta para pegar os casos de loop. Sinais, fotos e o painel ficam de fora. */
@@ -144,13 +144,14 @@ function pedidosDemais(path, url) {
 }
 
 /* ---------- limite diário por cliente ----------
-   Um cliente sozinho não pode gastar a cota do dia de todos (100 mil pedidos no plano grátis).
+   Proteção contra custo descontrolado: o plano pago da Cloudflare (US$ 5/mês) inclui 10 milhões de
+   pedidos por mês (~330 mil por dia) e cobra US$ 0,30 por milhão a mais.
    Passou do limite dele, as TVs dele recebem 429 com pausa de 1 hora: continuam mostrando o que já
    têm guardado e tentam de novo depois. O limite de cada cliente fica no cadastro (0 = automático).
-   Automático: 300 pedidos por tela contratada (uma TV usa ~150 por dia), nunca menos que 40 mil.
+   Automático: 600 pedidos por tela contratada (uma TV usa ~150 por dia), nunca menos que 150 mil.
    A lista de quem passou é recalculada a cada 5 minutos (1 consulta ao contador e 1 ao banco). */
-const LIMITE_DIA_PADRAO = 40000;
-const LIMITE_POR_TELA = 300;
+const LIMITE_DIA_PADRAO = 150000;
+const LIMITE_POR_TELA = 600;
 const limiteDoCliente = c => Number(c.limite) || Math.max(LIMITE_DIA_PADRAO, (Number(c.telas) || 0) * LIMITE_POR_TELA);
 const PAUSA_LIMITE_S = 3600;
 const limiteDia = { t: 0, acima: new Set(), buscando: null };
@@ -470,10 +471,10 @@ export default {
         return json(report);
       }
       if (path === '/api/stats/check') {
-        // até 25 feeds por chamada (limite de subrequisições do plano gratuito); o painel chama em partes
+        // até 100 feeds por chamada (o plano pago permite bem mais subrequisições); o painel chama em partes
         const all = await feedList(env, request);
         const from = Math.max(0, Number(url.searchParams.get('inicio')) || 0);
-        const part = all.slice(from, from + 25);
+        const part = all.slice(from, from + 100);
         // o Worker abre no máximo 6 conexões ao mesmo tempo: testa em 6 filas
         const results = [];
         let next = 0;

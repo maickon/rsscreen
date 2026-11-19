@@ -287,8 +287,8 @@
             <p class="hint" id="dbPlanoInfo"></p>
             <label class="field"><span>Observações (só você vê)</span><textarea class="input" id="dbObs" rows="2" maxlength="500" placeholder="Ex.: 2 TVs na padaria do centro, paga por Pix"></textarea></label>
             <label class="check"><input type="checkbox" id="dbAtivo" checked /> Cliente ativo (desmarque para suspender as telas)</label>
-            <label class="field"><span>Limite de pedidos por dia</span><input class="input" id="dbLimite" type="number" min="0" step="1000" placeholder="Automático: 300 por tela (mín. 40.000)" /></label>
-            <p class="hint">Proteção para um cliente não esgotar a cota do dia de todos (100 mil pedidos no plano grátis da Cloudflare). Ao passar do limite, as TVs dele continuam mostrando o que já têm guardado e tentam de novo a cada 1 hora. Deixe vazio para o automático.</p>
+            <label class="field"><span>Limite de pedidos por dia</span><input class="input" id="dbLimite" type="number" min="0" step="1000" placeholder="Automático: 600 por tela (mín. 150.000)" /></label>
+            <p class="hint">Proteção contra custo descontrolado (o plano pago da Cloudflare inclui 10 milhões de pedidos por mês). Ao passar do limite, as TVs dele continuam mostrando o que já têm guardado e tentam de novo a cada 1 hora. Deixe vazio para o automático.</p>
             <label class="check"><input type="checkbox" id="dbAviso" /> Mostrar aviso nas telas acima do plano</label>
             <p class="hint">As telas mais antigas, até o número contratado, continuam normais. As que passarem disso mostram, num canto, a frase "Tela fora do plano contratado · fale com seu fornecedor". Nada é bloqueado. Ligue só depois de conversar com o cliente.</p>
             <div class="db-acts">
@@ -535,7 +535,7 @@
         <div class="guide">
           <div class="card guide-hero">
             <h2>Como o rsscreen gera dinheiro para você</h2>
-            <p>Você vende uma <b>assinatura mensal por tela</b>. O cliente recebe links de conteúdo que abrem em qualquer TV, TV Box, navegador ou sistema de mídia indoor e se atualizam sozinhos, 24 horas por dia. Seu custo de servidor é praticamente zero (plano gratuito da Cloudflare), então quase todo o valor da mensalidade é margem.</p>
+            <p>Você vende uma <b>assinatura mensal por tela</b>. O cliente recebe links de conteúdo que abrem em qualquer TV, TV Box, navegador ou sistema de mídia indoor e se atualizam sozinhos, 24 horas por dia. Seu custo de servidor é baixo e fixo (US$ 5 por mês no plano pago da Cloudflare), então quase todo o valor da mensalidade é margem.</p>
             <div class="guide-steps">
               <div><b>1</b><span>Mostre a demonstração ao vivo</span></div>
               <div><b>2</b><span>Libere 7 dias grátis (plano Cortesia)</span></div>
@@ -627,14 +627,14 @@
               <div class="table-wrap"><table class="table">
                 <thead><tr><th>Item</th><th>Custo</th></tr></thead>
                 <tbody>
-                  <tr><td>Hospedagem, banco de dados e monitoramento (Cloudflare)</td><td>R$ 0 no plano gratuito</td></tr>
+                  <tr><td>Hospedagem, banco de dados e monitoramento (Cloudflare)</td><td>US$ 5/mês (cerca de R$ 30) no plano pago, com 10 milhões de pedidos por mês</td></tr>
                   <tr><td>Notícias, clima e cotações</td><td>R$ 0 (fontes públicas)</td></tr>
                   <tr><td>Loterias (API da Caixa)</td><td>R$ 0</td></tr>
                   <tr><td>Loterias pela apiloterias.com (opcional, reserva)</td><td>R$ 15/mês (500 consultas)</td></tr>
                   <tr><td>Domínio próprio (opcional)</td><td>cerca de R$ 40/ano</td></tr>
                 </tbody>
               </table></div>
-              <p class="hint">O plano gratuito da Cloudflare aguenta centenas de telas. O Monitoramento mostra o uso real.</p>
+              <p class="hint">O plano pago da Cloudflare aguenta milhares de telas (uma TV usa cerca de 150 pedidos por dia). O Monitoramento mostra o uso real.</p>
             </div>
           </div>
         </div>

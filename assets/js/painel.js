@@ -2140,9 +2140,9 @@
     return '<span class="st ' + (acima ? 'st-bad' : 'st-ok') + '">' + fmtN(c.aparelhos) + ' / ' + fmtN(t) + '</span>' + (acima ? '<br><small>' + fmtN(c.aparelhos - t) + ' acima do plano</small>' : '');
   }
   // pedidos de hoje (dia UTC, o mesmo da cota da Cloudflare) x limite diário do cadastro
-  const LIMITE_DIA = 40000;
-  // mesmo cálculo do servidor: o do cadastro ou, no automático, 300 por tela contratada (mínimo 40 mil)
-  const limiteDe = key => { const c = clients.find(x => x.chave === key); return (c && c.limite) || Math.max(LIMITE_DIA, ((c && c.telas) || 0) * 300); };
+  const LIMITE_DIA = 150000;
+  // mesmo cálculo do servidor: o do cadastro ou, no automático, 600 por tela contratada (mínimo 150 mil)
+  const limiteDe = key => { const c = clients.find(x => x.chave === key); return (c && c.limite) || Math.max(LIMITE_DIA, ((c && c.telas) || 0) * 600); };
   function alertaLimite(d) {
     const hoje = new Date().toISOString().slice(0, 10);
     const perto = (d.porCliente || []).filter(c => c.cliente !== SEM_ID && (c.dias[hoje] || 0) >= limiteDe(c.cliente) * 0.8);
