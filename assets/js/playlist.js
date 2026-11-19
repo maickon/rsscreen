@@ -128,17 +128,19 @@
   });
 
   // primeiro conteúdo: espera abrir; se falhar, tenta o seguinte
-  let first = null, firstTries = 0, firstTimer = null;
+  let first = null, firstTries = 0, firstTimer = null, rodadas = 0;
   function startFirst(f) {
     clearTimeout(firstTimer);
     first = null;
-    if (f.ok) { play(f); return; }
+    if (f.ok) { rodadas = 0; play(f); return; }
     drop(f);
     firstTries++;
     if (firstTries >= seq.length) {
       firstTries = 0;
       E.statusScreen('Conectando…', 'Não foi possível abrir os conteúdos agora. Nova tentativa em instantes.', true);
-      setTimeout(() => begin(0), 30000);
+      // espera crescente entre rodadas (30s, 60s, 2 min, 4 min, depois 5 min): cada rodada abre todos os conteúdos
+      rodadas++;
+      setTimeout(() => begin(0), Math.min(300000, 30000 * Math.pow(2, rodadas - 1)));
       return;
     }
     begin((f.k + 1) % seq.length);

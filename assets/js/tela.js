@@ -77,7 +77,9 @@
   function fetchWithTimeout(url, ms) {
     url = identificar(url);
     const proprio = typeof url === 'string' && url.indexOf(RS.ROOT_URL + 'api/') === 0;
-    if (proprio && !noPainel && emPausa()) return Promise.reject(new Error('Pausa pedida pelo servidor'));
+    // a pausa só vale para quem já tem conteúdo guardado: tela sem nada nunca fica presa na tela preta
+    // (as novas tentativas dela já são espaçadas, então não chegam a sobrecarregar o servidor)
+    if (proprio && !noPainel && data.length && emPausa()) return Promise.reject(new Error('Pausa pedida pelo servidor'));
     const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
     const t = setTimeout(() => ctrl && ctrl.abort(), ms || 15000);
     return fetch(url, ctrl ? { signal: ctrl.signal } : {}).then(
@@ -366,7 +368,8 @@
         notifyParent(false);
         failures++;
         statusScreen('Conectando…', 'Não foi possível carregar o conteúdo agora. Nova tentativa em instantes.', true);
-        setTimeout(() => refresh(true), failures < 3 ? 10000 : 30000);
+        // espera crescente entre tentativas: 10s, 20s, 40s, 80s, 160s e depois a cada 5 min
+        setTimeout(() => refresh(true), Math.min(300000, 10000 * Math.pow(2, failures - 1)));
       } else {
         ensureChrome();
       }
