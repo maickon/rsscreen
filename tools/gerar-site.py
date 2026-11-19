@@ -126,7 +126,8 @@ _ASSET = re.compile(r'((?:src|href)="(?:\.\./)*)((?:assets/(?:css|js)/[\w.-]+\.(
 def versao(rel):
     if rel not in _VERS:
         try:
-            _VERS[rel] = hashlib.sha1(open(os.path.join(ROOT, *rel.split('/')), 'rb').read()).hexdigest()[:8]
+            # fim de linha normalizado: Windows (CRLF) e o GitHub (LF) geram a mesma versão
+            _VERS[rel] = hashlib.sha1(open(os.path.join(ROOT, *rel.split('/')), 'rb').read().replace(b'\r\n', b'\n')).hexdigest()[:8]
         except OSError:
             _VERS[rel] = ''
     return _VERS[rel]
