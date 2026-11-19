@@ -57,9 +57,12 @@
   // Prévias do painel e do editor (dentro deles, ou abertas por eles em nova aba) e o modo teste não são
   // uma TV: não contam como aparelho e não entram na proteção de "pedidos demais", senão o próprio
   // operador, com várias prévias abertas, travaria as prévias dele.
+  // O mesmo vale para as telas ao vivo das páginas do site (vitrine): quem as abre é visitante ou robô
+  // de busca, não uma TV. Regra: aberta dentro de (ou por) qualquer página do próprio site que não seja
+  // uma tela/playlist. Sistemas de mídia indoor de terceiros (outro domínio) continuam contando.
   const noPainel = (() => {
     if (P.get('previa') === '1' || P.get('modo') === 'teste') return true;
-    try { const t = window.top !== window ? window.top : window.opener; return !!t && /\/(painel|editar)\//.test(t.location.pathname); } catch (_) { return false; }
+    try { const t = window.top !== window ? window.top : window.opener; return !!t && !/\/tela\//.test(t.location.pathname); } catch (_) { return false; }
   })();
 
   // pedidos ao próprio servidor levam o cliente (rc) e o aparelho (rd): o painel mostra o consumo de cada um
@@ -445,7 +448,7 @@
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const r = await res.json();
       if (r && r.banco) {
-        const c = r.cliente ? { nome: r.cliente.nome, chave: r.cliente.chave, ativo: r.cliente.ativo, demo: r.cliente.demo, fora: !!r.cliente.fora, plano: r.cliente.plano || '' } : null;
+        const c = r.cliente ? { nome: r.cliente.nome, chave: r.cliente.chave, ativo: r.cliente.ativo, demo: r.cliente.demo, fora: !!r.cliente.fora, plano: r.cliente.plano || '', ritmo: Number(r.cliente.ritmo) || 0 } : null;
         try { if (c) localStorage.setItem(memKey, JSON.stringify({ c, t: Date.now() })); else localStorage.removeItem(memKey); } catch (_) {}
         return c;
       }
@@ -527,12 +530,21 @@
     }
     // Dados ainda recentes não são buscados de novo ao abrir. Muitos players recarregam o link
     // toda vez que ele volta na programação; sem isso, cada TV gastaria dezenas de pedidos por dia.
-    const per = (mod.refreshMinutes || 10) * 60 * 1000;
+    // modo econômico (cliente passou do limite do dia): o servidor pede um intervalo maior (ctx.client.ritmo)
+    const perAtual = () => Math.max(mod.refreshMinutes || 10, (ctx.client && ctx.client.ritmo) || 0) * 60 * 1000;
+    const per = perAtual();
     const idade = cached && cached.t ? Date.now() - cached.t : Infinity;
     if (idade >= per) await refresh(!cached);
     startPing();
     startLoop();
-    setTimeout(() => { refresh(false); setInterval(() => refresh(false), per); }, idade >= per ? per : per - idade);
+    // a cada atualização reconfere o cliente (guardado por 30 min, então quase nunca vai ao servidor):
+    // assim a TV entra e sai do modo econômico sem precisar recarregar a página
+    const ciclo = () => {
+      refresh(false);
+      resolveClient(state.cliente).then(c => { if (c && c.ativo) ctx.client = c; }).catch(() => {});
+      setTimeout(ciclo, perAtual());
+    };
+    setTimeout(ciclo, idade >= per ? per : per - idade);
   }
 
   /* =================== registro de uso (painel > Monitoramento) =================== */
@@ -545,7 +557,7 @@
     } catch (_) { return ''; }
   }
   function ping(first) {
-    if (location.protocol === 'file:' || state.teste || embed || P.get('previa') === '1') return;
+    if (location.protocol === 'file:' || state.teste || embed || noPainel) return;
     const q = ['cliente', 'modulo', 'assunto', 'fonte', 'layout', 'orientacao']
       .map(k => k + '=' + encodeURIComponent(state[k] || '')).join('&');
     const img = new Image();

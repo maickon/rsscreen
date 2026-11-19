@@ -2148,7 +2148,7 @@
     const perto = (d.porCliente || []).filter(c => c.cliente !== SEM_ID && (c.dias[hoje] || 0) >= limiteDe(c.cliente) * 0.8);
     if (!perto.length) return '';
     return '<div class="card mon-alerta">' + ICON('zap') + '<div><b>Limite de pedidos do dia</b><p>' +
-      perto.map(c => { const n = c.dias[hoje] || 0, l = limiteDe(c.cliente); return esc(nomeCliente(c.cliente)) + ': ' + fmtN(n) + ' de ' + fmtN(l) + (n > l ? ' (passou: as TVs seguem com o conteúdo guardado e tentam de novo a cada hora)' : ' (perto do limite)'); }).join(' · ') +
+      perto.map(c => { const n = c.dias[hoje] || 0, l = limiteDe(c.cliente); return esc(nomeCliente(c.cliente)) + ': ' + fmtN(n) + ' de ' + fmtN(l) + (n > l ? ' (passou: modo econômico, as TVs seguem funcionando e atualizam a cada 1 hora)' : ' (perto do limite)'); }).join(' · ') +
       '. O limite volta a zero à meia-noite (horário de Brasília: 21h). Para mudar, edite o cadastro do cliente.</p></div></div>';
   }
   function alertaPlanos(d) {

@@ -146,14 +146,15 @@ function pedidosDemais(path, url) {
 /* ---------- limite diário por cliente ----------
    Proteção contra custo descontrolado: o plano pago da Cloudflare (US$ 5/mês) inclui 10 milhões de
    pedidos por mês (~330 mil por dia) e cobra US$ 0,30 por milhão a mais.
-   Passou do limite dele, as TVs dele recebem 429 com pausa de 1 hora: continuam mostrando o que já
-   têm guardado e tentam de novo depois. O limite de cada cliente fica no cadastro (0 = automático).
+   Passou do limite, as TVs dele NUNCA são recusadas (recusar deixava TV nova com a tela preta): elas
+   entram no modo econômico, recebem o conteúdo normalmente, mas passam a atualizar só a cada 1 hora
+   (o aviso vai na conferência do cliente, /api/cliente). O limite fica no cadastro (0 = automático).
    Automático: 600 pedidos por tela contratada (uma TV usa ~150 por dia), nunca menos que 150 mil.
    A lista de quem passou é recalculada a cada 5 minutos (1 consulta ao contador e 1 ao banco). */
 const LIMITE_DIA_PADRAO = 150000;
 const LIMITE_POR_TELA = 600;
 const limiteDoCliente = c => Number(c.limite) || Math.max(LIMITE_DIA_PADRAO, (Number(c.telas) || 0) * LIMITE_POR_TELA);
-const PAUSA_LIMITE_S = 3600;
+const RITMO_ECONOMICO_MIN = 60;
 const limiteDia = { t: 0, acima: new Set(), buscando: null };
 async function clientesAcimaDoLimite(env) {
   if (Date.now() - limiteDia.t < 5 * 60000) return limiteDia.acima;
@@ -174,11 +175,6 @@ async function clientesAcimaDoLimite(env) {
   })();
   await limiteDia.buscando;
   return limiteDia.acima;
-}
-function clienteDoPedido(path, url) {
-  // a conferência do cliente fica de fora: sem ela uma TV nova mostraria "tela não autorizada"
-  if (path === '/api/cliente' || path.startsWith('/api/admin/') || path.startsWith('/api/stats') || LIVRES.some(p => path.startsWith(p)) || url.searchParams.get('og')) return '';
-  return String(url.searchParams.get('rc') || url.searchParams.get('cliente') || url.searchParams.get('chave') || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 60);
 }
 
 /* ---------- rotas ---------- */
@@ -201,13 +197,6 @@ export default {
       maybeFlush(env, waitUntil);
       return new Response(JSON.stringify({ erro: 'pedidos-demais', pausa: LIMITE.pausaS }),
         { status: 429, headers: Object.assign({ 'Content-Type': 'application/json; charset=utf-8', 'Retry-After': String(LIMITE.pausaS), 'Cache-Control': 'no-store' }, CORS) });
-    }
-    const cliPedido = clienteDoPedido(path, url);
-    if (cliPedido && (await clientesAcimaDoLimite(env)).has(cliPedido)) {
-      trackRequest(request, 'limitado');
-      maybeFlush(env, waitUntil);
-      return new Response(JSON.stringify({ erro: 'limite-diario', pausa: PAUSA_LIMITE_S }),
-        { status: 429, headers: Object.assign({ 'Content-Type': 'application/json; charset=utf-8', 'Retry-After': String(PAUSA_LIMITE_S), 'Cache-Control': 'no-store' }, CORS) });
     }
 
     if (path === '/api/rss') {
@@ -349,6 +338,8 @@ export default {
         if (n <= 0) return new Response(JSON.stringify({ banco: false }), { headers });
         const c = chave ? await getCliente(env, chave) : null;
         const out = c ? { chave: c.chave, nome: c.nome, ativo: !!c.ativo, demo: !!c.demo, plano: c.plano || '' } : null;
+        // modo econômico: cliente passou do limite do dia → as TVs atualizam só a cada RITMO_ECONOMICO_MIN
+        if (out) { try { if ((await clientesAcimaDoLimite(env)).has(c.chave)) out.ritmo = RITMO_ECONOMICO_MIN; } catch (_) {} }
         // aviso de "tela fora do plano": só quando o operador ligou no cadastro. As telas mais antigas
         // (até o número contratado) ficam dentro do plano; as que entraram depois mostram o aviso discreto.
         const dev = String(url.searchParams.get('rd') || '').slice(0, 120);

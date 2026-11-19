@@ -430,7 +430,10 @@ code { background: var(--bg-soft); border: 1px solid var(--line); padding: 1px 6
 .mon-cli td { vertical-align: middle; }
 .mc-mini { height: 4px; background: var(--bg-soft); border-radius: 4px; margin-top: 4px; width: 110px; overflow: hidden; }
 .mc-mini i { display: block; height: 100%; background: var(--brand); border-radius: 4px; }
-.mon-det { margin-top: 18px; padding-top: 18px; border-top: 2px solid var(--brand); display: grid; gap: 16px; }
+.mon-det { margin-top: 18px; padding-top: 18px; border-top: 2px solid var(--brand); display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+/* itens de grid não encolhem abaixo do conteúdo por padrão: tabelas largas empurravam o detalhe para fora do card */
+.mon-det > *, .mon-det .mon-grid > *, .mon-kpis > * { min-width: 0; }
+.mon-det .kpi b { overflow-wrap: anywhere; }
 .mon-det-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
 .mon-det-head h3 { font-size: 20px; }
 .mon-det-head .acts { display: flex; gap: 8px; flex-wrap: wrap; }

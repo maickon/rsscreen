@@ -288,7 +288,7 @@
             <label class="field"><span>Observações (só você vê)</span><textarea class="input" id="dbObs" rows="2" maxlength="500" placeholder="Ex.: 2 TVs na padaria do centro, paga por Pix"></textarea></label>
             <label class="check"><input type="checkbox" id="dbAtivo" checked /> Cliente ativo (desmarque para suspender as telas)</label>
             <label class="field"><span>Limite de pedidos por dia</span><input class="input" id="dbLimite" type="number" min="0" step="1000" placeholder="Automático: 600 por tela (mín. 150.000)" /></label>
-            <p class="hint">Proteção contra custo descontrolado (o plano pago da Cloudflare inclui 10 milhões de pedidos por mês). Ao passar do limite, as TVs dele continuam mostrando o que já têm guardado e tentam de novo a cada 1 hora. Deixe vazio para o automático.</p>
+            <p class="hint">Proteção contra custo descontrolado (o plano pago da Cloudflare inclui 10 milhões de pedidos por mês). Ao passar do limite, as TVs dele nunca param: entram no modo econômico e atualizam o conteúdo a cada 1 hora até a meia-noite. Deixe vazio para o automático.</p>
             <label class="check"><input type="checkbox" id="dbAviso" /> Mostrar aviso nas telas acima do plano</label>
             <p class="hint">As telas mais antigas, até o número contratado, continuam normais. As que passarem disso mostram, num canto, a frase "Tela fora do plano contratado · fale com seu fornecedor". Nada é bloqueado. Ligue só depois de conversar com o cliente.</p>
             <div class="db-acts">
